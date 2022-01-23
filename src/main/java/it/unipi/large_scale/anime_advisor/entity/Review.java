@@ -1,21 +1,22 @@
 package it.unipi.large_scale.anime_advisor.entity;
 
 public final class Review {
-    private String id_user;
+
+    private String user_id;
     private String profile;
-    private String id_anime;
+    private String anime_id;
     private String text;         //text of the review
     private int    score;        //user score
 
     //SET METHODS
-    public void setId_user(String id_user){
-        this.id_user=id_user;
+    public void setUser_id(String user_id){
+        this.user_id = user_id;
     }
     public void setProfile(String profile){
         this.profile=profile;
     }
-    public void setId_anime(String id_anime){
-        this.id_anime=id_anime;
+    public void setAnime_id(String anime_id){
+        this.anime_id = anime_id;
     }
     public void setText(String text){
         this.text=text;
@@ -23,24 +24,25 @@ public final class Review {
     public void setScore(int score){
         this.score=score;
     }
+
     //GET METHODS
-    public String getId_user(){
-        return this.id_user;
+    public String getUser_id(){
+        return this.user_id;
     }
     public String getProfile(){
         return this.profile;
     }
-    public String getId_anime(){
-        return this.id_anime;
+    public String getAnime_id(){
+        return this.anime_id;
     }
     public String getText(){
         return this.text;
     }
     public String toString(){
         String string=(
-                "Id User: " +this.id_user +"\n" +
+                "Id User: " +this.user_id +"\n" +
                 "User profile: "+this.profile+"\n"+
-                "Anime id: " +this.id_anime+"\n"+
+                "Anime id: " +this.anime_id +"\n"+
                 "Review: \n" +this.text +"\n"+
                 "User score: " +this.score +"\n"
         );

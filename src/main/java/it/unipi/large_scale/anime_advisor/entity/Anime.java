@@ -16,6 +16,7 @@ public final class Anime {
     private int scored; //total score obtained
     private int scoredby; //number of users that voted
     private int members; //number of followers
+
     //SET METHODS
     public void setAnime_id(String anime_id){
         this.anime_id=anime_id;
