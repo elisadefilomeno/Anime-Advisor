@@ -113,13 +113,19 @@ public final class Anime {
                 "Episodes: "+this.episodes+"\n"
         );
       string.append(str);
+      string.append("" +
+              "Producer: ");
         for(String i:this.producer){
            string.append(i+" ");
         }
         string.append("\n");
+        string.append("" +
+                "Licensor: ");
         for(String i:this.licensor){
             string.append(i+" ");
         }
+        string.append("" +
+                "Studio: ");
         string.append("\n");
         for(String i:this.studio){
            string.append(i+" ");
@@ -133,9 +139,6 @@ public final class Anime {
         );
        string.append(str2);
        return string.toString();
-
-
-
 
     }
 

@@ -4,8 +4,8 @@ public final class Review {
     private String id_user;
     private String profile;
     private String id_anime;
-    private String text; //text of the review
-    private int score; //user score
+    private String text;         //text of the review
+    private int    score;        //user score
 
     //SET METHODS
     public void setId_user(String id_user){
