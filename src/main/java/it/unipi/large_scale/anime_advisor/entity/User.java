@@ -1,20 +1,15 @@
 package it.unipi.large_scale.anime_advisor.entity;
 
-import org.bouncycastle.util.test.FixedSecureRandom;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.ListIterator;
+import java.util.*;
 
 public class User {
     private String username;
     private String password;
     private String gender;
-    private Calendar birthday;
-    private String[] favorites_anime;
+    private Date birthday;
+    private int[] favorites_anime;
     private ArrayList<Integer> favorites_users;
     private Boolean logged_in;
     private Boolean is_admin;
@@ -29,10 +24,10 @@ public class User {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    public void setBirthday(Calendar birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
-    public void setFavorites_anime(String[] favorites_anime) {
+    public void setFavorites_anime(int[] favorites_anime) {
         this.favorites_anime = favorites_anime;
     }
     public void setFavorites_users(ArrayList<Integer> favorites_users) {
@@ -55,10 +50,10 @@ public class User {
     public String getGender() {
         return this.gender;
     }
-    public Calendar getBirthday() {
+    public Date getBirthday() {
         return this.birthday;
     }
-    public String[] getFavorites_anime() {
+    public int[] getFavorites_anime() {
         return this.favorites_anime;
     }
     public ArrayList<Integer> getFavorites_users() {
@@ -91,7 +86,7 @@ public class User {
         string.append(str);
         string.append("" +
                 "Favorites Animes : ");
-        for (String i : this.favorites_anime)
+        for (int i : this.favorites_anime)
             string.append(i + " ");
         string.append("\n");
 

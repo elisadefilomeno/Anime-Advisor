@@ -10,7 +10,7 @@ public class AnimeTest extends TestCase {
     @Test
     public static void test_toString(){
         Anime anime=new Anime();
-    anime.setAnime_id("23");
+    anime.setAnime_id(23);
     anime.setAnime_name("Cowboy Bebop");
     anime.setEpisodes(23);
     String[] genre={"Action","Sci-fi"};
@@ -18,7 +18,7 @@ public class AnimeTest extends TestCase {
     String[] licensor={"Sunrise"};
     anime.setLicensor(licensor);
     anime.setMembers(344);
-    anime.setPremiered("Jul 21");
+    anime.setPremiered(21);
     String[] prod={"Bandai"};
     anime.setProducer(prod);
     anime.setScored(9);
@@ -30,7 +30,7 @@ public class AnimeTest extends TestCase {
 
     String expected= "Anime_id: 23\n" +
             "Name: Cowboy Bebop\n" +
-            "Premiered: Jul 21\n" +
+            "Premiered: 21\n" +
             "Genre: Action Sci-fi \n" +
             "Type: Original\n" +
             "Episodes: 23\n" +
@@ -39,7 +39,7 @@ public class AnimeTest extends TestCase {
             "Studio: \n" +
             "asd dsa \n" +
             "Source: Original\n" +
-            "Score: 9\n" +
+            "Score: 9.0\n" +
             "Scored By: 2333\n" +
             "Total members: 344\n";
         Assert.assertEquals(anime.toString(),expected);

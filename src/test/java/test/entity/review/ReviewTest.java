@@ -10,10 +10,10 @@ public class ReviewTest extends TestCase {
     @Test
     public static void test_toString() {
         Review rew = new Review();
-        rew.setUser_id("11");
+        rew.setUser_id(11);
         rew.setProfile("Nick");
         rew.setScore(10);
-        rew.setAnime_id("111");
+        rew.setAnime_id(111);
         rew.setText("questa è la mia recensione...");
 
         String expected="Id User: 11\n" +

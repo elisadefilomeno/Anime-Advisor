@@ -1,11 +1,9 @@
 package it.unipi.large_scale.anime_advisor.entity;
 
-import javax.sql.rowset.serial.SerialException;
-
 public final class Anime {
-    private String anime_id;
+    private int anime_id;
     private String anime_name;
-    private String premiered;
+    private int premiered;
     private String[] genre; //list of genres
     private String type;    //if movie or serie type
     private int episodes;
@@ -13,18 +11,18 @@ public final class Anime {
     private String[] licensor;
     private String[] studio;
     private String source; //original or comes from a manga book
-    private int scored; //total score obtained
+    private double scored; //total score obtained
     private int scoredby; //number of users that voted
     private int members; //number of followers
 
     //SET METHODS
-    public void setAnime_id(String anime_id){
+    public void setAnime_id(int anime_id){
         this.anime_id=anime_id;
     }
     public void setAnime_name(String anime_name){
         this.anime_name=anime_name;
     }
-    public void setPremiered(String premiered){
+    public void setPremiered(int premiered){
         this.premiered=premiered;
     }
     public void setGenre(String[] genres){
@@ -48,7 +46,7 @@ public final class Anime {
     public void setSource(String source){
         this.source=source;
     }
-    public void setScored(int scored){
+    public void setScored(double scored){
         this.scored=scored;
     }
     public void setScoredby(int scoredby){
@@ -58,13 +56,13 @@ public final class Anime {
         this.members=members;
     }
     //GET METHODS
-    public String getAnime_id(){
+    public int getAnime_id(){
         return this.anime_id;
     }
     public String getAnime_name(){
         return this.anime_name;
     }
-    public String getPremiered(){
+    public int getPremiered(){
         return this.premiered;
     }
     public String[] getGenre(){
@@ -88,7 +86,7 @@ public final class Anime {
     public String getSource(){
         return this.source;
     }
-    public int getScored(){
+    public double getScored(){
         return this.scored;
     }
     public int getScoredby(){
