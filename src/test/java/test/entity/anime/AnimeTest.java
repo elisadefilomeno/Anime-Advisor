@@ -1,0 +1,47 @@
+package test.entity.anime;
+
+import it.unipi.large_scale.anime_advisor.entity.Anime;
+import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
+
+
+public class AnimeTest extends TestCase {
+    @Test
+    public static void test_toString(){
+        Anime anime=new Anime();
+    anime.setAnime_id("23");
+    anime.setAnime_name("Cowboy Bebop");
+    anime.setEpisodes(23);
+    String[] genre={"Action","Sci-fi"};
+    anime.setGenre(genre);
+    String[] licensor={"Sunrise"};
+    anime.setLicensor(licensor);
+    anime.setMembers(344);
+    anime.setPremiered("Jul 21");
+    String[] prod={"Bandai"};
+    anime.setProducer(prod);
+    anime.setScored(9);
+    anime.setScoredby(2333);
+    anime.setSource("Original");
+    String[] stud={"asd","dsa"};
+    anime.setStudio(stud);
+    anime.setType("Original");
+    System.out.println(anime.toString());
+    String expected= "Anime_id: 23\n" +
+            "Name: Cowboy Bebop\n" +
+            "Premiered: Jul 21\n" +
+            "Genre: Action Sci-fi \n" +
+            "Type: Original\n" +
+            "Episodes: 23\n" +
+            "Producer: Bandai \n" +
+            "Licensor: Sunrise \n" +
+            "Studio: \n" +
+            "asd dsa \n" +
+            "Source: Original\n" +
+            "Score: 9\n" +
+            "Scored By: 2333\n" +
+            "Total members: 344\n";
+        Assert.assertEquals(anime.toString(),expected);
+    }
+}

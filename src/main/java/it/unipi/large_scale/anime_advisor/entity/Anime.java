@@ -125,6 +125,7 @@ public final class Anime {
         for(String i:this.licensor){
             string.append(i+" ");
         }
+        string.append("\n");
         string.append("" +
                 "Studio: ");
         string.append("\n");
