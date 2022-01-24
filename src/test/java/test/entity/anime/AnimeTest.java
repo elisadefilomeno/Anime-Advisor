@@ -27,7 +27,7 @@ public class AnimeTest extends TestCase {
     String[] stud={"asd","dsa"};
     anime.setStudio(stud);
     anime.setType("Original");
-    System.out.println(anime.toString());
+
     String expected= "Anime_id: 23\n" +
             "Name: Cowboy Bebop\n" +
             "Premiered: Jul 21\n" +
