@@ -10,7 +10,6 @@ public class AnimeTest extends TestCase {
     @Test
     public static void test_toString(){
         Anime anime=new Anime();
-    anime.setAnime_id(23);
     anime.setAnime_name("Cowboy Bebop");
     anime.setEpisodes(23);
     String[] genre={"Action","Sci-fi"};
@@ -28,7 +27,7 @@ public class AnimeTest extends TestCase {
     anime.setStudio(stud);
     anime.setType("Original");
 
-    String expected= "Anime_id: 23\n" +
+    String expected=
             "Name: Cowboy Bebop\n" +
             "Premiered: 21\n" +
             "Genre: Action Sci-fi \n" +
