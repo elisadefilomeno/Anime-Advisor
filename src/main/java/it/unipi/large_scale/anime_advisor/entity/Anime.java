@@ -95,8 +95,10 @@ public final class Anime {
             "Premiered: " +this.premiered + "\n" +
             "Genre: "
         );
-        for(String i:this.genre){
-          string.append(i +" ");
+        if(genre!=null){
+            for(String i:this.genre){
+                string.append(i +" ");
+            }
         }
         string.append("\n");
       String str=("" +
@@ -106,21 +108,27 @@ public final class Anime {
       string.append(str);
       string.append("" +
               "Producer: ");
-        for(String i:this.producer){
-           string.append(i+" ");
+        if(producer!=null){
+            for(String i:this.producer){
+                string.append(i+" ");
+            }
         }
         string.append("\n");
         string.append("" +
                 "Licensor: ");
-        for(String i:this.licensor){
-            string.append(i+" ");
+        if(licensor!=null){
+            for(String i:this.licensor){
+                string.append(i+" ");
+            }
         }
         string.append("\n");
         string.append("" +
                 "Studio: ");
         string.append("\n");
-        for(String i:this.studio){
-           string.append(i+" ");
+        if(studio!=null){
+            for(String i:this.studio){
+                string.append(i+" ");
+            }
         }
         string.append("\n");
        String str2=(

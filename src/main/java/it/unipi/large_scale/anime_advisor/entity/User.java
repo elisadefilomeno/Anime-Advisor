@@ -1,18 +1,14 @@
 package it.unipi.large_scale.anime_advisor.entity;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDate;
 
 public class User {
     private String username;
     private String password;
     private String gender;
-    private Date birthday;
-    private int[] favorites_anime;
-    private ArrayList<Integer> favorites_users;
-    private Boolean logged_in;
-    private Boolean is_admin;
+    private LocalDate birthday;
+    private boolean logged_in;
+    private boolean is_admin;
 
     //SET METHODS
     public void setUsername(String username) {
@@ -24,19 +20,14 @@ public class User {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
-    public void setFavorites_anime(int[] favorites_anime) {
-        this.favorites_anime = favorites_anime;
-    }
-    public void setFavorites_users(ArrayList<Integer> favorites_users) {
-        this.favorites_users = favorites_users;
-    }
-    public void setLogged_in(Boolean logged_in) {
+
+    public void setLogged_in(boolean logged_in) {
         this.logged_in = logged_in;
     }
-    public void setIs_admin(Boolean is_admin) {
+    public void setIs_admin(boolean is_admin) {
         this.is_admin = is_admin;
     }
 
@@ -50,19 +41,14 @@ public class User {
     public String getGender() {
         return this.gender;
     }
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return this.birthday;
     }
-    public int[] getFavorites_anime() {
-        return this.favorites_anime;
-    }
-    public ArrayList<Integer> getFavorites_users() {
-        return this.favorites_users;
-    }
-    public Boolean getLogged_in() {
+
+    public boolean getLogged_in() {
         return this.logged_in;
     }
-    public Boolean getIs_admin() {
+    public boolean getIs_admin() {
         return is_admin;
     }
 
@@ -77,28 +63,18 @@ public class User {
                         "Gender: " + this.gender + "\n"
 
         );
-        String format = "dd/MM/yyyy";
-        DateFormat df = new SimpleDateFormat(format);
-        String birthdayAsString = df.format(this.birthday);
+//        String format = "dd/MM/yyyy";
+//        DateFormat df = new SimpleDateFormat(format);
+//        String birthdayAsString = df.format(this.birthday);
+//        String str = ("" +
+//                "Birthday: " + birthdayAsString + "\n"
+//        );
         String str = ("" +
-                "Birthday: " + birthdayAsString + "\n"
+                "Birthday: " + birthday.toString() + "\n"
         );
         string.append(str);
-        string.append("" +
-                "Favorites Animes : ");
-        for (int i : this.favorites_anime)
-            string.append(i + " ");
-        string.append("\n");
-
-        string.append("" +
-                "Favorite Users : ");
-        ListIterator<Integer> it = this.favorites_users.listIterator(this.favorites_users.size());
-        while(it.hasPrevious())
-            string.append(" "+ Integer.toString(it.previous()));
-        string.append("\n");
-
-        string.append(""+
-                "Logged_in"+String.valueOf(this.logged_in)
+        string.append("Logged_in: "+String.valueOf(this.logged_in)+ "\n" +
+                "Is_admin: "+ String.valueOf(this.is_admin)
         );
 
         return string.toString();
@@ -109,14 +85,7 @@ public class User {
         this.password = u.getPassword();
         this.gender = u.getGender();
         this.birthday=u.getBirthday();
-        this.favorites_anime=u.getFavorites_anime();
-        this.favorites_users = u.getFavorites_users();
         this.logged_in = u.getLogged_in();
-        if(this instanceof Admin) {
-            this.setIs_admin(Boolean.TRUE);
-        }
-        else{
-            this.setIs_admin(Boolean.FALSE);
-        }
+        this.is_admin = u.getIs_admin();
     }
 }
