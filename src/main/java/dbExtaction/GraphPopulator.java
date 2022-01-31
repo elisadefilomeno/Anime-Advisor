@@ -196,9 +196,9 @@ public class GraphPopulator implements DbManager, AutoCloseable{
 
         try ( DbManagerNeo4J neo4j = new DbManagerNeo4J() )
         {
-            ArrayList<Anime> animes = gp.loadAnimes("C:\\Users\\Elisa\\Desktop\\large scale\\AnimeDb\\animeNeo4j.csv");
+            ArrayList<Anime> animes = gp.loadAnimes("C:\\Users\\Rauro\\OneDrive\\Desktop\\Exams\\Large scale\\dataset\\animeNeo4j.csv");
             gp.addAnimeToGraph(animes);
-            ArrayList<User> users = gp.loadUsers("C:\\Users\\Elisa\\Desktop\\large scale\\AnimeDb\\users.csv");
+            ArrayList<User> users = gp.loadUsers("C:\\Users\\Rauro\\OneDrive\\Desktop\\Exams\\Large scale\\dataset\\users.csv");
             gp.addUsersToGraph(users);
             int number_of_users = users.size();
             int n_follows_edges_users = number_of_users/3;

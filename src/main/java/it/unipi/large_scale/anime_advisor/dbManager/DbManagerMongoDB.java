@@ -6,7 +6,6 @@ import com.mongodb.ConnectionString;
 import org.bson.Document;
 
 public class DbManagerMongoDB implements DbManager {
-    String cstr;
     MongoClient client;
     MongoDatabase db;
     //Costruttore DBMangager per mongo che setta il client
@@ -15,16 +14,31 @@ public class DbManagerMongoDB implements DbManager {
 
     }
     //Avviamento del database
-    public void startMongo(String db) {
+    public void startMongo(String db){
+        try{
         this.db= this.client.getDatabase(db);
+        } catch(Exception e){
+            System.out.println("An error occurred while starting MondoDB server");
+        }
+
         }
 
     //Restituzione della Collezione specifiicata
     public MongoCollection<Document> getCollection(String col){
-        return this.db.getCollection(col);
+        try {
+            return this.db.getCollection(col);
+        } catch(Exception e){
+            System.out.println("Unable to retrieve the collection: "+col);
+            return null;
+
+        }
     }
     //Chusura del Database
     public void closeMongo(){
-        this.client.close();
+        try {
+            this.client.close();
+        } catch(Exception e){
+            System.out.println("An error occurred while closing MondoDB server");
+        }
     }
 }
