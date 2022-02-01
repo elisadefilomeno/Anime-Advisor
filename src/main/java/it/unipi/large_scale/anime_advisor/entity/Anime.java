@@ -1,6 +1,7 @@
 package it.unipi.large_scale.anime_advisor.entity;
 
 public final class Anime {
+    private int anime_id;
     private String anime_name;
     private int premiered;
     private String[] genre; //list of genres
@@ -15,6 +16,10 @@ public final class Anime {
     private int members; //number of followers
 
     //SET METHODS
+
+    public void setAnime_id(int anime_id) {
+        this.anime_id = anime_id;
+    }
     public void setAnime_name(String anime_name){
         this.anime_name=anime_name;
     }
@@ -52,6 +57,10 @@ public final class Anime {
         this.members=members;
     }
     //GET METHODS
+
+    public int getAnime_id() {
+        return anime_id;
+    }
     public String getAnime_name(){
         return this.anime_name;
     }
@@ -91,6 +100,7 @@ public final class Anime {
     public String toString(){
         StringBuilder string= new StringBuilder();
         string.append(
+                "Id: "+this.anime_id+"\n"+
             "Name: " +this.anime_name +  "\n" +
             "Premiered: " +this.premiered + "\n" +
             "Genre: "
