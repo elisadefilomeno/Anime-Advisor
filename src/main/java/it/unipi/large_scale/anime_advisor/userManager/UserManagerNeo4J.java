@@ -1,8 +1,9 @@
 package it.unipi.large_scale.anime_advisor.userManager;
 
-import it.unipi.large_scale.anime_advisor.dbManager.DbManager;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.User;
+import it.unipi.large_scale.anime_advisor.exceptions.DuplicateUserException;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
 
@@ -16,8 +17,10 @@ public class UserManagerNeo4J implements UserManager{
     }
 
     @Override
-    public void createUser(User u) {
+    public boolean createUser(User u) throws DuplicateUserException {
 
+
+        return false;
     }
 
     @Override
@@ -48,6 +51,34 @@ public class UserManagerNeo4J implements UserManager{
             });
             return true;
 
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isUserPresent(User u){
+        if(u.getUsername()==null){
+            System.out.println("Username not inserted");
+            return false;
+        }
+
+        try(Session session= dbNeo4J.getDriver().session()){
+            int user_count;
+            user_count= session.readTransaction(tx -> {
+                Result result = tx.run( "MATCH (u:User) WHERE u.username=$username RETURN count(u) as user_count",
+                        parameters(
+                                "username", u.getUsername()
+                        )
+                );
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    return (r.get("user_count").asInt());
+                }
+
+                return null;
+            });
+            return (user_count>0);
         }catch(Exception ex){
             ex.printStackTrace();
             return false;
