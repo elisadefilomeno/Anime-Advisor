@@ -1,7 +1,6 @@
 package dbExtaction;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManager;
-import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.*;
 import java.io. * ;
 import java.time.LocalDate;
@@ -22,16 +21,16 @@ public class GraphPopulator implements DbManager, AutoCloseable{
     private final String user = "neo4j";
     private final String password = "admin";
 
-    public GraphPopulator() throws Exception {
+    public GraphPopulator() {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password)); //authentication without encryption
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         driver.close();
     }
 
-    public String[] getAnimeNames(ArrayList<Anime> animes) throws FileNotFoundException{
+    public String[] getAnimeNames(ArrayList<Anime> animes) {
         int size = animes.size();
         String[] anime_names = new String[size];
         int pos=0;
@@ -248,23 +247,17 @@ public class GraphPopulator implements DbManager, AutoCloseable{
         ArrayList<Review> reviews = gp.loadReviews("C:\\Users\\Elisa\\Desktop\\large scale\\AnimeDb\\reviewsGraph.csv");
         System.out.println("Total number of reviews: " + Integer.toString(reviews.size()));
 
-        try ( DbManagerNeo4J neo4j = new DbManagerNeo4J() )
-        {
-            gp.addAnimeToGraph(animes);
-            gp.addUsersToGraph(users);
-            gp.addReviewsWithRelationshipsToGraph(reviews);
-            int number_of_users = users.size();
-            int n_follows_edges_users = number_of_users/4;
-            gp.createFollowsRelationshipBetweenUsers(number_of_users, n_follows_edges_users);
-            String[] anime_names = gp.getAnimeNames(animes);
-            int n_follows_edges_user_anime = number_of_users;
-            gp.createFollowsRelationshipUserAnime(number_of_users,n_follows_edges_user_anime,anime_names);
+        gp.addAnimeToGraph(animes);
+        gp.addUsersToGraph(users);
+        gp.addReviewsWithRelationshipsToGraph(reviews);
+        int number_of_users = users.size();
+        int n_follows_edges_users = number_of_users / 4;
+        gp.createFollowsRelationshipBetweenUsers(number_of_users, n_follows_edges_users);
+        String[] anime_names = gp.getAnimeNames(animes);
+        int n_follows_edges_user_anime = number_of_users;
+        gp.createFollowsRelationshipUserAnime(number_of_users, n_follows_edges_user_anime, anime_names);
 
-        }
     }
-
-
-
 
 
 }

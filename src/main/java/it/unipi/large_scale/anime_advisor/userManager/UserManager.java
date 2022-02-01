@@ -7,5 +7,5 @@ public interface UserManager {
     void createUser(User u);
     void readUser(User u);
     void updateUser(User u);
-    void deleteUser(User u);
+    boolean deleteUser(User u);
 }

@@ -4,9 +4,9 @@ import it.unipi.large_scale.anime_advisor.entity.Review;
 
 public interface reviewManager {
 
-    public void createReview(Review r);
-    public void readReview(Review r);
-    public void updateReview(Review r);
-    public void deleteReview(Review r);
+    void createReview(Review r);
+    void readReview(Review r);
+    void updateReview(Review r);
+    void deleteReview(Review r);
 
 }

@@ -1,29 +1,33 @@
 package it.unipi.large_scale.anime_advisor.dbManager;
 
 import org.neo4j.driver.*;
-import it.unipi.large_scale.anime_advisor.entity.*;
-import java.util.*;
-import static org.neo4j.driver.Values.parameters;
 
 
-public class DbManagerNeo4J implements DbManager, AutoCloseable {
-    private final Driver driver;
+public class DbManagerNeo4J implements DbManager {
+    private static Driver driver;
     private final String uri = "neo4j://localhost:7687";
     private final String user = "neo4j";
     private final String password = "admin";
 
     public DbManagerNeo4J() {
-        driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password)); //authentication without encryption
+        try {
+            driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password)); //authentication without encryption
+        }catch (Exception e){
+            System.out.println("An error occurred while opening connection with Neo4j");
+        }
+
     }
 
-    @Override
-    public void close() throws Exception {
-        driver.close();
+    public void closeNeo4J() throws Exception {
+        try{
+            driver.close();
+        }catch (Exception e){
+            System.out.println("An error occurred while closing connection with Neo4j");
+        }
     }
 
-
-    public static void main(String[] args) throws Exception {
-
+    public Driver getDriver() {
+        return driver;
     }
 }
 
