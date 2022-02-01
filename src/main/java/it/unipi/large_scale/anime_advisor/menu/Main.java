@@ -1,10 +1,12 @@
 package it.unipi.large_scale.anime_advisor.menu;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDB;
 import it.unipi.large_scale.anime_advisor.dbManager.*;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import org.bson.Document;
+
+//da rimuovere
+
 
 public class Main {
 
@@ -43,10 +45,17 @@ public class Main {
             System.out.println("Presente");
         else
             System.out.println("Non presente");
+
         am.readAnime(anime,collection);
         am.updateAnimeName(anime,collection,"rotocalco");
         anime.setAnime_name("rotocalco");
         am.readAnime(anime,collection);
+        am.updateAnimeStudioAddOne(anime,collection,"Studio Ghibli");
+        am.readAnime(anime,collection);
+        Anime cb= new Anime();
+        cb.setAnime_name("Kill la Kill");
+        am.readAnime(cb,collection);
+        am.deleteAnime(anime,collection);
         mongoM.closeMongo();
 
 
