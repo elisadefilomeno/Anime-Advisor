@@ -9,6 +9,8 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.client.result.UpdateResult;
+import static com.mongodb.client.model.Updates.*;
+
 
 
 import it.unipi.large_scale.anime_advisor.entity.Anime;
@@ -31,29 +33,32 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
     //Creates a new document and put it into the collection specified
     public void createAnime(Anime anime, MongoCollection<Document> collection) {
         if(checkIfPresent(anime,collection)==true){
-            System.out.println("Documento già presente\n");
+            System.out.println("Document already present\n");
             return;}
-    Document doc= new Document ("name",anime.getAnime_name())
-            .append("episodes",anime.getEpisodes())
-            .append("premiered",anime.getPremiered())
-            .append("genre", Arrays.asList(anime.getGenre()))
-            .append("type",anime.getType())
-            .append("source",anime.getSource())
-            .append("studio", Arrays.asList(anime.getStudio()))
-            .append("producer",Arrays.asList(anime.getProducer()))
-            .append("licensor",Arrays.asList(anime.getLicensor()))
-            .append("scored",0)
-            .append("scoredBy",0)
-            .append("members",0);
-    collection.insertOne(doc);
-    System.out.println("Document inserted correctly");
+        else {
+            Document doc = new Document("name", anime.getAnime_name())
+                    .append("episodes", anime.getEpisodes())
+                    .append("premiered", anime.getPremiered())
+                    .append("genre", Arrays.asList(anime.getGenre()))
+                    .append("type", anime.getType())
+                    .append("source", anime.getSource())
+                    .append("studio", Arrays.asList(anime.getStudio()))
+                    .append("producer", Arrays.asList(anime.getProducer()))
+                    .append("licensor", Arrays.asList(anime.getLicensor()))
+                    .append("scored", 0)
+                    .append("scoredBy", 0)
+                    .append("members", 0);
+            collection.insertOne(doc);
+             System.out.println("Document inserted correctly\n");
+             return;
+        }
     }
 
     @Override
     //Find and print if present the document specified in the collection
     public void readAnime(Anime anime, MongoCollection<Document> collection) {
         if(checkIfPresent(anime,collection)==false){
-            System.out.println("Documento inesistente\n");
+            System.out.println("Document not found\n");
             return;}
        Document result= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
         System.out.println(result.toJson());
@@ -65,8 +70,13 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
 
     }
 
+
     //Find a document and update it's parameters
     public void updateAnimeName(Anime anime,MongoCollection<Document> collection,String newName) {
+        if(collection.find(eq("name",new Document("$regex",newName).append("$options","i"))).first()!=null){
+            System.out.println("A document with this name is already present. Cannot update\n");
+            return;
+        }
         if(checkIfPresent(anime,collection)==true){
         Bson query= new Document().append("name",anime.getAnime_name());
         Bson update= Updates.set("name",newName);
@@ -78,7 +88,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
     }
     public void updateAnimeEpisodes(Anime anime,MongoCollection<Document> collection,int ep) {
         if(checkIfPresent(anime,collection)==true){
@@ -92,7 +102,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     public void updateAnimePremiered(Anime anime,MongoCollection<Document> collection,int prem) {
@@ -107,7 +117,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
 
     }
@@ -126,7 +136,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     public void updateAnimeSource(Anime anime,MongoCollection<Document> collection,String s) {
@@ -141,10 +151,29 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
-    public void updateAnimeStudio(Anime anime,MongoCollection<Document> collection) {
+    public void updateAnimeStudioAddOne(Anime anime,MongoCollection<Document> collection,String nstudio) {
+        if(checkIfPresent(anime,collection)==true){
+            Bson query= eq("name",anime.getAnime_name());
+            //Bson query2=(eq())
+            Bson update= push("studio",nstudio);
+            UpdateResult result= collection.updateOne(query,update);
+
+
+        }
+        else
+            System.out.println("Cannot update: Document not found\n");
+
+
+    }
+    public void updateAnimeStudioDeleteOne(Anime anime,MongoCollection<Document> collection) {
+
+
+    }
+    public void updateAnimeStudioDeleteAll(Anime anime,MongoCollection<Document> collection) {
+
 
     }
     public void updateAnimeProducer(Anime anime,MongoCollection<Document> collection) {
@@ -166,7 +195,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     //Update the mean of the average score when someone vote
@@ -183,7 +212,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     //Increment number of users who voted the anime
@@ -199,7 +228,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     //update the total number of the users who voted the anime
@@ -215,7 +244,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     //Increment the number of users who follow the anime when someone follow it
@@ -231,7 +260,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
     //update the number of members  value
@@ -247,7 +276,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             }
         }
         else
-            System.out.println("Cannot Update: Document not present");
+            System.out.println("Cannot Update: Document not found\n");
 
     }
 
@@ -259,7 +288,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             System.out.println("Documento eliminato");
         }
         else{
-            System.out.println("Documento non trovato. Impossibile eliminare");
+            System.out.println("Documento not found. Can't delete\n");
         }
 
 
