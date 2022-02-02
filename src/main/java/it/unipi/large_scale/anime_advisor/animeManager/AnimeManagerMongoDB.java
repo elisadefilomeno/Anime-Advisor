@@ -1,5 +1,6 @@
 package it.unipi.large_scale.anime_advisor.animeManager;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
@@ -56,7 +57,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
                     .append("studio", Arrays.asList(anime.getStudio()))
                     .append("producer", Arrays.asList(anime.getProducer()))
                     .append("licensor", Arrays.asList(anime.getLicensor()))
-                    .append("scored", 0)
+                    .append("scored", 0.0)
                     .append("scoredBy", 0)
                     .append("members", 0);
             collection.insertOne(doc);
@@ -105,7 +106,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
     //update the anime episodes field
     public void updateAnimeEpisodes(Anime anime,MongoCollection<Document> collection,int ep) {
         if(checkIfPresent(anime,collection)==true){
-            Bson query= new Document().append("episodes",anime.getEpisodes());
+            Bson query= new Document().append("name",anime.getAnime_name());
             Bson update= Updates.set("episodes",ep);
             try {
                 UpdateResult result = collection.updateOne(query, update);
@@ -303,11 +304,15 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             System.out.println("Cannot Update: Document not found\n");
 
     }
-    //Update the mean of the average score when someone vote
+    //Update the mean of the average score when someone vote USE IT ONLY AFTER THE FIRST VOTE
     public void updateAnimeMeanScored(Anime anime,MongoCollection<Document> collection,double score) {
         if(checkIfPresent(anime,collection)==true){
+            Document doc= collection.find(eq("name",anime.getAnime_name())).first();
+            double scored=doc.getDouble("scored");
+            int scoredBy=doc.getInteger("scoredBy");
+            double newScore= (scoredBy*scored+score)/(scoredBy+1);
+            System.out.println("score="+scored+"\nsb="+scoredBy+"\nnew Score=");
             Bson query= new Document().append("name",anime.getAnime_name());
-            double newScore= (anime.getScoredby()*anime.getScored()+score)/(anime.getScoredby());
             Bson update= Updates.set("scored",newScore);
             try {
                 UpdateResult result = collection.updateOne(query, update);
@@ -323,8 +328,8 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
     //Increment number of users who voted the anime
     public void updateAnimeIncScoredBy(Anime anime,MongoCollection<Document> collection) {
         if(checkIfPresent(anime,collection)==true){
-            Bson query= new Document().append("name",anime.getAnime_name());
-            Bson update= Updates.set("scoredBy",anime.getScoredby()+1);
+            Bson query=new Document().append("name",anime.getAnime_name());
+            Bson update= Updates.inc("scoredBy",1);
             try {
                 UpdateResult result = collection.updateOne(query, update);
                 System.out.println("Document updated\n");
@@ -356,7 +361,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
     public void updateAnimeIncMembers(Anime anime,MongoCollection<Document> collection) {
         if(checkIfPresent(anime,collection)==true){
             Bson query= new Document().append("name",anime.getAnime_name());
-            Bson update= Updates.set("members",anime.getMembers()+1);
+            Bson update= Updates.inc("members",1);
             try {
                 UpdateResult result = collection.updateOne(query, update);
                 System.out.println("Document updated\n");

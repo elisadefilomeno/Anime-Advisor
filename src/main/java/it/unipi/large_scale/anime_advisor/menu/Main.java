@@ -34,12 +34,18 @@ public class Main {
         anime.setStudio(s);
         anime.setProducer(p);
         anime.setLicensor(l);
-        anime.setScoredby(12);
-        anime.setScoredby(111);
-        anime.setMembers(111);
+        anime.setScoredby(0);
+        anime.setScored(0.0);
+        anime.setMembers(0);
         am.createAnime(anime,collection);
-
         am.readAnime(anime,collection);
+        //TEST MONGO CRUD
+
+        am.updateAnimeMeanScored(anime,collection,10.0);
+        am.updateAnimeIncScoredBy(anime,collection);
+
+
+
         mongoM.closeMongo();
 
 
