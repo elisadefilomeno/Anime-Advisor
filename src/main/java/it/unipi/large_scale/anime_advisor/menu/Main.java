@@ -39,23 +39,7 @@ public class Main {
         anime.setMembers(111);
         am.createAnime(anime,collection);
 
-
-
-        if(am.checkIfPresent(anime,collection)==true)
-            System.out.println("Presente");
-        else
-            System.out.println("Non presente");
-
         am.readAnime(anime,collection);
-        am.updateAnimeName(anime,collection,"rotocalco");
-        anime.setAnime_name("rotocalco");
-        am.readAnime(anime,collection);
-        am.updateAnimeStudioAddOne(anime,collection,"Studio Ghibli");
-        am.readAnime(anime,collection);
-        Anime cb= new Anime();
-        cb.setAnime_name("Kill la Kill");
-        am.readAnime(cb,collection);
-        am.deleteAnime(anime,collection);
         mongoM.closeMongo();
 
 
