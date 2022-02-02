@@ -6,7 +6,7 @@ import it.unipi.large_scale.anime_advisor.exceptions.DuplicateUserException;
 public interface UserManager {
 
     boolean createUser(User u) throws DuplicateUserException;
-    void readUser(User u);
-    void updateUser(User u);
+    User getUserByUsername(String username);
+    boolean updateUser(User u);
     boolean deleteUser(User u);
 }
