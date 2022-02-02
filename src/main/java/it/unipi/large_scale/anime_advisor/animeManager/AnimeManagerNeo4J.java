@@ -1,7 +1,6 @@
 package it.unipi.large_scale.anime_advisor.animeManager;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
-import it.unipi.large_scale.anime_advisor.exceptions.DuplicateAnimeException;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;

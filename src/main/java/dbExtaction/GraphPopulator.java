@@ -147,7 +147,7 @@ public class GraphPopulator implements DbManager, AutoCloseable{
                         )
                 );
                 if ((i%1000)==0){
-                    System.out.println("total anime nodes:"+ Integer.toString(i));
+                    System.out.println("total anime nodes: "+ Integer.toString(i));
                 }
             }
         }
@@ -169,7 +169,7 @@ public class GraphPopulator implements DbManager, AutoCloseable{
                         )
                 );
                 if ((i%1000)==0){
-                    System.out.println("total user nodes:"+ Integer.toString(i));
+                    System.out.println("total user nodes: "+ Integer.toString(i));
                 }
             }
         }

@@ -18,9 +18,10 @@ public class UserManagerNeo4J implements UserManager{
     }
 
     @Override
-    public boolean createUser(User u) throws DuplicateUserException {
-        if(isUserPresent(u))
+    public boolean createUser(User u) throws Exception {
+        if(checkIfPresent(u)) {
             throw new DuplicateUserException();
+        }
 
         try(Session session= dbNeo4J.getDriver().session()){
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -61,11 +62,11 @@ public class UserManagerNeo4J implements UserManager{
                 );
                 if(result.hasNext()){
                     org.neo4j.driver.Record r = result.next();
-                    LocalDate birthday = r.get("birthday").asLocalDate();
-                    String password = r.get("password").asString();
-                    String gender = r.get("gender").asString();
-                    boolean logged_in = r.get("logged_in").asBoolean();
-                    boolean is_admin = r.get("is_admin").asBoolean();
+                    LocalDate birthday= r.get("u.birthday").asLocalDate();
+                    String password = r.get("u.password").asString();
+                    String gender = r.get("u.gender").asString();
+                    boolean logged_in = r.get("u.logged_in").asBoolean();
+                    boolean is_admin = r.get("u.is_admin").asBoolean();
                     User u = new User();
                     u.setUsername(username);
                     u.setBirthday(birthday);
@@ -90,7 +91,7 @@ public class UserManagerNeo4J implements UserManager{
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ( "MATCH (u:User) WHERE n.username = $username" +
+                tx.run ( "MATCH (u:User) WHERE u.username = $username " +
                                 "SET u.birthday=$birthday, u.password=$password, u.gender=$gender, " +
                                 "u.logged_in=$logged_in, u.is_admin=$is_admin",
                         parameters(
@@ -136,7 +137,7 @@ public class UserManagerNeo4J implements UserManager{
         }
     }
 
-    public boolean isUserPresent(User u){
+    public boolean checkIfPresent(User u){
         if(u.getUsername()==null){
             System.out.println("Username not inserted");
             return false;

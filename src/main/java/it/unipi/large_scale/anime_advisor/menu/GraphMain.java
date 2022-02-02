@@ -1,30 +1,45 @@
 package it.unipi.large_scale.anime_advisor.menu;
 
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.*;
 import it.unipi.large_scale.anime_advisor.userManager.UserManager;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
-import org.neo4j.driver.Session;
 
 import java.time.LocalDate;
 
-import static org.neo4j.driver.Values.parameters;
+//da rimuovere
 
 public class GraphMain {
     public static void main(String[] args) throws Exception {
         DbManagerNeo4J dbNeo4J = new DbManagerNeo4J();
         UserManager um = new UserManagerNeo4J();
-        LocalDate birthday =  LocalDate.of(1999,1,1);
+        AnimeManagerNeo4J am = new AnimeManagerNeo4J();
+        LocalDate birthday =  LocalDate.of(1999,11,25);
 
-        User u= new User();
-        u.setUsername("Francesca");
-        u.setBirthday(birthday);
-        u.setGender("female");
-        u.setPassword("psw");
-        u.setIs_admin(true);
-        u.setLogged_in(true);
 
-        um.createUser(u);
+//        User e= new User();
+//        e.setUsername("Elisa");
+//        e.setBirthday(birthday); // default = 1900/01/01
+//        e.setGender("female");
+//        e.setPassword("psw");
+//        e.setIs_admin(true); // default = false
+//        e.setLogged_in(true); //default = false
+//
+//        um.createUser(e);
+////        um.deleteUser(e);
+//        e.setPassword("new_password");
+//        um.updateUser(e);
+//        User elisa = um.getUserByUsername("Elisa");
+//        System.out.println(elisa.toString());
+
+        Anime a = new Anime();
+        a.setAnime_name("Sailor Moon");
+//        am.createAnime(a, dbNeo4J);
+//        System.out.println(am.checkIfPresent(a, dbNeo4J));
+        am.deleteAnime(a, dbNeo4J);
+
+
         dbNeo4J.closeNeo4J();
         }
 
