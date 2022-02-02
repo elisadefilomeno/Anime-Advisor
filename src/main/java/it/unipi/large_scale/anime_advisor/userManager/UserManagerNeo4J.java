@@ -115,7 +115,7 @@ public class UserManagerNeo4J implements UserManager{
     @Override
     public boolean deleteUser(User u) {
         if(u.getUsername()==null){
-            System.out.println("Username not inserted");
+            System.out.println("Username not inserted, unable to delete");
             return false;
         }
 
