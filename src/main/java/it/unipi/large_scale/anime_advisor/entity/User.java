@@ -6,7 +6,7 @@ public class User {
     private String username;
     private String password;
     private String gender;
-    private LocalDate birthday;
+    private LocalDate birthday= LocalDate.of(1900,1,1); //default value
     private boolean logged_in;
     private boolean is_admin;
 
