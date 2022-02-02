@@ -24,7 +24,7 @@ public class UserManagerNeo4J implements UserManager{
 
         try(Session session= dbNeo4J.getDriver().session()){
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run( "MERGE (u:User {id: $id, username: $username, birthday: $birthday, " +
+                tx.run( "MERGE (u:User {username: $username, birthday: $birthday, " +
                                 "password: $password, gender: $gender, " +
                                 "logged_in: $logged_in, is_admin: $logged_in})",
                         parameters(

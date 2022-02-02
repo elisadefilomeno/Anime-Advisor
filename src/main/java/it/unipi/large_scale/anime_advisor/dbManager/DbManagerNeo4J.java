@@ -6,7 +6,7 @@ import org.neo4j.driver.*;
 public class DbManagerNeo4J implements DbManager {
     private static Driver driver;
 //    private final String uri = "neo4j://localhost:7687";
-private final String uri = "bolt://localhost:7687";
+    private final String uri = "bolt://localhost:7687";
     private final String user = "neo4j";
     private final String password = "admin";
 
