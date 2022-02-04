@@ -26,19 +26,22 @@ public class GraphMain {
         e.setIs_admin(true); // default = false
         e.setLogged_in(true); //default = false
 
-        um.createUser(e);
+//        um.createUser(e);
 //        um.deleteUser(e);
-        e.setPassword("new_psw");
-        um.updateUser(e);
-        um.getUserByUsername("Elisa");
-
-        Anime a = new Anime();
-        a.setAnime_name("Sailor Moon");
-        am.createAnime(a, dbNeo4J);
-        System.out.println(am.checkIfPresent(a, dbNeo4J));
+//        e.setPassword("new_psw");
+//        um.updateUser(e);
+//        um.getUserByUsername("Elisa");
+//
+//        Anime a = new Anime();
+//        a.setAnime_name("Sailor Moon");
+//        am.createAnime(a, dbNeo4J);
+//        System.out.println(am.checkIfPresent(a, dbNeo4J));
 //        am.deleteAnime(a, dbNeo4J);
 
-
+        um.followUser("Francesca", "Elisa");
+        um.unfollowUser("Francesca", "Elisa");
+        um.followAnime("Francesca", "Sailor Moon");
+        um.unfollowAnime("Francesca", "Sailor Moon");
         dbNeo4J.closeNeo4J();
         }
 

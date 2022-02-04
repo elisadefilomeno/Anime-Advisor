@@ -206,7 +206,7 @@ public class UserManagerNeo4J implements UserManager{
         }
     }
 
-    public void followAnime(String username, String anime_title, DbManagerNeo4J dbNeo4J){
+    public void followAnime(String username, String anime_title){
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -228,7 +228,7 @@ public class UserManagerNeo4J implements UserManager{
     }
 
 
-    public void unfollowAnime(String username, String anime_title, DbManagerNeo4J dbNeo4J){
+    public void unfollowAnime(String username, String anime_title){
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -247,7 +247,7 @@ public class UserManagerNeo4J implements UserManager{
         }
         System.out.println("Correctly unfollowed anime");
     }
-    public void followUser(String username, String to_follow_username, DbManagerNeo4J dbNeo4J){
+    public void followUser(String username, String to_follow_username){
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -269,7 +269,7 @@ public class UserManagerNeo4J implements UserManager{
     }
 
 
-    public void unfollowUser(String username, String to_follow_username, DbManagerNeo4J dbNeo4J){
+    public void unfollowUser(String username, String to_follow_username){
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
