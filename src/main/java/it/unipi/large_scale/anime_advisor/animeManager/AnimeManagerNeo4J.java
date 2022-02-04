@@ -1,9 +1,13 @@
 package it.unipi.large_scale.anime_advisor.animeManager;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
+
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -35,7 +39,30 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
     @Override
     public void readAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
+        try(Session session= dbNeo4J.getDriver().session()){
+            Anime a;
+            a = session.readTransaction(tx -> {
+                Result result = tx.run( "MATCH (a:Anime) WHERE a.title=$title",
+                        parameters(
+                                "title", anime.getAnime_name()
+                        )
+                );
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    String title = r.get("a.title").asString();
+                    Anime read_anime = new Anime();
+                    read_anime.setAnime_name(title);
+                    return read_anime;
+                }
 
+                return null;
+            });
+            System.out.println("Anime info:");
+            System.out.println(a.toString());
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get user due to an error");
+        }
 
     }
 
@@ -43,6 +70,7 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
     public void updateAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
 
     }
+
 
     @Override
     public void deleteAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
@@ -94,4 +122,13 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
             return false;
         }
     }
+
+    public List<Anime> getSuggestedAnime(User u){
+        List<Anime> suggested_anime = new ArrayList<Anime>();
+
+
+        return suggested_anime;
+    }
+
+
 }
