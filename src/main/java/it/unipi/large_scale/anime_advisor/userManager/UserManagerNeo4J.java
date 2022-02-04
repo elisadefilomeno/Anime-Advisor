@@ -119,6 +119,9 @@ public class UserManagerNeo4J implements UserManager{
         if(u.getUsername()==null){
             System.out.println("Username not inserted, unable to delete");
         }
+        if(!checkIfPresent(u)){
+            System.out.println("Cannot delete, user not present in database");
+        }
 
         try(Session session= dbNeo4J.getDriver().session()){
             session.writeTransaction((TransactionWork<Void>) tx -> {

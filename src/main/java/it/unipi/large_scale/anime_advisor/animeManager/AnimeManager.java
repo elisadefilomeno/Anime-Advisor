@@ -1,10 +1,9 @@
 package it.unipi.large_scale.anime_advisor.animeManager;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
-import it.unipi.large_scale.anime_advisor.exceptions.DuplicateAnimeException;
 
 interface AnimeManager<T> {
     //Creazione di un doccumento di tipo Anime ed inserimento nel rispettivo DB
-    public void createAnime(Anime anime, T db) throws DuplicateAnimeException;
+    public void createAnime(Anime anime, T db);
 
     //Lettura di un documento di tipo Anime dal corrispettivo DB
     public void readAnime(Anime anime, T db);
