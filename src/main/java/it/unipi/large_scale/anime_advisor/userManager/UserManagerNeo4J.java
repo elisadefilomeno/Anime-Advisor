@@ -2,7 +2,6 @@ package it.unipi.large_scale.anime_advisor.userManager;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.User;
-import it.unipi.large_scale.anime_advisor.exceptions.DuplicateUserException;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
@@ -18,9 +17,9 @@ public class UserManagerNeo4J implements UserManager{
     }
 
     @Override
-    public boolean createUser(User u) throws Exception {
+    public void createUser(User u) {
         if(checkIfPresent(u)) {
-            throw new DuplicateUserException();
+            System.out.println("User already present");
         }
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -39,17 +38,17 @@ public class UserManagerNeo4J implements UserManager{
                 );
                 return null;
             });
-            return true;
+            System.out.println("User inserted correctly\n");
 
         }catch(Exception ex){
             ex.printStackTrace();
-            return false;
+            System.out.println("Unable to create node due to an error");
         }
 
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public void getUserByUsername(String username) {
 
         try(Session session= dbNeo4J.getDriver().session()){
             User user;
@@ -79,15 +78,16 @@ public class UserManagerNeo4J implements UserManager{
 
                 return null;
             });
-            return user;
+            System.out.println("User info:");
+            System.out.println(user.toString());
         }catch(Exception ex){
             ex.printStackTrace();
-            return null;
+            System.out.println("Unable to get user due to an error");
         }
     }
 
     @Override
-    public boolean updateUser(User u) {
+    public void updateUser(User u) {
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -108,16 +108,16 @@ public class UserManagerNeo4J implements UserManager{
 
         }catch(Exception ex){
             ex.printStackTrace();
-            return false;
+            System.out.println("Unable to update user due to an error");
         }
-        return true;
+        System.out.println("User correctly updated");
+
     }
 
     @Override
-    public boolean deleteUser(User u) {
+    public void deleteUser(User u) {
         if(u.getUsername()==null){
             System.out.println("Username not inserted, unable to delete");
-            return false;
         }
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -129,11 +129,12 @@ public class UserManagerNeo4J implements UserManager{
                 );
                 return null;
             });
-            return true;
+            System.out.println("User deleted correctly\n");
+
 
         }catch(Exception ex){
             ex.printStackTrace();
-            return false;
+            System.out.println("Unable to delete user due to an error\n");
         }
     }
 

@@ -9,11 +9,10 @@ import static org.neo4j.driver.Values.parameters;
 
 public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
-
     @Override
     public void createAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
         if(checkIfPresent(anime, dbNeo4J)){
-            System.out.println("Anime node not found\n");
+            System.out.println("Anime already present\n");
         return;
         }
 
