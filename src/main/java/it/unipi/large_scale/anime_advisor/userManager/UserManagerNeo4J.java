@@ -48,6 +48,43 @@ public class UserManagerNeo4J implements UserManager{
     }
 
     @Override
+    public void readUser(User u) {
+        try(Session session= dbNeo4J.getDriver().session()){
+            User user;
+            user = session.readTransaction(tx -> {
+                Result result = tx.run( "MATCH (u:User) WHERE u.username=$username " +
+                                "RETURN u.birthday, u.password, u.gender, u.logged_in, u.is_admin",
+                        parameters(
+                                "username", u.getUsername()
+                        )
+                );
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    LocalDate birthday= r.get("u.birthday").asLocalDate();
+                    String password = r.get("u.password").asString();
+                    String gender = r.get("u.gender").asString();
+                    boolean logged_in = r.get("u.logged_in").asBoolean();
+                    boolean is_admin = r.get("u.is_admin").asBoolean();
+                    User read_user = new User();
+                    read_user.setUsername(u.getUsername());
+                    read_user.setBirthday(birthday);
+                    read_user.setGender(gender);
+                    read_user.setPassword(password);
+                    read_user.setIs_admin(is_admin);
+                    read_user.setLogged_in(logged_in);
+                    return read_user;
+                }
+
+                return null;
+            });
+            System.out.println("User info:");
+            System.out.println(user.toString());
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get user due to an error");
+        }
+    }
+
     public void getUserByUsername(String username) {
 
         try(Session session= dbNeo4J.getDriver().session()){

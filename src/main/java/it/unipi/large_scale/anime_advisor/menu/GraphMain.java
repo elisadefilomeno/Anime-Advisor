@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class GraphMain {
     public static void main(String[] args) throws Exception {
         DbManagerNeo4J dbNeo4J = new DbManagerNeo4J();
-        UserManager um = new UserManagerNeo4J();
+        UserManagerNeo4J um = new UserManagerNeo4J();
         AnimeManagerNeo4J am = new AnimeManagerNeo4J();
         LocalDate birthday =  LocalDate.of(1999,11,25);
 

@@ -36,6 +36,7 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
     @Override
     public void readAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
 
+
     }
 
     @Override
