@@ -1,6 +1,6 @@
 package it.unipi.large_scale.anime_advisor.menu;
 import com.mongodb.client.MongoCollection;
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDB;
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
 import it.unipi.large_scale.anime_advisor.dbManager.*;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import org.bson.Document;
@@ -19,7 +19,7 @@ public class Main {
         //**METODI DI PROVA DI MONDOSB (DA ELIMINARE POI) **
         MongoCollection<Document> collection= mongoM.getCollection("anime");
         //collection.find().forEach(doc->System.out.println(doc.toJson()));
-        AnimeManagerMongoDB am= new AnimeManagerMongoDB();
+        AnimeManagerMongoDBCRUD am= new AnimeManagerMongoDBCRUD();
         Anime anime=new Anime();
         anime.setAnime_name("Anime Test");
         anime.setEpisodes(20);
@@ -41,8 +41,6 @@ public class Main {
         am.readAnime(anime,collection);
         //TEST MONGO CRUD
 
-        am.updateAnimeMeanScored(anime,collection,10.0);
-        am.updateAnimeIncScoredBy(anime,collection);
 
 
 

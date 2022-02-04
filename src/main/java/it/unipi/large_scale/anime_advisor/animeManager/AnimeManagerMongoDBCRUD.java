@@ -20,7 +20,7 @@ import it.unipi.large_scale.anime_advisor.entity.Anime;
 
 import java.util.Arrays;
 
-public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Document>>{
+public class AnimeManagerMongoDBCRUD implements AnimeManager<MongoCollection<Document>>{
 
 
     //Check if the document is present with case insensitivity option
@@ -317,6 +317,7 @@ public class AnimeManagerMongoDB implements AnimeManager<MongoCollection<Documen
             try {
                 UpdateResult result = collection.updateOne(query, update);
                 System.out.println("Document updated\n");
+                updateAnimeIncScoredBy(anime,collection);
             } catch (MongoException me) {
                 System.err.println("Unable to update due to an error: " + me);
             }
