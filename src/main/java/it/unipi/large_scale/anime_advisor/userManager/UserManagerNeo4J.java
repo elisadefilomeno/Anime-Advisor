@@ -1,6 +1,8 @@
 package it.unipi.large_scale.anime_advisor.userManager;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
+import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -290,7 +292,7 @@ public class UserManagerNeo4J implements UserManager{
         System.out.println("Correctly unfollowed user");
     }
 
-    public Set<User> viewFollowedUsers(User u){
+    public Set<User> viewFollowedUsers(String username){
         Set<User> followed_users = new HashSet<User>();
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -300,13 +302,11 @@ public class UserManagerNeo4J implements UserManager{
                         "RETURN followed.username, followed.password, followed.logged_in, " +
                                 "followed.is_admin, followed.gender, followed.birthday",
                         parameters(
-                        "username", u.getUsername()
+                        "username", username
                 ));
 
                 while(result.hasNext()){
-                    System.out.println(result);
                     org.neo4j.driver.Record r= result.next();
-                    System.out.println(r.get("followed.username").asString());
                     User followed_user = new User();
                     followed_user.setUsername(r.get("followed.username").asString());
                     followed_user.setPassword(r.get("followed.password").asString());
@@ -328,5 +328,64 @@ public class UserManagerNeo4J implements UserManager{
             return null;
         }
         return followed_users;
+    }
+
+    public Set<Anime> viewFollowedAnime(String username){
+        Set<Anime> followed_animes = new HashSet<Anime>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx->{
+                Result result = tx.run("MATCH (followed:Anime)<-[f:FOLLOWS]-(user:User) " +
+                                "WHERE user.username = $username "+
+                                "RETURN followed.title",
+                        parameters(
+                                "username", username
+                        ));
+
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    Anime anime = new Anime();
+                    anime.setAnime_name(r.get("followed.title").asString());
+                    followed_animes.add(anime);
+                }
+                return followed_animes;
+            });
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+        return followed_animes;
+    }
+
+
+    public Set<Review> viewCreatedReviews(String username){
+        Set<Review> reviews = new HashSet<Review>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx->{
+                Result result = tx.run("MATCH (r:Review)<-[f:CREATED]-(user:User) " +
+                                "WHERE user.username = $username "+
+                                "RETURN r.id, r.score, r.text",
+                        parameters(
+                                "username", username
+                        ));
+
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    Review review = new Review();
+                    review.setId(r.get("r.id").asInt());
+                    review.setText(r.get("r.text").asString());
+                    review.setScore(r.get("r.score").asInt());
+                    reviews.add(review);
+                }
+                return reviews;
+            });
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+        return reviews;
     }
 }

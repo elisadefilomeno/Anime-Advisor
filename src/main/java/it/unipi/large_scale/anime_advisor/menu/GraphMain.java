@@ -39,30 +39,33 @@ public class GraphMain {
 //        um.updateUser(e);
 //        um.getUserByUsername("Elisa");
 //
-//        Anime a = new Anime();
-//        a.setAnime_name("Sailor Moon");
-//        am.createAnime(a, dbNeo4J);
-//        System.out.println(am.checkIfPresent(a, dbNeo4J));
+        Anime a = new Anime();
+        a.setAnime_name("Naruto");
+        am.createAnime(a, dbNeo4J);
+        System.out.println(am.checkIfPresent(a, dbNeo4J));
 //        am.deleteAnime(a, dbNeo4J);
         User f = new User();
         f.setUsername("Francesca");
         f.setBirthday(birthday);
-        um.updateUser(f);
-        um.deleteUser(e);
-        um.createUser(e);
-        um.createUser(p);
+//        um.updateUser(f);
+//        um.deleteUser(e);
+//        um.createUser(e);
+//        um.createUser(p);
 
-        um.followUser("Francesca", "Elisa");
-        um.followUser("Pippo", "Elisa");
-        um.followUser("Pippo", "Francesca");
+//        um.followUser("Francesca", "Elisa");
+//        um.followUser("Pippo", "Elisa");
+//        um.followUser("Pippo", "Francesca");
 
 
 //        um.unfollowUser("Francesca", "Elisa");
-        um.followAnime("Francesca", "Sailor Moon");
+        um.followAnime("Francesca", "Naruto");
 //        um.unfollowAnime("Francesca", "Sailor Moon");
-        Set<User> followed = um.viewFollowedUsers(p);
-        System.out.println(followed.size());
-        for (User u:followed){
+//        Set<User> followed = um.viewFollowedUsers("Pippo");
+        Set<Anime> anime_followed = um.viewFollowedAnime("Francesca");
+
+//        Set<Review> reviews = um.viewCreatedReviews("Elisa");
+        System.out.println(anime_followed.size());
+        for (Anime u:anime_followed){
             System.out.println(u.toString());
         }
 
