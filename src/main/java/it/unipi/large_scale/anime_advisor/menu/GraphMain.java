@@ -7,6 +7,7 @@ import it.unipi.large_scale.anime_advisor.userManager.UserManager;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 //da rimuovere
 
@@ -25,6 +26,13 @@ public class GraphMain {
         e.setPassword("psw");
         e.setIs_admin(true); // default = false
         e.setLogged_in(true); //default = false
+        User p= new User();
+        p.setUsername("Pippo");
+        p.setBirthday(birthday); // default = 1900/01/01
+        p.setGender("male");
+        p.setPassword("pippo_psw");
+        p.setIs_admin(true); // default = false
+        p.setLogged_in(true); //default = false
 
 //        um.createUser(e);
 //        um.deleteUser(e);
@@ -37,11 +45,28 @@ public class GraphMain {
 //        am.createAnime(a, dbNeo4J);
 //        System.out.println(am.checkIfPresent(a, dbNeo4J));
 //        am.deleteAnime(a, dbNeo4J);
+        User f = new User();
+        f.setUsername("Francesca");
+        f.setBirthday(birthday);
+        um.updateUser(f);
+        um.deleteUser(e);
+        um.createUser(e);
+        um.createUser(p);
 
         um.followUser("Francesca", "Elisa");
-        um.unfollowUser("Francesca", "Elisa");
+        um.followUser("Pippo", "Elisa");
+        um.followUser("Pippo", "Francesca");
+
+
+//        um.unfollowUser("Francesca", "Elisa");
         um.followAnime("Francesca", "Sailor Moon");
-        um.unfollowAnime("Francesca", "Sailor Moon");
+//        um.unfollowAnime("Francesca", "Sailor Moon");
+        Set<User> followed = um.viewFollowedUsers(p);
+        System.out.println(followed.size());
+        for (User u:followed){
+            System.out.println(u.toString());
+        }
+
         dbNeo4J.closeNeo4J();
         }
 

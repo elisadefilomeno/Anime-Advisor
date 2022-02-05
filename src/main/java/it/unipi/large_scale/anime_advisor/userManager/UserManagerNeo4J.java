@@ -6,6 +6,8 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -50,17 +52,16 @@ public class UserManagerNeo4J implements UserManager{
     @Override
     public void readUser(User u) {
         try(Session session= dbNeo4J.getDriver().session()){
-            User user;
-            user = session.readTransaction(tx -> {
-                Result result = tx.run( "MATCH (u:User) WHERE u.username=$username " +
+            User user = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User) WHERE u.username=$username " +
                                 "RETURN u.birthday, u.password, u.gender, u.logged_in, u.is_admin",
                         parameters(
                                 "username", u.getUsername()
                         )
                 );
-                if(result.hasNext()){
+                if (result.hasNext()) {
                     org.neo4j.driver.Record r = result.next();
-                    LocalDate birthday= r.get("u.birthday").asLocalDate();
+                    LocalDate birthday = r.get("u.birthday").asLocalDate();
                     String password = r.get("u.password").asString();
                     String gender = r.get("u.gender").asString();
                     boolean logged_in = r.get("u.logged_in").asBoolean();
@@ -168,12 +169,12 @@ public class UserManagerNeo4J implements UserManager{
         }
     }
 
-    public void getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
 
         try(Session session= dbNeo4J.getDriver().session()){
             User user;
             user = session.readTransaction(tx -> {
-                Result result = tx.run( "MATCH (u:User) WHERE u.username=$username " +
+                org.neo4j.driver.Result result = tx.run( "MATCH (u:User) WHERE u.username=$username " +
                                 "RETURN u.birthday, u.password, u.gender, u.logged_in, u.is_admin",
                         parameters(
                                 "username", username
@@ -198,12 +199,12 @@ public class UserManagerNeo4J implements UserManager{
 
                 return null;
             });
-            System.out.println("User info:");
-            System.out.println(user.toString());
+            return user;
         }catch(Exception ex){
             ex.printStackTrace();
             System.out.println("Unable to get user due to an error");
         }
+        return null;
     }
 
     public void followAnime(String username, String anime_title){
@@ -289,5 +290,43 @@ public class UserManagerNeo4J implements UserManager{
         System.out.println("Correctly unfollowed user");
     }
 
+    public Set<User> viewFollowedUsers(User u){
+        Set<User> followed_users = new HashSet<User>();
+        try(Session session= dbNeo4J.getDriver().session()){
 
+            session.readTransaction(tx->{
+                Result result = tx.run("MATCH (followed:User)<-[f:FOLLOWS]-(user:User) " +
+                        "WHERE user.username = $username "+
+                        "RETURN followed.username, followed.password, followed.logged_in, followed.is_admin, followed.gender, followed.birthday",
+//                        "RETURN followed {.*}",
+                        parameters(
+                        "username", u.getUsername()
+                ));
+
+                while(result.hasNext()){
+                    System.out.println(result);
+                    org.neo4j.driver.Record r= result.next();
+                    System.out.println(r.get("followed.username").asString());
+                    User followed_user = new User();
+                    followed_user.setUsername(r.get("followed.username").asString());
+                    followed_user.setPassword(r.get("followed.password").asString());
+                    if(!r.get("followed.logged_in").isNull()){
+                        followed_user.setLogged_in(r.get("followed.logged_in").asBoolean());
+                    }
+                    if(!r.get("followed.is_admin").isNull()) {
+                        followed_user.setIs_admin(r.get("followed.is_admin").asBoolean());
+                    }
+                    followed_user.setGender(r.get("followed.gender").asString());
+                    followed_user.setBirthday(r.get("followed.birthday").asLocalDate());
+                    followed_users.add(followed_user);
+                }
+                return followed_users;
+            });
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+        return followed_users;
+    }
 }
