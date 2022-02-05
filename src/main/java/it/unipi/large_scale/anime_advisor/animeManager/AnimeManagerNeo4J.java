@@ -71,7 +71,6 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
     }
 
-
     @Override
     public void deleteAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
         if(anime.getAnime_name()==null){
@@ -121,6 +120,44 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
             ex.printStackTrace();
             return false;
         }
+    }
+
+    public Set<User> getFollowers(String anime_title, DbManagerNeo4J dbNeo4J){
+        Set<User> followers = new HashSet<User>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx->{
+                Result result = tx.run("MATCH (anime:Anime)<-[f:FOLLOWS]-(follower:User) " +
+                                "WHERE anime.title = $title "+
+                                "RETURN follower.username, follower.password, follower.logged_in," +
+                                "follower.is_admin, follower.gender, follower.birthday",
+                        parameters(
+                                "title", anime_title
+                        ));
+
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    User follower = new User();
+                    follower.setUsername(r.get("follower.username").asString());
+                    follower.setPassword(r.get("follower.password").asString());
+                    if(!r.get("follower.logged_in").isNull()){
+                        follower.setLogged_in(r.get("follower.logged_in").asBoolean());
+                    }
+                    if(!r.get("follower.is_admin").isNull()) {
+                        follower.setIs_admin(r.get("follower.is_admin").asBoolean());
+                    }
+                    follower.setGender(r.get("follower.gender").asString());
+                    follower.setBirthday(r.get("follower.birthday").asLocalDate());
+                    followers.add(follower);
+                }
+                return followers;
+            });
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+        return followers;
     }
 
     public List<Anime> getSuggestedAnime(User u){

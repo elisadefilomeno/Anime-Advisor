@@ -230,7 +230,6 @@ public class UserManagerNeo4J implements UserManager{
         System.out.println("Correctly followed anime");
     }
 
-
     public void unfollowAnime(String username, String anime_title){
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -250,6 +249,7 @@ public class UserManagerNeo4J implements UserManager{
         }
         System.out.println("Correctly unfollowed anime");
     }
+
     public void followUser(String username, String to_follow_username){
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -271,7 +271,6 @@ public class UserManagerNeo4J implements UserManager{
         System.out.println("Correctly followed user");
     }
 
-
     public void unfollowUser(String username, String to_follow_username){
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -292,7 +291,7 @@ public class UserManagerNeo4J implements UserManager{
         System.out.println("Correctly unfollowed user");
     }
 
-    public Set<User> viewFollowedUsers(String username){
+    public Set<User> getFollowedUsers(String username){
         Set<User> followed_users = new HashSet<User>();
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -330,7 +329,7 @@ public class UserManagerNeo4J implements UserManager{
         return followed_users;
     }
 
-    public Set<Anime> viewFollowedAnime(String username){
+    public Set<Anime> getFollowedAnime(String username){
         Set<Anime> followed_animes = new HashSet<Anime>();
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -358,8 +357,7 @@ public class UserManagerNeo4J implements UserManager{
         return followed_animes;
     }
 
-
-    public Set<Review> viewCreatedReviews(String username){
+    public Set<Review> getCreatedReviews(String username){
         Set<Review> reviews = new HashSet<Review>();
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -388,4 +386,6 @@ public class UserManagerNeo4J implements UserManager{
         }
         return reviews;
     }
+
+
 }

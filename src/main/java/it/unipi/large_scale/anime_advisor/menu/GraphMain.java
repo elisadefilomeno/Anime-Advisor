@@ -59,13 +59,14 @@ public class GraphMain {
 
 //        um.unfollowUser("Francesca", "Elisa");
         um.followAnime("Francesca", "Naruto");
+        um.followAnime("Pippo", "Sailor Moon");
 //        um.unfollowAnime("Francesca", "Sailor Moon");
-//        Set<User> followed = um.viewFollowedUsers("Pippo");
-        Set<Anime> anime_followed = um.viewFollowedAnime("Francesca");
+        Set<User> followed = am.getFollowers("Sailor Moon", dbNeo4J);
+//        Set<Anime> anime_followed = um.getFollowedAnime("Francesca");
 
 //        Set<Review> reviews = um.viewCreatedReviews("Elisa");
-        System.out.println(anime_followed.size());
-        for (Anime u:anime_followed){
+        System.out.println(followed.size());
+        for (User u:followed){
             System.out.println(u.toString());
         }
 
