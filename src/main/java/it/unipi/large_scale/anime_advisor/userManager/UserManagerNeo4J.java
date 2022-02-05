@@ -297,8 +297,8 @@ public class UserManagerNeo4J implements UserManager{
             session.readTransaction(tx->{
                 Result result = tx.run("MATCH (followed:User)<-[f:FOLLOWS]-(user:User) " +
                         "WHERE user.username = $username "+
-                        "RETURN followed.username, followed.password, followed.logged_in, followed.is_admin, followed.gender, followed.birthday",
-//                        "RETURN followed {.*}",
+                        "RETURN followed.username, followed.password, followed.logged_in, " +
+                                "followed.is_admin, followed.gender, followed.birthday",
                         parameters(
                         "username", u.getUsername()
                 ));
