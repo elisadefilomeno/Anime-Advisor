@@ -179,10 +179,11 @@ public class GraphPopulator implements DbManager, AutoCloseable{
             int i=0;
             for(Review r: review_list) {
                 i+=1;
-                session.run("MERGE (r:Review {text: $text, id: $id})",
+                session.run("MERGE (r:Review {text: $text, id: $id, score: $score})",
                         parameters(
                                 "text", r.getText(),
-                                "id", r.getId()
+                                "id", r.getId(),
+                                "score", r.getScore()
                         )
                 );
                 session.run(
