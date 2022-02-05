@@ -252,10 +252,10 @@ public class GraphPopulator implements DbManager, AutoCloseable{
         gp.addUsersToGraph(users);
         gp.addReviewsWithRelationshipsToGraph(reviews);
         int number_of_users = users.size();
-        int n_follows_edges_users = number_of_users / 4;
+        int n_follows_edges_users = number_of_users / 2;
         gp.createFollowsRelationshipBetweenUsers(number_of_users, n_follows_edges_users);
         String[] anime_names = gp.getAnimeNames(animes);
-        int n_follows_edges_user_anime = number_of_users;
+        int n_follows_edges_user_anime = number_of_users*5;
         gp.createFollowsRelationshipUserAnime(number_of_users, n_follows_edges_user_anime, anime_names);
 
     }
