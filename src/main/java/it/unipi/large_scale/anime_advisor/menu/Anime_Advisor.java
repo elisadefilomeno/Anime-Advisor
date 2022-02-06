@@ -7,14 +7,16 @@ import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 import java.util.Scanner;
 
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RED;
 import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.BLUE;
 import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
 
 public class Anime_Advisor {
+    static private UserInterface ui = new UserInterface();
     static private DbManagerNeo4J dbNeo4J;
     static private UserManagerNeo4J userManagerNeo4J;
+
+
 
     public static void main(String argd[]) throws Exception {
         try{
@@ -49,14 +51,26 @@ public class Anime_Advisor {
                 value_case=4;
             }
             if(value_case == 1) {
-
-                System.out.println("TO DO: Log in page");
                 // call login function
                 User user = userManagerNeo4J.logIn();
+                if(user == null){
+                    System.out.println("Login failed");
+                    continue;
+                }
+                else{
+                    user.toString();
+                }
+                if(user.getIs_admin()){
+                    ui.show_admin_home_page(user);
+                }
+                else{
+                    ui.show_home_page(user);
+                }
                 continue;
             }
 
             else if(value_case==2){
+                userManagerNeo4J.signIn();  // change function name to SignUp
                 System.out.println("TO DO: Sign up page");
                 continue;
             }
