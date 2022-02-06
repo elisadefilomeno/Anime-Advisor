@@ -24,6 +24,7 @@ public class UserManagerNeo4J implements UserManager{
     public void createUser(User u) {
         if(checkIfPresent(u)) {
             System.out.println("User already present");
+            return;
         }
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -120,9 +121,11 @@ public class UserManagerNeo4J implements UserManager{
     public void deleteUser(User u) {
         if(u.getUsername()==null){
             System.out.println("Username not inserted, unable to delete");
+            return;
         }
         if(!checkIfPresent(u)){
             System.out.println("Cannot delete, user not present in database");
+            return;
         }
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -386,6 +389,7 @@ public class UserManagerNeo4J implements UserManager{
         }
         return reviews;
     }
+    //List<Review>
 
 
 }

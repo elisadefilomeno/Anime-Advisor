@@ -41,9 +41,9 @@ public class GraphMain {
 //
         Anime a = new Anime();
         a.setAnime_name("Naruto");
-        am.createAnime(a, dbNeo4J);
-        System.out.println(am.checkIfPresent(a, dbNeo4J));
-//        am.deleteAnime(a, dbNeo4J);
+        am.createAnime(a);
+        System.out.println(am.checkIfPresent(a));
+//        am.deleteAnime(a);
         User f = new User();
         f.setUsername("Francesca");
         f.setBirthday(birthday);
@@ -61,7 +61,7 @@ public class GraphMain {
         um.followAnime("Francesca", "Naruto");
         um.followAnime("Pippo", "Sailor Moon");
 //        um.unfollowAnime("Francesca", "Sailor Moon");
-        Set<User> followed = am.getFollowers("Sailor Moon", dbNeo4J);
+        Set<User> followed = am.getFollowers("Sailor Moon");
 //        Set<Anime> anime_followed = um.getFollowedAnime("Francesca");
 
 //        Set<Review> reviews = um.viewCreatedReviews("Elisa");

@@ -11,11 +11,15 @@ import java.util.*;
 
 import static org.neo4j.driver.Values.parameters;
 
-public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
+public class AnimeManagerNeo4J{
+    DbManagerNeo4J dbNeo4J;
 
-    @Override
-    public void createAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
-        if(checkIfPresent(anime, dbNeo4J)){
+    public AnimeManagerNeo4J() {
+        this.dbNeo4J = new DbManagerNeo4J();
+    }
+
+    public void createAnime(Anime anime) {
+        if(checkIfPresent(anime)){
             System.out.println("Anime already present\n");
         return;
         }
@@ -37,8 +41,7 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
         }
     }
 
-    @Override
-    public void readAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
+    public void readAnime(Anime anime) {
         try(Session session= dbNeo4J.getDriver().session()){
             Anime a;
             a = session.readTransaction(tx -> {
@@ -66,15 +69,14 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
     }
 
-    @Override
-    public void updateAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
 
-    }
-
-    @Override
-    public void deleteAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
+    public void deleteAnime(Anime anime) {
         if(anime.getAnime_name()==null){
             System.out.println("Anime title not inserted, unable to delete");
+            return;
+        }
+        if(!checkIfPresent(anime)){
+            System.out.println("Cannot delete, anime not present in database");
             return;
         }
 
@@ -94,7 +96,7 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
     }
 
-    public boolean checkIfPresent(Anime anime, DbManagerNeo4J dbNeo4J){
+    public boolean checkIfPresent(Anime anime){
         if(anime.getAnime_name()==null){
             System.out.println("Anime title not inserted");
             return false;
@@ -122,7 +124,7 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
         }
     }
 
-    public Set<User> getFollowers(String anime_title, DbManagerNeo4J dbNeo4J){
+    public Set<User> getFollowers(String anime_title){
         Set<User> followers = new HashSet<User>();
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -166,6 +168,6 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
         return suggested_anime;
     }
-
+//List<String anime_title>
 
 }
