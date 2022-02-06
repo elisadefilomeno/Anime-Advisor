@@ -143,6 +143,7 @@ public class GraphPopulator implements AutoCloseable{
         }
     }
     public void addUsersToGraph(ArrayList<User> user_list){
+        System.out.println("a");
         try (Session session = driver.session()) {
             int i=0;
             for(User u: user_list) {
@@ -192,7 +193,6 @@ public class GraphPopulator implements AutoCloseable{
         }
 
     }
-
     public void createFollowsRelationshipUserAnime(int number_of_users, int number_of_edges, String[] anime_names){
         Random rand = new Random();
         for(int i =0; i<=number_of_edges; i++){
