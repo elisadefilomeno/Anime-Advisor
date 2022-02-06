@@ -1,7 +1,13 @@
-- Ricontrollare la query "view most followed Anime" se farlo con Neo4j (contando gli archi e eliminando la colonna) o con la colonna nel dataset
-- ScoredByMembers(quanta gente ha recensito l'anime) serve per le query di MongoDb getTopTenFollowed
-- Per le query GetMostFollowedAnimeby... bisogna che su MongoDb si memorizzi il numero dei followers per ciascun anime
+Da Fare:
+- indici
+- velocity o variety
 
-Da fare:
-- aggiungere colonna NumeroFollowers su AnimeList
--
+Cambiamenti nel codice:
+- cambiare costruttore UserManagerNeo4J che prende come parametro DBManagerNeo4J già esistente e non ne crea uno nuovo
+
+Possibili miglioramenti codice se avanza tempo:
+- interfaccia grafica
+- mettere funzioni quando possibile private 
+- lanciare eccezioni invece di printare errore
+- valutare se usare pattern creazionali come singleton e factory
+
