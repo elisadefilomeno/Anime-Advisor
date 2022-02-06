@@ -168,10 +168,11 @@ public class GraphPopulator implements AutoCloseable{
             int i=0;
             for(Review r: review_list) {
                 i+=1;
-                session.run("MERGE (r:Review {text: $text, id: $id})",
+                session.run("MERGE (r:Review {text: $text, id: $id, score: $score})",
                         parameters(
                                 "text", r.getText(),
-                                "id", r.getId()
+                                "id", r.getId(),
+                                "score", r.getScore()
                         )
                 );
                 session.run(
@@ -240,10 +241,10 @@ public class GraphPopulator implements AutoCloseable{
         gp.addUsersToGraph(users);
         gp.addReviewsWithRelationshipsToGraph(reviews);
         int number_of_users = users.size();
-        int n_follows_edges_users = number_of_users / 4;
+        int n_follows_edges_users = number_of_users / 2;
         gp.createFollowsRelationshipBetweenUsers(number_of_users, n_follows_edges_users);
         String[] anime_names = gp.getAnimeNames(animes);
-        int n_follows_edges_user_anime = number_of_users;
+        int n_follows_edges_user_anime = number_of_users*5;
         gp.createFollowsRelationshipUserAnime(number_of_users, n_follows_edges_user_anime, anime_names);
 
     }

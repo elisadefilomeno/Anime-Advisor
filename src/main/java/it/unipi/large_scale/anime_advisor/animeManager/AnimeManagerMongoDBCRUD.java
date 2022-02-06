@@ -401,7 +401,5 @@ public class AnimeManagerMongoDBCRUD implements AnimeManager<MongoCollection<Doc
         else{
             System.out.println("Document not found. Can't delete\n");
         }
-
-
     }
 }
