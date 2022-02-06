@@ -1,42 +1,35 @@
 package it.unipi.large_scale.anime_advisor.userManager;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
-import it.unipi.large_scale.anime_advisor.entity.Anime;
-import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 
 import static org.neo4j.driver.Values.parameters;
 
-public class UserManagerNeo4J implements UserManager{
-    DbManagerNeo4J dbNeo4J;
+public class UserManagerNeo4J {
+    static DbManagerNeo4J dbNeo4J;
 
     public UserManagerNeo4J() {
         this.dbNeo4J = new DbManagerNeo4J();
     }
 
-    @Override
     public void createUser(User u) {
-        if(checkIfPresent(u)) {
+        //Controllo gia presente anche in SignIn
+        if(checkIfPresent(u.getUsername())) {
             System.out.println("User already present");
-            return;
         }
 
-        try(Session session= dbNeo4J.getDriver().session()){
+         try(Session session= dbNeo4J.getDriver().session()){
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run( "MERGE (u:User {username: $username, birthday: $birthday, " +
+                tx.run( "MERGE (u:User {username: $username, " +
                                 "password: $password, gender: $gender, " +
                                 "logged_in: $logged_in, is_admin: $logged_in})",
                         parameters(
                                 "username", u.getUsername(),
-                                "birthday", u.getBirthday(),
                                 "password", u.getPassword(),
                                 "gender", u.getGender(),
                                 "logged_in", u.getLogged_in(),
@@ -54,54 +47,52 @@ public class UserManagerNeo4J implements UserManager{
 
     }
 
-    @Override
     public void readUser(User u) {
-        try(Session session= dbNeo4J.getDriver().session()){
-            User user = session.readTransaction(tx -> {
+        try (Session session = dbNeo4J.getDriver().session()) {
+            User user;
+            user = session.readTransaction(tx -> {
                 Result result = tx.run("MATCH (u:User) WHERE u.username=$username " +
                                 "RETURN u.birthday, u.password, u.gender, u.logged_in, u.is_admin",
                         parameters(
                                 "username", u.getUsername()
                         )
                 );
+                User read_user = new User();
                 if (result.hasNext()) {
                     org.neo4j.driver.Record r = result.next();
-                    LocalDate birthday = r.get("u.birthday").asLocalDate();
+
                     String password = r.get("u.password").asString();
                     String gender = r.get("u.gender").asString();
                     boolean logged_in = r.get("u.logged_in").asBoolean();
                     boolean is_admin = r.get("u.is_admin").asBoolean();
-                    User read_user = new User();
+
+
                     read_user.setUsername(u.getUsername());
-                    read_user.setBirthday(birthday);
                     read_user.setGender(gender);
                     read_user.setPassword(password);
                     read_user.setIs_admin(is_admin);
                     read_user.setLogged_in(logged_in);
-                    return read_user;
                 }
-
-                return null;
+                return read_user;
             });
             System.out.println("User info:");
             System.out.println(user.toString());
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Unable to get user due to an error");
         }
+
     }
 
-    @Override
     public void updateUser(User u) {
-        try(Session session= dbNeo4J.getDriver().session()){
+        try (Session session = dbNeo4J.getDriver().session()) {
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ( "MATCH (u:User) WHERE u.username = $username " +
-                                "SET u.birthday=$birthday, u.password=$password, u.gender=$gender, " +
+                tx.run("MATCH (u:User) WHERE u.username = $username " +
+                                "SET u.password=$password, u.gender=$gender, " +
                                 "u.logged_in=$logged_in, u.is_admin=$is_admin",
                         parameters(
                                 "username", u.getUsername(),
-                                "birthday", u.getBirthday(),
                                 "password", u.getPassword(),
                                 "gender", u.getGender(),
                                 "logged_in", u.getLogged_in(),
@@ -109,9 +100,9 @@ public class UserManagerNeo4J implements UserManager{
                         )
                 );
                 return null;
-            } );
+            });
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Unable to update user due to an error");
         }
@@ -119,20 +110,18 @@ public class UserManagerNeo4J implements UserManager{
 
     }
 
-    @Override
+
     public void deleteUser(User u) {
-        if(u.getUsername()==null){
+        if (u.getUsername() == null) {
             System.out.println("Username not inserted, unable to delete");
-            return;
         }
-        if(!checkIfPresent(u)){
+        if (!checkIfPresent(u.getUsername())) {
             System.out.println("Cannot delete, user not present in database");
-            return;
         }
 
-        try(Session session= dbNeo4J.getDriver().session()){
+        try (Session session = dbNeo4J.getDriver().session()) {
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run( "MATCH (u:User) WHERE u.username=$username DETACH DELETE u",
+                tx.run("MATCH (u:User) WHERE u.username=$username DETACH DELETE u",
                         parameters(
                                 "username", u.getUsername()
                         )
@@ -142,76 +131,78 @@ public class UserManagerNeo4J implements UserManager{
             System.out.println("User deleted correctly\n");
 
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Unable to delete user due to an error\n");
         }
     }
 
-    public boolean checkIfPresent(User u){
-        if(u.getUsername()==null){
+    //Funzione che controlla tramite il nome se l'utente è presente o meno nel db
+    public boolean checkIfPresent(String name) {
+        if (name == null) {
             System.out.println("Username not inserted");
             return false;
         }
 
-        try(Session session= dbNeo4J.getDriver().session()){
+        try (Session session = dbNeo4J.getDriver().session()) {
             int user_count;
             user_count = session.readTransaction(tx -> {
-                Result result = tx.run( "MATCH (u:User) WHERE u.username=$username RETURN count(u) as user_count",
+                Result result = tx.run("MATCH (u:User) WHERE u.username=$username RETURN count(u) as user_count",
                         parameters(
-                                "username", u.getUsername()
+                                "username", name
                         )
                 );
-                if(result.hasNext()){
+                if (result.hasNext()) {
                     org.neo4j.driver.Record r = result.next();
                     return (r.get("user_count").asInt());
                 }
 
                 return null;
             });
-            return (user_count>0);
-        }catch(Exception ex){
+            return (user_count > 0);
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }
     }
 
     public User getUserByUsername(String username) {
+        User user=new User();
+        try (Session session = dbNeo4J.getDriver().session()) {
 
-        try(Session session= dbNeo4J.getDriver().session()){
-            User user;
             user = session.readTransaction(tx -> {
-                org.neo4j.driver.Result result = tx.run( "MATCH (u:User) WHERE u.username=$username " +
-                                "RETURN u.birthday, u.password, u.gender, u.logged_in, u.is_admin",
+                Result result = tx.run("MATCH (u:User) WHERE u.username=$username " +
+                                "RETURN  u.password, u.gender, u.logged_in, u.is_admin",
                         parameters(
                                 "username", username
                         )
                 );
-                if(result.hasNext()){
+                if (result.hasNext()) {
                     org.neo4j.driver.Record r = result.next();
-                    LocalDate birthday= r.get("u.birthday").asLocalDate();
                     String password = r.get("u.password").asString();
                     String gender = r.get("u.gender").asString();
                     boolean logged_in = r.get("u.logged_in").asBoolean();
                     boolean is_admin = r.get("u.is_admin").asBoolean();
                     User u = new User();
                     u.setUsername(username);
-                    u.setBirthday(birthday);
                     u.setGender(gender);
                     u.setPassword(password);
                     u.setIs_admin(is_admin);
                     u.setLogged_in(logged_in);
                     return u;
                 }
-
-                return null;
+                else
+                   return null;
             });
-            return user;
-        }catch(Exception ex){
+
+        } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Unable to get user due to an error");
+
         }
-        return null;
+
+        return user;
     }
 
     public void followAnime(String username, String anime_title){
@@ -296,100 +287,150 @@ public class UserManagerNeo4J implements UserManager{
         System.out.println("Correctly unfollowed user");
     }
 
-    public Set<User> getFollowedUsers(String username){
-        Set<User> followed_users = new HashSet<User>();
-        try(Session session= dbNeo4J.getDriver().session()){
+    //Check LogIn is correct
+    public boolean checkLogIn(String name,String psw){
 
-            session.readTransaction(tx->{
-                Result result = tx.run("MATCH (followed:User)<-[f:FOLLOWS]-(user:User) " +
-                        "WHERE user.username = $username "+
-                        "RETURN followed.username, followed.password, followed.logged_in, " +
-                                "followed.is_admin, followed.gender, followed.birthday",
-                        parameters(
-                        "username", username
-                ));
-
-                while(result.hasNext()){
-                    org.neo4j.driver.Record r= result.next();
-                    User followed_user = new User();
-                    followed_user.setUsername(r.get("followed.username").asString());
-                    followed_user.setPassword(r.get("followed.password").asString());
-                    if(!r.get("followed.logged_in").isNull()){
-                        followed_user.setLogged_in(r.get("followed.logged_in").asBoolean());
-                    }
-                    if(!r.get("followed.is_admin").isNull()) {
-                        followed_user.setIs_admin(r.get("followed.is_admin").asBoolean());
-                    }
-                    followed_user.setGender(r.get("followed.gender").asString());
-                    followed_user.setBirthday(r.get("followed.birthday").asLocalDate());
-                    followed_users.add(followed_user);
-                }
-                return followed_users;
-            });
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-            return null;
+        //Controlli per verificare se nome o password sono null
+        if (name == null) {
+            System.out.println("Username not inserted");
+            return false;
         }
-        return followed_users;
+        else if (psw == null) {
+            System.out.println("Username not inserted");
+            return false;
+        }
+
+        try (Session session = dbNeo4J.getDriver().session()) {
+            int user_count;
+            user_count = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User) WHERE u.username=$username AND u.password=$password RETURN count(u) as user_count",
+                        parameters(
+                                "username", name,
+                                "password",psw
+                        )
+                );
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+                    return (r.get("user_count").asInt());
+                }
+                else
+                    return null;
+            });
+            if (user_count > 0)
+                return true;
+            else
+                return false;
+
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
-    public Set<Anime> getFollowedAnime(String username){
-        Set<Anime> followed_animes = new HashSet<Anime>();
-        try(Session session= dbNeo4J.getDriver().session()){
+    //Set della variabile che verifica se un utente è loggato o no
+    public void updateLog(boolean log,String username) {
+        try (Session session = dbNeo4J.getDriver().session()) {
 
-            session.readTransaction(tx->{
-                Result result = tx.run("MATCH (followed:Anime)<-[f:FOLLOWS]-(user:User) " +
-                                "WHERE user.username = $username "+
-                                "RETURN followed.title",
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run("MATCH (u:User) WHERE u.username = $username " +
+                                "SET  u.logged_in=$logged_in",
                         parameters(
-                                "username", username
-                        ));
-
-                while(result.hasNext()){
-                    org.neo4j.driver.Record r= result.next();
-                    Anime anime = new Anime();
-                    anime.setAnime_name(r.get("followed.title").asString());
-                    followed_animes.add(anime);
-                }
-                return followed_animes;
+                                "username",username,
+                                "logged_in", log
+                        )
+                );
+                return null;
             });
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            System.out.println("Unable to update user due to an error");
         }
-        return followed_animes;
+        System.out.println("User correctly updated");
+
     }
 
-    public Set<Review> getCreatedReviews(String username){
-        Set<Review> reviews = new HashSet<Review>();
-        try(Session session= dbNeo4J.getDriver().session()){
+    //SignIn
+    public  void  signIn (){
+        UserManagerNeo4J um = new UserManagerNeo4J();
+        User u = new User();
+        User u_check = new User ();
+        String name_user,password_user,gender;
+        Scanner sc = new Scanner(System.in);
 
-            session.readTransaction(tx->{
-                Result result = tx.run("MATCH (r:Review)<-[f:CREATED]-(user:User) " +
-                                "WHERE user.username = $username "+
-                                "RETURN r.id, r.score, r.text",
-                        parameters(
-                                "username", username
-                        ));
+        System.out.println("Register new User, insert name/gender/password ");
+        System.out.println("Enter username: ");
+        name_user = sc.nextLine();
+        //Inserire funzione che controlla se è presente gia l'utente
 
-                while(result.hasNext()){
-                    org.neo4j.driver.Record r= result.next();
-                    Review review = new Review();
-                    review.setId(r.get("r.id").asInt());
-                    review.setText(r.get("r.text").asString());
-                    review.setScore(r.get("r.score").asInt());
-                    reviews.add(review);
-                }
-                return reviews;
-            });
 
-        }catch(Exception ex){
-            ex.printStackTrace();
-            return null;
+        u.setUsername(name_user);
+
+        System.out.println("Male or Female :");
+        gender = sc.nextLine();
+        u.setGender(gender);
+
+        System.out.println("Insert your password: ");
+        password_user = sc.nextLine();
+        u.setPassword(password_user);
+
+        //Default set log_in and is_admin to false
+        u.setLogged_in(false);
+        u.setIs_admin(false);
+
+        if(!um.checkIfPresent(u.getUsername())){
+            um.createUser(u);
+            System.out.println("Register Successfully");
         }
-        return reviews;
+        else{
+            System.out.println("User is alredy register!");
+        }
+
+    }
+
+    //LogIn
+    public User logIn(){
+        UserManagerNeo4J um = new UserManagerNeo4J();
+        String userName,passwordUser;
+        User logUser= new User();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("LogIn... Insert username and password... ");
+        System.out.println("Enter username: ");
+        userName = sc.nextLine();
+
+        System.out.println("Insert your password: ");
+        passwordUser = sc.nextLine();
+
+        if( checkLogIn(userName,passwordUser)){
+            System.out.println("LogIn Successfully!!! ");
+            //Salvo l'user in una variabile
+            logUser= um.getUserByUsername(userName);
+            //Set log_in true
+            logUser.setLogged_in(true);
+            um.updateLog(logUser.getLogged_in(),logUser.getUsername());
+
+        }
+        else{
+            System.out.println("Username or password wrong!!! ");
+        }
+        return logUser;
+
+    }
+
+    //LogOut
+    public void logOut(User u){
+        UserManagerNeo4J um = new UserManagerNeo4J();
+
+        if(u.getLogged_in()){
+            u.setLogged_in(false);
+            um.updateLog(u.getLogged_in(),u.getUsername());
+
+        }
+        else{
+            System.out.println("LogOut is alredy been");
+        }
     }
 
     public Set<String> getVerySuggestedUsers(String username){
