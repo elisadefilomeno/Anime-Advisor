@@ -34,10 +34,10 @@ public class Anime_Advisor {
             System.out.println(GREEN+"**************************************"+RESET);
             System.out.println(GREEN+"MENU"+RESET);
             System.out.println("What would you like to do?");
-            System.out.println("Select:");
-            System.out.println("1) Log in");
-            System.out.println("2) Sign up");
-            System.out.println("0) Exit");
+            System.out.println("Digit:");
+            System.out.println("1 to Log in");
+            System.out.println("2 to Sign up");
+            System.out.println("0 to Exit");
             System.out.println(GREEN+"**************************************"+RESET);
             System.out.println("Write your command here:");
 
