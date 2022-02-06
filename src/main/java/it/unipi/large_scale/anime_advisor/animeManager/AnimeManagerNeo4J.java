@@ -11,9 +11,8 @@ import java.util.*;
 
 import static org.neo4j.driver.Values.parameters;
 
-public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
+public class AnimeManagerNeo4J {
 
-    @Override
     public void createAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
         if(checkIfPresent(anime, dbNeo4J)){
             System.out.println("Anime already present\n");
@@ -37,7 +36,6 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
         }
     }
 
-    @Override
     public void readAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
         try(Session session= dbNeo4J.getDriver().session()){
             Anime a;
@@ -66,13 +64,11 @@ public class AnimeManagerNeo4J implements AnimeManager<DbManagerNeo4J> {
 
     }
 
-    @Override
     public void updateAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
 
     }
 
 
-    @Override
     public void deleteAnime(Anime anime, DbManagerNeo4J dbNeo4J) {
         if(anime.getAnime_name()==null){
             System.out.println("Anime title not inserted, unable to delete");
