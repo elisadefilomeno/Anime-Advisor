@@ -8,7 +8,9 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.neo4j.driver.Values.parameters;
@@ -389,7 +391,86 @@ public class UserManagerNeo4J implements UserManager{
         }
         return reviews;
     }
-    //List<Review>
 
+    public Set<String> getVerySuggestedUsers(String username){
+        // set can't contain duplicate username strings
+
+        Set<String> very_sugggested_users = new HashSet<String>();
+
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(u3:User)" +
+                                " WHERE NOT (u1)-[:FOLLOWS]->(u3) AND u1.username = $username " +
+                                "RETURN u3.username LIMIT 20",
+                        parameters(
+                                "username", username
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    if(!r.get("u3.username").isNull()){
+                        String suggested_username=r.get("u3.username").asString();
+                        very_sugggested_users.add(suggested_username);
+                    }
+
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get very suggested users due to an error");
+        }
+        return very_sugggested_users;
+    }
+
+    public Set<String> getSuggestedUsersLowPriority(String username){
+        // set can't contain duplicate title strings
+        Set<String> sugggested_users = new HashSet<String>();
+
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(u3:User)-[:FOLLOWS]->(u4:User)" +
+                                " WHERE NOT (u1)-[:FOLLOWS]->(u4) AND u1.username = $username " +
+                                "RETURN u4.username LIMIT 20",
+                        parameters(
+                                "username", username
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    if(!r.get("u4.username").isNull()){
+                        String suggested_username=r.get("u4.username").asString();
+                        sugggested_users.add(suggested_username);
+                    }
+
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get suggested anime due to an error");
+        }
+        return sugggested_users;
+    }
+
+    public List<String> getNSuggestedUsers(String username, int number_of_suggested){
+        Set<String> verySuggestedUsers = getVerySuggestedUsers(username);
+        List<String> suggested_users = new ArrayList<String>(verySuggestedUsers);
+
+        if(suggested_users.size()<number_of_suggested){
+            Set<String> low_suggested_users = getSuggestedUsersLowPriority(username);
+            for(String title: low_suggested_users){
+                if(!suggested_users.contains(title) && suggested_users.size()<number_of_suggested){
+                    suggested_users.add(title);
+                }
+            }
+        }
+
+        return suggested_users;
+    }
 
 }
