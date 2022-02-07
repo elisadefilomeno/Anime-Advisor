@@ -12,9 +12,10 @@ import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
 
 public class Anime_Advisor {
-    static private UserInterface ui = new UserInterface();
-    static private DbManagerNeo4J dbNeo4J;
-    static private UserManagerNeo4J userManagerNeo4J;
+    private static UserInterface ui = new UserInterface();
+    private static  DbManagerNeo4J dbNeo4J;
+    private static UserManagerNeo4J userManagerNeo4J;
+    private static User user;
 
 
 
@@ -37,6 +38,7 @@ public class Anime_Advisor {
             System.out.println("Digit:");
             System.out.println("1 to Log in");
             System.out.println("2 to Sign up");
+            System.out.println("3 to Browse Anime");
             System.out.println("0 to Exit");
             System.out.println(GREEN+"**************************************"+RESET);
             System.out.println("Write your command here:");
@@ -52,31 +54,41 @@ public class Anime_Advisor {
             }
             if(value_case == 1) {
                 // call login function
-                User user = userManagerNeo4J.logIn();
-                if(user == null){
+                User logged_user = userManagerNeo4J.logIn();
+                if(logged_user == null){
                     System.out.println("Login failed");
                     continue;
                 }
                 else{
-                    user.toString();
+                    user = logged_user;
+                    System.out.println("Welcome "+ user.getUsername());
+                    if(user.getIs_admin()){
+                        ui.show_admin_home_page(user);
+                    }
+                    else{
+                        ui.show_home_page(user);
+                    }
                 }
-                if(user.getIs_admin()){
-                    ui.show_admin_home_page(user);
-                }
-                else{
-                    ui.show_home_page(user);
-                }
+
                 continue;
             }
 
             else if(value_case==2){
-                userManagerNeo4J.signIn();  // change function name to SignUp
-                System.out.println("TO DO: Sign up page");
+                userManagerNeo4J.signUp();  // change function name to SignUp
+                continue;
+            }
+            else if(value_case==3){
+
+                System.out.println("TO DO: Browse Anime");
                 continue;
             }
         }
 
         while(value_case!=0);
+        if(user!=null){
+            userManagerNeo4J.logOut(user);
+        }
+
         System.out.println(BLUE+"GOODBYE"+RESET);
 
         System.out.println(BLUE+"COME BACK SOON! :)"+RESET);
