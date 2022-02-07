@@ -16,6 +16,8 @@ public class ProfileUserMenu {
         System.out.println("Digit:");
         System.out.println("0) Go Back To Home Page");
         System.out.println("1) Modify your profile");
+        // vedere anime  e utenti seguiti
+        // vedere le recenioni lasciate
         System.out.println(GREEN+"**************************************"+RESET);
         System.out.println("Write your command here:");
 
