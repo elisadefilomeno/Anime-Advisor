@@ -8,6 +8,8 @@ import org.neo4j.driver.TransactionWork;
 
 import java.util.*;
 
+import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
+import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
 import static org.neo4j.driver.Values.parameters;
 
 public class UserManagerNeo4J {
@@ -352,7 +354,7 @@ public class UserManagerNeo4J {
     }
 
     //SignIn
-    public  void  signIn (){
+    public  void signUp(){
         UserManagerNeo4J um = new UserManagerNeo4J();
         User u = new User();
         User u_check = new User ();
@@ -361,31 +363,109 @@ public class UserManagerNeo4J {
 
         System.out.println("Register new User, insert name/gender/password ");
         System.out.println("Enter username: ");
+
         name_user = sc.nextLine();
+        int temp=1;
+        while(temp==1){
+            if(um.checkIfPresent(name_user)){
+                System.out.println("Username is alredy present!");
+                System.out.println("Insert new username:");
+                continue;
+            }
+
+            if (name_user== null || name_user=="") {
+                System.out.println("Invalid Username !!! \n");
+                System.out.println("Re-insert the username or press 0 to go back:");
+                name_user = sc.nextLine();
+                continue;
+
+            }
+           else {
+                if(name_user.equals("0")){
+                    return;
+                }
+               temp=0;
+            }
+
+        }
+
         //Inserire funzione che controlla se è presente gia l'utente
-
-
-        u.setUsername(name_user);
-
-        System.out.println("Male or Female :");
-        gender = sc.nextLine();
-        u.setGender(gender);
-
         System.out.println("Insert your password: ");
         password_user = sc.nextLine();
+        int temp_psw=1;
+        while(temp_psw==1){
+
+            if (password_user== null || password_user=="") {
+                System.out.println("Invalid Password !!! \n");
+                System.out.println("Re-insert the password or press 0 to go back:");
+                password_user = sc.nextLine();
+                continue;
+
+            }
+            else {
+                if(password_user.equals("0")){
+                    return;
+                }
+                temp_psw=0;
+            }
+
+        }
+        u.setUsername(name_user);
         u.setPassword(password_user);
+        int tempg=0;
+        while(tempg==0) {
+            System.out.println("Insert gender:");
+            System.out.println("1) Female");
+            System.out.println("2) Male");
+            System.out.println("3) Other");
+            System.out.println("4) I prefer not to specify");
+            System.out.println(GREEN+"**************************************"+RESET);
+            System.out.println("Write your command here:");
+
+            try {
+                int gender_case = Integer.valueOf(sc.nextLine());
+
+                switch ((gender_case)) {
+                    case 1: {
+                        u.setGender("Female");
+                        tempg=1;
+                        break;
+                    }
+                    case 2: {
+                        u.setGender("Male");
+                        tempg=1;
+                        break;
+                    }
+
+                    case 3: {
+                        u.setGender("Other");
+                        tempg=1;
+                        break;
+                    }
+
+                    case 4: {
+                        u.setGender("Not specified");
+                        tempg=1;
+                        break;
+                    }
+                    default: {
+                        System.out.println("Invalid option\n");
+                        continue;
+
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+            }
+        }
 
         //Default set log_in and is_admin to false
         u.setLogged_in(false);
         u.setIs_admin(false);
+        um.createUser(u);
+        System.out.println("Register Successfully");
 
-        if(!um.checkIfPresent(u.getUsername())){
-            um.createUser(u);
-            System.out.println("Register Successfully");
-        }
-        else{
-            System.out.println("User is alredy register!");
-        }
+
 
     }
 
@@ -414,6 +494,7 @@ public class UserManagerNeo4J {
         }
         else{
             System.out.println("Username or password wrong!!! ");
+            return null;
         }
         return logUser;
 
