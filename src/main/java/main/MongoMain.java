@@ -1,5 +1,6 @@
-package it.unipi.large_scale.anime_advisor.menu;
+package main;
 import com.mongodb.client.MongoCollection;
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
 import it.unipi.large_scale.anime_advisor.dbManager.*;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
@@ -8,7 +9,7 @@ import org.bson.Document;
 //da rimuovere
 
 
-public class Main {
+public class MongoMain {
 
     public static void main(String[] args){
 
@@ -20,6 +21,7 @@ public class Main {
         MongoCollection<Document> collection= mongoM.getCollection("anime");
         //collection.find().forEach(doc->System.out.println(doc.toJson()));
         AnimeManagerMongoDBCRUD am= new AnimeManagerMongoDBCRUD();
+        AnimeManagerMongoDBAgg amg=new AnimeManagerMongoDBAgg();
         Anime anime=new Anime();
         anime.setAnime_name("Anime Test");
         anime.setEpisodes(20);
@@ -40,7 +42,7 @@ public class Main {
         am.createAnime(anime,collection);
         am.readAnime(anime,collection);
         //TEST MONGO CRUD
-
+    amg.entityProdByType(collection,"studio",0);
 
 
 
