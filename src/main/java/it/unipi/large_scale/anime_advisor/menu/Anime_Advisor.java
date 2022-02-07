@@ -12,10 +12,10 @@ import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
 
 public class Anime_Advisor {
-    private static UserInterface ui = new UserInterface();
-    private static  DbManagerNeo4J dbNeo4J;
+    private static DbManagerNeo4J dbNeo4J;
     private static UserManagerNeo4J userManagerNeo4J;
-    private static User user;
+    private static UserInterface ui = new UserInterface();
+    static User user;
 
 
 
@@ -61,12 +61,13 @@ public class Anime_Advisor {
                 }
                 else{
                     user = logged_user;
-                    System.out.println("Welcome "+ user.getUsername());
+                    System.out.println(GREEN+"**************************************"+RESET);
+                    System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+RESET+"!");
                     if(user.getIs_admin()){
                         ui.show_admin_home_page(user);
                     }
                     else{
-                        ui.show_home_page(user);
+                        ui.show_home_page();
                     }
                 }
 

@@ -353,8 +353,6 @@ public class UserManagerNeo4J {
             ex.printStackTrace();
             System.out.println("Unable to update user due to an error");
         }
-        System.out.println("User correctly updated");
-
     }
 
     //SignIn
