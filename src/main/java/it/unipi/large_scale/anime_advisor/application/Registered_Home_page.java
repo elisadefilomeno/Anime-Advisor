@@ -11,7 +11,7 @@ import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 public class Registered_Home_page {
     private final BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
     private final BrowseUsersMenu browseUsersMenu = new BrowseUsersMenu();
-    private final ProfileUserMenu profileUserMenu = new ProfileUserMenu();
+    private final PersonalProfileUserMenu profileUserMenu = new PersonalProfileUserMenu();
 
     public void showMenu(){
         System.out.println(GREEN+"**************************************"+RESET);

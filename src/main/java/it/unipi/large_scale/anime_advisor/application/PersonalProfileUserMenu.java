@@ -4,7 +4,7 @@ import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 
-public class ProfileUserMenu {
+public class PersonalProfileUserMenu {
     public void showMenu(){
         System.out.println("To do");
         System.out.println("TO DO: VISUALIZE PROFILE");

@@ -12,7 +12,6 @@ import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo
 public class Interface {
     protected static User user;
     private Registered_Home_page registered_home_page = new Registered_Home_page();
-    private Admin_Home_Page admin_home_page = new Admin_Home_Page();
 
     public void showMenu(){
         int value_case =0;
@@ -49,12 +48,7 @@ public class Interface {
                     user = logged_user;
                     System.out.println(GREEN+"**************************************"+RESET);
                     System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+RESET+"!");
-                    if(user.getIs_admin()){
-                        admin_home_page.showMenu();
-                    }
-                    else{
-                        registered_home_page.showMenu();
-                    }
+                    registered_home_page.showMenu();
                 }
 
                 continue;
