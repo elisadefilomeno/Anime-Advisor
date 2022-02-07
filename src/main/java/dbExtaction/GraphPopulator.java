@@ -1,21 +1,17 @@
 package dbExtaction;
 
-import it.unipi.large_scale.anime_advisor.dbManager.DbManager;
 import it.unipi.large_scale.anime_advisor.entity.*;
 import java.io. * ;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import java.time.*;
 
 import org.neo4j.driver.*;
 import static org.neo4j.driver.Values.parameters;
 
 
 // load data and populate graph
-public class GraphPopulator implements DbManager, AutoCloseable{
+public class GraphPopulator implements AutoCloseable{
     private final Driver driver;
     private final String uri = "neo4j://localhost:7687";
     private final String user = "neo4j";
@@ -105,31 +101,25 @@ public class GraphPopulator implements DbManager, AutoCloseable{
         Scanner usersSc = new Scanner(new File(file_path));
         //parsing a CSV file into the constructor of Scanner class
         usersSc.useDelimiter(";");
-        int i =0;
+
         while (usersSc.hasNext()) {
-            i = i+1;
+
             csvRows = usersSc.nextLine();
-            // raplace all text between []
-            csvRows = csvRows.replaceAll("\\[.*?\\]", "");
-            if (first) {
-                first = false;
-                continue;
-            }
+
             String[] fields = csvRows.split(",");
-            String gender= (fields[2].trim());
-            String username = (fields[3].trim());
-            LocalDate start = LocalDate.of(1940, Month.JANUARY, 1);
-            LocalDate end = LocalDate.of(2004, Month.DECEMBER, 31);
-            long days = ChronoUnit.DAYS.between(start, end);
-            LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + i));
+            String gender = (fields[0].trim());
+            String username = (fields[1].trim());
+            String password = (fields[2].trim());
+            String logged_in = (fields[3].trim());
+            String is_admin = (fields[4].trim());
+
 
             User u = new User();
             u.setGender(gender);
             u.setUsername(username);
-            u.setPassword(Integer.toString(i));
-            u.setBirthday(randomDate);
-            u.setIs_admin(false);
-            u.setLogged_in(false);
+            u.setPassword(password);
+            u.setIs_admin(Boolean.parseBoolean(logged_in));
+            u.setLogged_in(Boolean.parseBoolean(is_admin));
             users.add(u);
         }
         usersSc.close();
@@ -153,17 +143,17 @@ public class GraphPopulator implements DbManager, AutoCloseable{
         }
     }
     public void addUsersToGraph(ArrayList<User> user_list){
+        System.out.println("a");
         try (Session session = driver.session()) {
             int i=0;
             for(User u: user_list) {
                 i+=1;
-                session.run("MERGE (u:User {username: $username, birthday: $birthday, password: $password, " +
-                                "gender: $gender, logged_in: $logged_in, is_admin: $is_admin})",
+                session.run("MERGE (u:User {gender: $gender, username: $username,  password: $password, " +
+                                " logged_in: $logged_in, is_admin: $is_admin})",
                         parameters(
-                                "username", u.getUsername(),
-                                "birthday", u.getBirthday(),
-                                "password", u.getPassword(),
                                 "gender", u.getGender(),
+                                "username", u.getUsername(),
+                                "password", u.getPassword(),
                                 "logged_in", u.getLogged_in(),
                                 "is_admin", u.getIs_admin()
                         )
@@ -179,10 +169,11 @@ public class GraphPopulator implements DbManager, AutoCloseable{
             int i=0;
             for(Review r: review_list) {
                 i+=1;
-                session.run("MERGE (r:Review {text: $text, id: $id})",
+                session.run("MERGE (r:Review {text: $text, id: $id, score: $score})",
                         parameters(
                                 "text", r.getText(),
-                                "id", r.getId()
+                                "id", r.getId(),
+                                "score", r.getScore()
                         )
                 );
                 session.run(
@@ -202,7 +193,6 @@ public class GraphPopulator implements DbManager, AutoCloseable{
         }
 
     }
-
     public void createFollowsRelationshipUserAnime(int number_of_users, int number_of_edges, String[] anime_names){
         Random rand = new Random();
         for(int i =0; i<=number_of_edges; i++){
@@ -251,10 +241,10 @@ public class GraphPopulator implements DbManager, AutoCloseable{
         gp.addUsersToGraph(users);
         gp.addReviewsWithRelationshipsToGraph(reviews);
         int number_of_users = users.size();
-        int n_follows_edges_users = number_of_users / 4;
+        int n_follows_edges_users = number_of_users / 2;
         gp.createFollowsRelationshipBetweenUsers(number_of_users, n_follows_edges_users);
         String[] anime_names = gp.getAnimeNames(animes);
-        int n_follows_edges_user_anime = number_of_users;
+        int n_follows_edges_user_anime = number_of_users*5;
         gp.createFollowsRelationshipUserAnime(number_of_users, n_follows_edges_user_anime, anime_names);
 
     }
