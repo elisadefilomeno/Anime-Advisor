@@ -8,7 +8,11 @@ import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.*;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo4J;
 
-public class Unregistered_Home_Page {
+
+public class Interface {
+    protected static User user;
+    private Registered_Home_page registered_home_page = new Registered_Home_page();
+    private Admin_Home_Page admin_home_page = new Admin_Home_Page();
 
     public void showMenu(){
         int value_case =0;
@@ -46,10 +50,10 @@ public class Unregistered_Home_Page {
                     System.out.println(GREEN+"**************************************"+RESET);
                     System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+RESET+"!");
                     if(user.getIs_admin()){
-                        ui.show_admin_home_page(user);
+                        admin_home_page.showMenu();
                     }
                     else{
-                        ui.show_home_page();
+                        registered_home_page.showMenu();
                     }
                 }
 
@@ -58,6 +62,7 @@ public class Unregistered_Home_Page {
 
             else if(value_case==2){
                 userManagerNeo4J.signUp();  // change function name to SignUp
+                System.out.println("fine signUp");
                 continue;
             }
             else if(value_case==3){

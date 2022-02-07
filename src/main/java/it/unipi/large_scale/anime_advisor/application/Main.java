@@ -5,10 +5,10 @@ import it.unipi.large_scale.anime_advisor.entity.User;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 public class Main {
-    private static Unregistered_Home_Page unregistered_home_page = new Unregistered_Home_Page();
-    private static DbManagerNeo4J dbNeo4J;
-    static UserManagerNeo4J userManagerNeo4J;
-    private static User user;
+    protected static Interface anInterface = new Interface();
+    protected static DbManagerNeo4J dbNeo4J;
+    protected static UserManagerNeo4J userManagerNeo4J;
+
 
     public static void main(String argd[]) throws Exception {
         try{
@@ -20,7 +20,7 @@ public class Main {
             System.out.println("Error");
             return;
         }
-        unregistered_home_page.showMenu();
+        anInterface.showMenu();
 
         dbNeo4J.closeNeo4J();
     }
