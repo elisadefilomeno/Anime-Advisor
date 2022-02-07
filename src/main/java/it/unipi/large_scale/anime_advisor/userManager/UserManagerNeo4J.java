@@ -13,10 +13,14 @@ import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
 import static org.neo4j.driver.Values.parameters;
 
 public class UserManagerNeo4J {
-    static DbManagerNeo4J dbNeo4J;
+    private final DbManagerNeo4J dbNeo4J;
 
-    public UserManagerNeo4J() {
-        this.dbNeo4J = new DbManagerNeo4J();
+    public UserManagerNeo4J(DbManagerNeo4J dbNeo4J) {
+        this.dbNeo4J = dbNeo4J;
+    }
+
+    public DbManagerNeo4J getDbNeo4J() {
+        return dbNeo4J;
     }
 
     public void createUser(User u) {
@@ -355,7 +359,7 @@ public class UserManagerNeo4J {
 
     //SignIn
     public  void signUp(){
-        UserManagerNeo4J um = new UserManagerNeo4J();
+        UserManagerNeo4J um = new UserManagerNeo4J(this.getDbNeo4J());
         User u = new User();
         User u_check = new User ();
         String name_user,password_user,gender;
@@ -471,7 +475,7 @@ public class UserManagerNeo4J {
 
     //LogIn
     public User logIn(){
-        UserManagerNeo4J um = new UserManagerNeo4J();
+        UserManagerNeo4J um = new UserManagerNeo4J(this.dbNeo4J);
         String userName,passwordUser;
         User logUser= new User();
         Scanner sc = new Scanner(System.in);
@@ -502,7 +506,7 @@ public class UserManagerNeo4J {
 
     //LogOut
     public void logOut(User u){
-        UserManagerNeo4J um = new UserManagerNeo4J();
+        UserManagerNeo4J um = new UserManagerNeo4J(this.getDbNeo4J());
 
         if(u.getLogged_in()){
             u.setLogged_in(false);

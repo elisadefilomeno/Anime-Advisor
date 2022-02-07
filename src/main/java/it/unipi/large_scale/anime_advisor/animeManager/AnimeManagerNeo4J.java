@@ -11,10 +11,10 @@ import java.util.*;
 import static org.neo4j.driver.Values.parameters;
 
 public class AnimeManagerNeo4J{
-    DbManagerNeo4J dbNeo4J;
+    private final DbManagerNeo4J dbNeo4J;
 
-    public AnimeManagerNeo4J() {
-        this.dbNeo4J = new DbManagerNeo4J();
+    public AnimeManagerNeo4J(DbManagerNeo4J dbNeo4J) {
+        this.dbNeo4J = dbNeo4J;
     }
 
     public void createAnime(String anime_title) {

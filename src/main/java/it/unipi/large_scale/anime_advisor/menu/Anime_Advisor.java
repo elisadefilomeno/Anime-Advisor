@@ -23,7 +23,7 @@ public class Anime_Advisor {
         try{
             // connections to databases
             dbNeo4J = new DbManagerNeo4J();
-            userManagerNeo4J = new UserManagerNeo4J();
+            userManagerNeo4J =new UserManagerNeo4J(dbNeo4J);
 
         } catch (Exception e) {
             System.out.println("Error");
