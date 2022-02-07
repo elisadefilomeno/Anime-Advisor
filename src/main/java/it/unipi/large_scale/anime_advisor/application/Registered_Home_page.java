@@ -4,11 +4,14 @@ import java.util.Scanner;
 
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
+import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo4J;
+import static it.unipi.large_scale.anime_advisor.application.Interface.user;
+
 
 public class Registered_Home_page {
-    private BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
-    private BrowseUsersMenu browseUsersMenu = new BrowseUsersMenu();
-    private ProfileUserMenu profileUserMenu = new ProfileUserMenu();
+    private final BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
+    private final BrowseUsersMenu browseUsersMenu = new BrowseUsersMenu();
+    private final ProfileUserMenu profileUserMenu = new ProfileUserMenu();
 
     public void showMenu(){
         System.out.println(GREEN+"**************************************"+RESET);
@@ -18,7 +21,7 @@ public class Registered_Home_page {
         System.out.println("1) Browse Anime");
         System.out.println("2) Browse Users");
         System.out.println("3) Visualize your profile");
-        System.out.println("0) Go Back");
+        System.out.println("0) Log out");
         System.out.println(GREEN+"**************************************"+RESET);
         System.out.println("Write your command here:");
 
@@ -35,7 +38,10 @@ public class Registered_Home_page {
             case 1 -> browseAnimeMenu.showMenu();
             case 2 -> browseUsersMenu.showMenu();
             case 3 -> profileUserMenu.showMenu();
-            case 0 -> {}
+            case 0 -> {if(user!=null){
+                userManagerNeo4J.logOut(user);
+                return;
+            }}
             default -> System.out.println("ATTENTION! Wrong command");
         }
     }
