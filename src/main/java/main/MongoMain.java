@@ -39,8 +39,8 @@ public class MongoMain {
         anime.setScoredby(0);
         anime.setScored(0.0);
         anime.setMembers(0);
-        am.createAnime(anime,collection);
-        am.readAnime(anime,collection);
+        amc.createAnime(anime,collection);
+        amc.readAnime(anime,collection);
         //TEST MONGO CRUD
     amg.entityProdByType(collection,"studio",0);
 
