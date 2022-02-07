@@ -1,12 +1,12 @@
-package it.unipi.large_scale.anime_advisor.menu;
+package it.unipi.large_scale.anime_advisor.application;
 
 import it.unipi.large_scale.anime_advisor.entity.User;
 
 import java.util.Scanner;
 
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
-import static it.unipi.large_scale.anime_advisor.menu.Anime_Advisor.user;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
+import static it.unipi.large_scale.anime_advisor.application.Anime_Advisor.user;
 
 public class UserInterface {
     public void show_home_page(){

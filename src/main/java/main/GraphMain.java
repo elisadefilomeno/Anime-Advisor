@@ -1,4 +1,4 @@
-package it.unipi.large_scale.anime_advisor.menu;
+package main;
 
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
@@ -6,8 +6,6 @@ import it.unipi.large_scale.anime_advisor.entity.*;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Set;
 
 //da rimuovere
 

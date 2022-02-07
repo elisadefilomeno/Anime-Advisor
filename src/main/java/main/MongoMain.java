@@ -1,4 +1,4 @@
-package it.unipi.large_scale.anime_advisor.menu;
+package main;
 import com.mongodb.client.MongoCollection;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
@@ -9,7 +9,7 @@ import org.bson.Document;
 //da rimuovere
 
 
-public class Main {
+public class MongoMain {
 
     public static void main(String[] args){
 
@@ -20,8 +20,8 @@ public class Main {
         //**METODI DI PROVA DI MONDOSB (DA ELIMINARE POI) **
         MongoCollection<Document> collection= mongoM.getCollection("anime");
         //collection.find().forEach(doc->System.out.println(doc.toJson()));
-        AnimeManagerMongoDBCRUD amc= new AnimeManagerMongoDBCRUD();
-        AnimeManagerMongoDBAgg amg= new AnimeManagerMongoDBAgg();
+        AnimeManagerMongoDBCRUD am= new AnimeManagerMongoDBCRUD();
+        AnimeManagerMongoDBAgg amg=new AnimeManagerMongoDBAgg();
         Anime anime=new Anime();
         anime.setAnime_name("Anime Test");
         anime.setEpisodes(20);
@@ -42,8 +42,7 @@ public class Main {
         amc.createAnime(anime,collection);
         amc.readAnime(anime,collection);
         //TEST MONGO CRUD
-
-        amg.entityProdByType(collection,"studio",0);
+    amg.entityProdByType(collection,"studio",0);
 
 
 

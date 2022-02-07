@@ -8,8 +8,8 @@ import org.neo4j.driver.TransactionWork;
 
 import java.util.*;
 
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 import static org.neo4j.driver.Values.parameters;
 
 public class UserManagerNeo4J {

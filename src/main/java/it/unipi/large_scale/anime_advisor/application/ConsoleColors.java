@@ -1,4 +1,4 @@
-package it.unipi.large_scale.anime_advisor.menu;
+package it.unipi.large_scale.anime_advisor.application;
 
 public class ConsoleColors {
     // Reset
