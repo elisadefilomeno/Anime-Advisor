@@ -12,6 +12,5 @@ public class BrowseAnimeMenu {
         // 4) view most reviewed anime (sul grafo-> da decidere se fare come most followed anime)
         // 3) view personalised suggested anime (Neo4J)
         // 4) go back to registered home page
-
     }
 }
