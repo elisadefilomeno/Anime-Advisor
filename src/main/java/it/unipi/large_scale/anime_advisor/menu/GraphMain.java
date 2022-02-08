@@ -3,6 +3,7 @@ package it.unipi.large_scale.anime_advisor.menu;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.*;
+import it.unipi.large_scale.anime_advisor.reviewManager.ReviewManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 import java.time.LocalDate;
@@ -17,8 +18,7 @@ public class GraphMain {
         DbManagerNeo4J dbNeo4J = new DbManagerNeo4J();
         UserManagerNeo4J um = new UserManagerNeo4J(dbNeo4J);
         AnimeManagerNeo4J am = new AnimeManagerNeo4J(dbNeo4J);
-        LocalDate birthday =  LocalDate.of(1999,11,25);
-
+        ReviewManagerNeo4J rm = new  ReviewManagerNeo4J(dbNeo4J);
 
 //        User e= new User();
 //        e.setUsername("Elisa");
@@ -27,13 +27,15 @@ public class GraphMain {
 //        e.setPassword("psw");
 //        e.setIs_admin(true); // default = false
 //        e.setLogged_in(true); //default = false
-        User p= new User();
-        p.setUsername("Pippo");
-        p.setBirthday(birthday); // default = 1900/01/01
-        p.setGender("male");
-        p.setPassword("pippo_psw");
-        p.setIs_admin(true); // default = false
-        p.setLogged_in(true); //default = false
+          Review r = new Review();
+          String a="Ciao ciao de srnalr aikdj dckdldoek";
+          r.setText(a);
+          r.setScore(8);
+          r.setId(2);
+          r.setProfile("GIANNI");
+          r.setAnime_title("AJAJAJA");
+
+          rm.createReview(r);
 //
 //        um.createUser(e);
 //        um.deleteUser(e);
@@ -82,13 +84,6 @@ public class GraphMain {
 //        um.createUser(l);
 //        um.createUser(a);
 
-        System.out.println(am.getVerySuggestedAnime("Pippo"));
-        System.out.println(am.getSuggestedAnimeMediumPriority("Pippo"));
-        System.out.println(am.getCommentedByFriendAnime("Pippo"));
-        System.out.println(am.getNSuggestedAnime("Pippo",10));
-        System.out.println(um.getVerySuggestedUsers("Pippo"));
-        System.out.println(um.getSuggestedUsersLowPriority("Pippo"));
-        System.out.println(um.getNSuggestedUsers("Pippo", 5));
 
 
         dbNeo4J.closeNeo4J();
