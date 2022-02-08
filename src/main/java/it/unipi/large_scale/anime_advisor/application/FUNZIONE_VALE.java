@@ -12,10 +12,11 @@ import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 
 public class FUNZIONE_VALE {
-        private AnimeManagerNeo4J animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
+        private AnimeManagerNeo4J animeManagerNeo4J;
 
         public void viewTop10MostFollowedAnime(){ // vale
             // TO DO
+            animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
             Map<String, Integer> top10_anime= animeManagerNeo4J.getTop10MostFollowedAnime();
             int i =0;
             Map<Integer, String> user_map_to_access_anime = new HashMap<>();

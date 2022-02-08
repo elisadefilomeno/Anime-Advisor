@@ -16,6 +16,7 @@ import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 public class PersonalProfileUserMenu {
     private UserManagerNeo4J userManagerNeo4J;
+    private AnimeManagerNeo4J animeManagerNeo4J;
     private BrowseAnimeMenu browseAnimeMenu;
     private Registered_Home_page registered_home_page;
     
@@ -31,11 +32,9 @@ public class PersonalProfileUserMenu {
             string.append("Status: Admin\n");
         else
             string.append("Status: Not an Admin\n");
-        string.append(
-                "Username: " + user.getUsername() + "\n" +
-                        "Password: " + user.getPassword() + "\n" +
-                        "Gender: " + user.getGender()
-        );
+        string.append("Username: ").append(user.getUsername()).append("\n")
+                .append("Password: ").append(user.getPassword()).append("\n")
+                .append("Gender: ").append(user.getGender());
 
         System.out.println(string);
         System.out.println(GREEN+"**************************************"+RESET);
@@ -82,6 +81,7 @@ public class PersonalProfileUserMenu {
     }
 
     private void viewFollowedAnime() {
+        animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
         System.out.println("TO DO: viewFollowedAnime");
 
     }
