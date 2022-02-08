@@ -1,6 +1,7 @@
 package it.unipi.large_scale.anime_advisor.userManager;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
+import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -519,7 +520,7 @@ public class UserManagerNeo4J {
     public Set<String> getVerySuggestedUsers(String username){
         // set can't contain duplicate username strings
 
-        Set<String> very_sugggested_users = new HashSet<String>();
+        Set<String> very_sugggested_users = new HashSet<>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -551,7 +552,7 @@ public class UserManagerNeo4J {
 
     public Set<String> getSuggestedUsersLowPriority(String username){
         // set can't contain duplicate title strings
-        Set<String> sugggested_users = new HashSet<String>();
+        Set<String> sugggested_users = new HashSet<>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -597,4 +598,31 @@ public class UserManagerNeo4J {
         return suggested_users;
     }
 
+    public Set<String> getFollowedAnime(User user) {
+        Set<String> followed_anime = new HashSet<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u:User)-[:FOLLOWS]->(a:Anime)" +
+                                " WHERE u.username = $username " +
+                                "RETURN a.title",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String followed=r.get("a.title").asString();
+                    followed_anime.add(followed);
+
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get followed anime due to an error");
+        }
+        return followed_anime;
+    }
 }

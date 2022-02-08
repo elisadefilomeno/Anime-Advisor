@@ -7,6 +7,7 @@ import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
 import java.util.Scanner;
+import java.util.Set;
 
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
@@ -82,6 +83,18 @@ public class PersonalProfileUserMenu {
 
     private void viewFollowedAnime() {
         animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
+        Set<String> followed_anime = userManagerNeo4J.getFollowedAnime(user);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("Followed Anime:");
+        System.out.println(followed_anime);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("What would you like to do?");
+        System.out.println("Digit:");
+        System.out.println("0) Go Back");
+        System.out.println("1) View specific Anime info");
+        System.out.println("2) See next anime followed");
+
+
         System.out.println("TO DO: viewFollowedAnime");
 
     }
