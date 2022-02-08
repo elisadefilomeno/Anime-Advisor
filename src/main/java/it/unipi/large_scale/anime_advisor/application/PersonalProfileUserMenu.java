@@ -102,25 +102,58 @@ public class PersonalProfileUserMenu {
             case 1 -> {
                 System.out.println(GREEN + "**************************************" + RESET);
                 System.out.println("Write your new username here:");
-                Scanner scanner = new Scanner(System.in);
                 String new_username = sc.nextLine();
                 user = userManagerNeo4J.modifyUsername(user, new_username);
                 showMenu();
             }
             case 2 -> {
-                // TO DO
                 System.out.println(GREEN + "**************************************" + RESET);
                 System.out.println("Write your new password here:");
-                Scanner scanner = new Scanner(System.in);
                 String new_password = sc.nextLine();
                 User updated_user = userManagerNeo4J.updateUser(
-                        new User(user.getUsername(),new_password, user.getGender(),user.getLogged_in(), user.getIs_admin()));
+                        new User(user.getUsername(),new_password, user.getGender(),
+                                user.getLogged_in(), user.getIs_admin()));
                 if(!(updated_user == null)){
                     user = updated_user;
                 }
                 showMenu();
             }
-            case 3 -> viewFollowedUsers(); // TO DO
+            case 3 -> {
+                System.out.println(GREEN + "**************************************" + RESET);
+                System.out.println("Choose your new gender:");
+                System.out.println("1) Female");
+                System.out.println("2) Male");
+                System.out.println("3) Other");
+                System.out.println("4) I prefer not to specify");
+                System.out.println(GREEN+"**************************************"+RESET);
+                System.out.println("Write your command here:");
+                String new_gender = user.getGender();
+
+                try {
+                    int gender_case = Integer.parseInt(sc.nextLine());
+                    switch ((gender_case)) {
+                        case 1 -> new_gender ="Female";
+                        case 2 -> new_gender="Male";
+                        case 3 -> new_gender="Other";
+                        case 4 -> new_gender="Not specified";
+                        default -> {
+                            System.out.println("Invalid option!");
+                            showMenu();
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
+                    showMenu();
+                }
+                
+                User updated_user = userManagerNeo4J.updateUser(
+                        new User(user.getUsername(),user.getPassword(), new_gender,
+                                user.getLogged_in(), user.getIs_admin()));
+                if(!(updated_user == null)){
+                    user = updated_user;
+                }
+                showMenu();
+            }
             case 4 -> viewPostedReviews();// TO DO
             case 0 -> showMenu();
             default -> {
