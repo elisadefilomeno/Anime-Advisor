@@ -41,11 +41,13 @@ public class FUNZIONE_VALE {
             catch(Exception e){
                 // TO DO
                 System.out.println("ATTENTION! Wrong command");
+                //this.showMenu();
                 return;
             }
             if(!user_map_to_access_anime.containsKey(anime_key)){
                 // TO DO
                 System.out.println("Wrong number digited");
+                //this.showMenu();
                 return;
             }
             String anime_title = user_map_to_access_anime.get(anime_key);
