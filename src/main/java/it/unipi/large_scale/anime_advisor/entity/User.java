@@ -10,6 +10,14 @@ public class User {
     private boolean logged_in;  // default = false
     private boolean is_admin;  // default = false
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User() {
+    }
+
     //SET METHODS
     public void setUsername(String username) {
         this.username = username;

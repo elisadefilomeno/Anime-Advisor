@@ -51,8 +51,7 @@ public class FUNZIONE_VALE {
             System.out.println(GREEN+"**************************************"+RESET);
 
             System.out.println("You have choosen:");
-            Anime anime = new Anime();
-            anime.setAnime_name(anime_title);
+            Anime anime = new Anime(anime_title);
             System.out.println(anime.getAnime_name());
 
         }
