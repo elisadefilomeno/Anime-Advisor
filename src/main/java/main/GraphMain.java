@@ -87,6 +87,10 @@ public class GraphMain {
         System.out.println(um.getVerySuggestedUsers("Pippo"));
         System.out.println(um.getSuggestedUsersLowPriority("Pippo"));
         System.out.println(um.getNSuggestedUsers("Pippo", 5));
+        um.followAnime("e", "Heidi");
+        um.followAnime("e", "Sailor Moon");
+
+
 
 
         dbNeo4J.closeNeo4J();
