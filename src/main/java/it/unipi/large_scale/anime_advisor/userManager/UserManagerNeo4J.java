@@ -212,6 +212,10 @@ public class UserManagerNeo4J {
     }
 
     public void followAnime(String username, String anime_title){
+        if(!checkIfPresent(anime_title)){
+            System.out.println("Anime not present in the database, cannot follow it");
+            return;
+        }
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
