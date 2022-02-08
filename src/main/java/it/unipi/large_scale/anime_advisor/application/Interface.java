@@ -1,34 +1,19 @@
-package it.unipi.large_scale.anime_advisor.menu;
+package it.unipi.large_scale.anime_advisor.application;
 
-import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.User;
-import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
-
 
 import java.util.Scanner;
 
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.BLUE;
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
-
-public class Anime_Advisor {
-    private static DbManagerNeo4J dbNeo4J;
-    private static UserManagerNeo4J userManagerNeo4J;
-    private static UserInterface ui = new UserInterface();
-    static User user;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.*;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
+import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo4J;
 
 
+public class Interface {
+    protected static User user;
+    private Registered_Home_page registered_home_page = new Registered_Home_page();
 
-    public static void main(String argd[]) throws Exception {
-        try{
-            // connections to databases
-            dbNeo4J = new DbManagerNeo4J();
-            userManagerNeo4J =new UserManagerNeo4J(dbNeo4J);
-
-        } catch (Exception e) {
-            System.out.println("Error");
-            return;
-        }
+    public void showMenu(){
         int value_case =0;
         System.out.println(BLUE+"WELCOME IN ANIME ADVISOR!"+RESET);
         do{
@@ -46,7 +31,7 @@ public class Anime_Advisor {
             Scanner sc =new Scanner(System.in);
 
             try{
-                value_case = Integer.valueOf(sc.nextLine());
+                value_case = Integer.parseInt(sc.nextLine());
             }
             catch(Exception e){
                 System.out.println("ATTENTION! Wrong command");
@@ -63,12 +48,7 @@ public class Anime_Advisor {
                     user = logged_user;
                     System.out.println(GREEN+"**************************************"+RESET);
                     System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+RESET+"!");
-                    if(user.getIs_admin()){
-                        ui.show_admin_home_page(user);
-                    }
-                    else{
-                        ui.show_home_page();
-                    }
+                    registered_home_page.showMenu();
                 }
 
                 continue;
@@ -76,6 +56,7 @@ public class Anime_Advisor {
 
             else if(value_case==2){
                 userManagerNeo4J.signUp();  // change function name to SignUp
+                System.out.println("fine signUp");
                 continue;
             }
             else if(value_case==3){
@@ -93,6 +74,5 @@ public class Anime_Advisor {
         System.out.println(BLUE+"GOODBYE"+RESET);
 
         System.out.println(BLUE+"COME BACK SOON! :)"+RESET);
-        dbNeo4J.closeNeo4J();
     }
 }

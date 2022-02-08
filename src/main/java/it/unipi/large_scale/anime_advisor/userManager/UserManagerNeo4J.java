@@ -8,8 +8,8 @@ import org.neo4j.driver.TransactionWork;
 
 import java.util.*;
 
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.GREEN;
-import static it.unipi.large_scale.anime_advisor.menu.ConsoleColors.RESET;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 import static org.neo4j.driver.Values.parameters;
 
 public class UserManagerNeo4J {
@@ -360,22 +360,23 @@ public class UserManagerNeo4J {
         UserManagerNeo4J um = new UserManagerNeo4J(this.getDbNeo4J());
         User u = new User();
         User u_check = new User ();
-        String name_user,password_user,gender;
+        String name_user = null,password_user,gender;
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Register new User, insert name/gender/password ");
         System.out.println("Enter username: ");
 
-        name_user = sc.nextLine();
+
         int temp=1;
         while(temp==1){
+            name_user = sc.nextLine();
             if(um.checkIfPresent(name_user)){
                 System.out.println("Username is alredy present!");
                 System.out.println("Insert new username:");
                 continue;
             }
 
-            if (name_user== null || name_user=="") {
+            if (name_user== null || name_user.equals("")) {
                 System.out.println("Invalid Username !!! \n");
                 System.out.println("Re-insert the username or press 0 to go back:");
                 name_user = sc.nextLine();

@@ -145,7 +145,7 @@ public class AnimeManagerMongoDBAgg {
     public void entityProdByType(MongoCollection<Document>doc,String entity, int year){
         try {
             Map<String, Object> multiIdMap = new HashMap<String, Object>();
-            multiIdMap.put(entity, "$"+entity);
+            multiIdMap.put(entity, "$".concat(entity));
             multiIdMap.put("type", "$type");
 
             Document groupFields = new Document(multiIdMap);
