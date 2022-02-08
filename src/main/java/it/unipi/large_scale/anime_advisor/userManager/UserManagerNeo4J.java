@@ -13,7 +13,7 @@ import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET
 import static org.neo4j.driver.Values.parameters;
 
 public class UserManagerNeo4J {
-    private final DbManagerNeo4J dbNeo4J;
+    private DbManagerNeo4J dbNeo4J;
 
     public UserManagerNeo4J(DbManagerNeo4J dbNeo4J) {
         this.dbNeo4J = dbNeo4J;
@@ -88,6 +88,37 @@ public class UserManagerNeo4J {
             System.out.println("Unable to get user due to an error");
         }
 
+    }
+
+    public User modifyUsername(User u, String new_username){
+        if(checkIfPresent(new_username)){
+            System.out.println("This username is already used! Cannot modify");
+            return u;
+        }
+        if (new_username== null || new_username.equals("")) {
+            System.out.println("Invalid Username!");
+            return u;
+        }
+        try (Session session = dbNeo4J.getDriver().session()) {
+
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run("MATCH (u:User) WHERE u.username = $username " +
+                                "SET u.username=$new_username",
+                        parameters(
+                                "username", u.getUsername(),
+                                "new_username", new_username
+                        )
+                );
+                return null;
+            });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Unable to modify username due to an error");
+        }
+        System.out.println("Correctly modified username!");
+        u.setUsername(new_username);
+        return u;
     }
 
     public void updateUser(User u) {
@@ -209,51 +240,6 @@ public class UserManagerNeo4J {
         }
 
         return user;
-    }
-
-    public void followAnime(String username, String anime_title){
-        if(!checkIfPresent(anime_title)){
-            System.out.println("Anime not present in the database, cannot follow it");
-            return;
-        }
-        try(Session session= dbNeo4J.getDriver().session()){
-
-            session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ("match (u:User) where u.username= $username " +
-                                "match (a:Anime) where a.title=$title " +
-                                "merge (u)-[:FOLLOWS]->(a)",
-                        parameters(
-                                "title", anime_title,
-                                "username", username
-                        ));
-                return null;
-            } );
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-            System.out.println("unable to follow anime due to an error");
-        }
-        System.out.println("Correctly followed anime");
-    }
-
-    public void unfollowAnime(String username, String anime_title){
-        try(Session session= dbNeo4J.getDriver().session()){
-
-            session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ("match (u:User {username: $username}) -[f:FOLLOWS]-> (b:Anime {title:$title}) " +
-                                "delete f",
-                        parameters(
-                                "title", anime_title,
-                                "username", username
-                        ));
-                return null;
-            } );
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-            System.out.println("unable to unfollow anime due to an error");
-        }
-        System.out.println("Correctly unfollowed anime");
     }
 
     public void followUser(String username, String to_follow_username){
