@@ -24,13 +24,13 @@ public class GraphMain {
 //        LocalDate birthday =  LocalDate.of(1999,11,25);
 //
 //
-//        User e= new User();
-//        e.setUsername("Elisa");
+        User e= new User();
+        e.setUsername("elisa");
 //        e.setBirthday(birthday); // default = 1900/01/01
-//        e.setGender("female");
-//        e.setPassword("psw");
-//        e.setIs_admin(true); // default = false
-//        e.setLogged_in(true); //default = false
+        e.setGender("Female");
+        e.setPassword("psw");
+        e.setIs_admin(true); // default = false
+        e.setLogged_in(true); //default = false
 //        User p= new User();
 //        p.setUsername("Pippo");
 //        p.setBirthday(birthday); // default = 1900/01/01
@@ -109,6 +109,9 @@ public class GraphMain {
 
 
 
+        um.followUser("elisa","Pippo");
+        um.followUser("elisa","Ari");
+        um.followUser("elisa","Laura");
 
         dbNeo4J.closeNeo4J();
         }

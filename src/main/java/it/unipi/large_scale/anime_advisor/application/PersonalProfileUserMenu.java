@@ -77,12 +77,21 @@ public class PersonalProfileUserMenu {
     }
 
     private void viewFollowedUsers() {
+        Set<String> followed_users = userManagerNeo4J.getFollowedUsers(user);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("Followed Users:");
+        System.out.println(followed_users);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("What would you like to do?");
+        System.out.println("Digit:");
+        System.out.println("0) Go Back");
+        System.out.println("1) View specific User info");
+        System.out.println("2) See next users followed");
         System.out.println("TO DO: viewFollowedUsers");
 
     }
 
     private void viewFollowedAnime() {
-        animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
         Set<String> followed_anime = userManagerNeo4J.getFollowedAnime(user);
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Followed Anime:");

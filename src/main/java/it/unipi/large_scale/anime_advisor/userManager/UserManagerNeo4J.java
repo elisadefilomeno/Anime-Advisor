@@ -625,4 +625,32 @@ public class UserManagerNeo4J {
         }
         return followed_anime;
     }
+
+    public Set<String> getFollowedUsers(User user) {
+        Set<String> followed_users = new HashSet<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)" +
+                                " WHERE u1.username = $username and u1<>u2 " +
+                                "RETURN u2.username",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String followed=r.get("u2.username").asString();
+                    followed_users.add(followed);
+
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get followed users due to an error");
+        }
+        return followed_users;
+    }
 }
