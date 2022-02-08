@@ -1,6 +1,7 @@
 package dbExtaction;
 
 import it.unipi.large_scale.anime_advisor.entity.Anime;
+
 import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.AuthTokens;
@@ -31,7 +32,7 @@ public class MyPopulation implements AutoCloseable {
     }
 
     //Popolazione degli anime
-    public String[] getAnimeNames(ArrayList<Anime> animes) {
+   /* public String[] getAnimeNames(ArrayList<Anime> animes) {
         int size = animes.size();
         String[] anime_names = new String[size];
         int pos=0;
@@ -40,7 +41,7 @@ public class MyPopulation implements AutoCloseable {
             pos+=1;
         }
         return anime_names;
-    }
+    }*/
     public ArrayList<Anime> loadAnimes(String file_path) throws FileNotFoundException {
         ArrayList<Anime> animes = new ArrayList<Anime>();
         boolean first = true;
@@ -152,17 +153,20 @@ public class MyPopulation implements AutoCloseable {
                 first = false;
                 continue;
             }
+
             String[] fields = csvRows.split(",");
-            while(fields.length<5){
+            while(fields.length<6){
                 csvRows = reviewSc.nextLine();
                 fields = csvRows.split(",");
             }
+
             String id_string = (fields[0].trim());
             String profile= (fields[1].trim());
             //String score = (fields[4].trim());
             String anime_name = (fields[2].trim());
             String title=(fields[3].trim());
             String text = (fields[4].trim());
+
             //Carico la data che inizialmente e' una stringa e la converto in LocalDate
             String last_update = (fields[5].trim());
             String [] parts =  last_update.split("-");
@@ -180,22 +184,50 @@ public class MyPopulation implements AutoCloseable {
         reviewSc.close();
         return reviews;
     }
-
-    //Add relations
-    public void addReviewsWithRelationshipsToGraph(ArrayList<Review> review_list){
+    public void addReviewsToGraph(ArrayList<Review> review_list){
         try (Session session = driver.session()) {
             int i=0;
+            System.out.println("PRINEE");
             for(Review r: review_list) {
                 i+=1;
-                session.run("MERGE (r:Review {text: $text, score: $score,"+
-                             "title: $title,last_update=$last_update})",
+                session.run("MERGE (r:Review {text: $text,title: $title,last_update:$last_update})",
                         parameters(
                                 "text", r.getText(),
-                                "score", r.getScore(),
+
                                 "title", r.getTitle(),
                                 "last_update",r.getLast_update()
                         )
                 );
+                if ((i%1000)==0){
+                    System.out.println("total review nodes:"+ Integer.toString(i));
+                }
+                if(i==review_list.size()){
+                    System.out.println("Finish upload reviews");
+                }
+            }
+        }
+
+    }
+
+    //Add relations
+    public void createFollowsRelationshipUserAnime(int number_of_users, int number_of_edges, String[] anime_names){
+        Random rand = new Random();
+        for(int i =0; i<=number_of_edges; i++){
+            int random_user_psw = rand.nextInt(number_of_users);
+            int random_anime_name_pos = rand.nextInt(anime_names.length);
+            String random_anime_name = anime_names[random_anime_name_pos];
+            try (Session session = driver.session()){
+                session.run(
+                        "MATCH (u:User) WHERE u.password = $user " + "MATCH (a:Anime) WHERE a.name = $anime " +
+                                "MERGE (u)-[:FOLLOWS]->(a)",
+                        parameters("user", Integer.toString(random_user_psw), "anime", random_anime_name)
+                );
+            }
+
+
+        }
+    }
+
          /*       session.run(
                         "MATCH (r:Review) WHERE r.id = $r_id " + "MATCH (a:Anime) WHERE a.title = $title " +
                                 "MERGE (r)-[:REFERRED_TO]->(a)",
@@ -207,16 +239,8 @@ public class MyPopulation implements AutoCloseable {
                         parameters("r_id", r.getId(), "username", r.getProfile())
                 );
 */
-                if ((i%1000)==0){
-                    System.out.println("total review nodes:"+ Integer.toString(i));
-                }
-                if(i==review_list.size()){
-                    System.out.println("Finish upload reviews");
-                }
-            }
-        }
 
-    }
+
 
     //Popolazione
     @Override
@@ -237,7 +261,7 @@ public class MyPopulation implements AutoCloseable {
         //System.out.println("FIniSH Anime");
         //gp.addUsersToGraph(users);//Fatto
        // System.out.println("finish User");//Fatto
-        gp.addReviewsWithRelationshipsToGraph(reviews);
+        gp.addReviewsToGraph(reviews);
         System.out.println("FIniSH review");
 
      /*   int number_of_users = users.size();
