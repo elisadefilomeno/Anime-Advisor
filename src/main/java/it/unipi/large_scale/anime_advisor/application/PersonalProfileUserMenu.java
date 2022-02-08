@@ -72,12 +72,18 @@ public class PersonalProfileUserMenu {
     }
 
     private void viewPostedReviews() {
+        System.out.println("TO DO: viewPostedReviews");
+
     }
 
     private void viewFollowedUsers() {
+        System.out.println("TO DO: viewFollowedUsers");
+
     }
 
     private void viewFollowedAnime() {
+        System.out.println("TO DO: viewFollowedAnime");
+
     }
 
     private void modifyProfile() {
@@ -154,7 +160,6 @@ public class PersonalProfileUserMenu {
                 }
                 showMenu();
             }
-            case 4 -> viewPostedReviews();// TO DO
             case 0 -> showMenu();
             default -> {
                 System.out.println("ATTENTION! Wrong command");
