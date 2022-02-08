@@ -18,6 +18,14 @@ public class User {
     public User() {
     }
 
+    public User(String username, String password, String gender, boolean logged_in, boolean is_admin) {
+        this.username = username;
+        this.password = password;
+        this.gender = gender;
+        this.logged_in = logged_in;
+        this.is_admin = is_admin;
+    }
+
     //SET METHODS
     public void setUsername(String username) {
         this.username = username;

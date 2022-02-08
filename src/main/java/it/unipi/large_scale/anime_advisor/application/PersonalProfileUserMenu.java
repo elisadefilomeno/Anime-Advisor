@@ -2,6 +2,7 @@ package it.unipi.large_scale.anime_advisor.application;
 
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.User;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
@@ -106,7 +107,19 @@ public class PersonalProfileUserMenu {
                 user = userManagerNeo4J.modifyUsername(user, new_username);
                 showMenu();
             }
-            case 2 -> viewFollowedAnime(); // TO DO
+            case 2 -> {
+                // TO DO
+                System.out.println(GREEN + "**************************************" + RESET);
+                System.out.println("Write your new password here:");
+                Scanner scanner = new Scanner(System.in);
+                String new_password = sc.nextLine();
+                User updated_user = userManagerNeo4J.updateUser(
+                        new User(user.getUsername(),new_password, user.getGender(),user.getLogged_in(), user.getIs_admin()));
+                if(!(updated_user == null)){
+                    user = updated_user;
+                }
+                showMenu();
+            }
             case 3 -> viewFollowedUsers(); // TO DO
             case 4 -> viewPostedReviews();// TO DO
             case 0 -> showMenu();

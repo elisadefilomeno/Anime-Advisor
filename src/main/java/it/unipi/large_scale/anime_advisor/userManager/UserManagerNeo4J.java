@@ -121,7 +121,12 @@ public class UserManagerNeo4J {
         return u;
     }
 
-    public void updateUser(User u) {
+    public User updateUser(User u) {
+        if (u.getPassword()==null || u.getPassword().equals("")) {
+            System.out.println("Invalid Password!");
+            return null;
+        }
+
         try (Session session = dbNeo4J.getDriver().session()) {
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -144,7 +149,11 @@ public class UserManagerNeo4J {
             System.out.println("Unable to update user due to an error");
         }
         System.out.println("User correctly updated");
-
+        u.setPassword(u.getPassword());
+        u.setGender(u.getGender());
+        u.setLogged_in(u.getLogged_in());
+        u.setIs_admin(u.getIs_admin());
+        return u;
     }
 
 
@@ -388,7 +397,7 @@ public class UserManagerNeo4J {
         int temp_psw=1;
         while(temp_psw==1){
 
-            if (password_user== null || password_user=="") {
+            if (password_user== null || password_user.equals("")) {
                 System.out.println("Invalid Password !!! \n");
                 System.out.println("Re-insert the password or press 0 to go back:");
                 password_user = sc.nextLine();
