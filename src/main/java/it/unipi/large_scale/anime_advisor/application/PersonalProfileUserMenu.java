@@ -11,13 +11,11 @@ import java.util.Scanner;
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
-import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;  // vale
 
 
 public class PersonalProfileUserMenu {
-    private AnimeManagerNeo4J animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);  //vale
     private BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
-    private Registered_Home_page registered_home_page = new Registered_Home_page();
+    private Registered_Home_page registered_home_page;
     
     
     public void showMenu(){
@@ -53,7 +51,10 @@ public class PersonalProfileUserMenu {
             case 2 -> viewFollowedAnime();
             case 3 -> viewFollowedUsers();
             case 4 -> viewPostedReviews();
-            case 0 -> registered_home_page.showMenu();
+            case 0 -> {
+                this.registered_home_page = new Registered_Home_page();
+                registered_home_page.showMenu();
+            }
             default -> System.out.println("ATTENTION! Wrong command");
         }
     }
