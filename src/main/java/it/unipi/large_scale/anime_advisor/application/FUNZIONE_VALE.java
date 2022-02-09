@@ -21,7 +21,7 @@ public class FUNZIONE_VALE {
             int i =0;
             Map<Integer, String> user_map_to_access_anime = new HashMap<>();
             System.out.println(GREEN+"**************************************"+RESET);
-            System.out.println("What anime would you like to see?");
+            System.out.println("Which anime would you like to see?");
             System.out.println("Digit:");
 
             for (String key : top10_anime.keySet()) {

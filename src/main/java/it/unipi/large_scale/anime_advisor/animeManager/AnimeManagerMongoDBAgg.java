@@ -16,7 +16,7 @@ import java.util.Map;
 public class AnimeManagerMongoDBAgg {
 
     //top 10 anime by specified field(Genres (multiple),year,source, type
-    public HashMap<Integer,String> topTenAnimeByField(MongoCollection<Document>doc,String field,int year,String t,String[] genres){
+    public HashMap<Integer,String> topTenAnimeByField(MongoCollection<Document>doc,String field,int year,String t,String[] genres,int limitg){
         //By Year
         HashMap<Integer,String> results=new HashMap<Integer,String>();
         if(field.equals("premiered")){
@@ -44,14 +44,26 @@ public class AnimeManagerMongoDBAgg {
         //By genre, User MUST specify which genre
         if(field.equals("genre")){
             try{
-                MongoCursor<Document> cursor =doc.aggregate(
-                        Arrays.asList(
-                                Aggregates.match(Filters.all("genre",genres)),
-                                Aggregates.sort(Sorts.descending("scored")),
-                                Aggregates.limit(10)
+                MongoCursor<Document> cursor;
+                if(limitg==1) {
+                   cursor= doc.aggregate(
+                            Arrays.asList(
+                                    Aggregates.match(Filters.all("genre", genres)),
+                                    Aggregates.sort(Sorts.descending("scored")),
+                                    Aggregates.limit(10)
 
-                        )
-                ).iterator();
+                            )
+                    ).iterator();
+                }
+                else{
+                  cursor=  doc.aggregate(
+                            Arrays.asList(
+                                    Aggregates.match(Filters.all("genre", genres)),
+                                    Aggregates.sort(Sorts.descending("scored"))
+                            )
+                    ).iterator();
+
+                }
                 int temp=1;
                 while (cursor.hasNext()){
                     results.put(temp,cursor.next().get("name").toString());

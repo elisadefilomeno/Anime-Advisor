@@ -52,6 +52,36 @@ public class AnimeManagerMongoDBCRUD{
         System.out.println("Producer:" + doc.get("producer"));
         System.out.println("Licensor:" + doc.get("licensor"));
     }
+    public void printAnimeResults(HashMap<Integer,String> map){
+        int elements=map.size();
+        int temp=0;
+        int answ=0;
+        Scanner sc=new Scanner(System.in);
+        for(int i=0;i<elements;i++){
+            answ=0;
+            System.out.println((i+1)+") "+map.get(i+1));
+            temp++;
+            if(temp==10) {
+                while (answ != 1 && answ != 2) {
+                    try {
+                        System.out.println("Do you want to see more results?\n1) YES 2) NO");
+                        answ = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("ATTENTION! Wrong command\n");
+                        continue;
+                    }
+                }
+                    if (answ == 1) {
+                        temp = 0;
+                    }
+                    if (answ == 2) break;
+
+            }
+        }
+        return;
+    }
+
+
 
     //Creates a new document and put it into the collection specified
     public void createAnime(Anime anime, MongoCollection<Document> collection) {

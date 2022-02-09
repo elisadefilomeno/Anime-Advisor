@@ -63,7 +63,6 @@ public class Interface {
             }
             else if(value_case==3){
                 browse_anime_menu.showMenu();
-                System.out.println("TO DO: Browse Anime");
                 continue;
             }
         }
