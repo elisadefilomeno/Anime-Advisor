@@ -186,6 +186,7 @@ public class GraphPopulator implements AutoCloseable{
                                 "MERGE (u)-[:CREATED]->(r)",
                         parameters("r_id", r.getId(), "username", r.getProfile())
                 );
+
                 if ((i%1000)==0){
                     System.out.println("total review nodes:"+ Integer.toString(i));
                 }

@@ -1,6 +1,7 @@
 package it.unipi.large_scale.anime_advisor.userManager;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
+import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -13,7 +14,7 @@ import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET
 import static org.neo4j.driver.Values.parameters;
 
 public class UserManagerNeo4J {
-    private final DbManagerNeo4J dbNeo4J;
+    private DbManagerNeo4J dbNeo4J;
 
     public UserManagerNeo4J(DbManagerNeo4J dbNeo4J) {
         this.dbNeo4J = dbNeo4J;
@@ -90,7 +91,43 @@ public class UserManagerNeo4J {
 
     }
 
-    public void updateUser(User u) {
+    public User modifyUsername(User u, String new_username){
+        if(checkIfPresent(new_username)){
+            System.out.println("This username is already used! Cannot modify");
+            return u;
+        }
+        if (new_username== null || new_username.equals("")) {
+            System.out.println("Invalid Username!");
+            return u;
+        }
+        try (Session session = dbNeo4J.getDriver().session()) {
+
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run("MATCH (u:User) WHERE u.username = $username " +
+                                "SET u.username=$new_username",
+                        parameters(
+                                "username", u.getUsername(),
+                                "new_username", new_username
+                        )
+                );
+                return null;
+            });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Unable to modify username due to an error");
+        }
+        System.out.println("Correctly modified username!");
+        u.setUsername(new_username);
+        return u;
+    }
+
+    public User updateUser(User u) {
+        if (u.getPassword()==null || u.getPassword().equals("")) {
+            System.out.println("Invalid Password!");
+            return null;
+        }
+
         try (Session session = dbNeo4J.getDriver().session()) {
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -113,7 +150,11 @@ public class UserManagerNeo4J {
             System.out.println("Unable to update user due to an error");
         }
         System.out.println("User correctly updated");
-
+        u.setPassword(u.getPassword());
+        u.setGender(u.getGender());
+        u.setLogged_in(u.getLogged_in());
+        u.setIs_admin(u.getIs_admin());
+        return u;
     }
 
 
@@ -209,47 +250,6 @@ public class UserManagerNeo4J {
         }
 
         return user;
-    }
-
-    public void followAnime(String username, String anime_title){
-        try(Session session= dbNeo4J.getDriver().session()){
-
-            session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ("match (u:User) where u.username= $username " +
-                                "match (a:Anime) where a.title=$title " +
-                                "merge (u)-[:FOLLOWS]->(a)",
-                        parameters(
-                                "title", anime_title,
-                                "username", username
-                        ));
-                return null;
-            } );
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-            System.out.println("unable to follow anime due to an error");
-        }
-        System.out.println("Correctly followed anime");
-    }
-
-    public void unfollowAnime(String username, String anime_title){
-        try(Session session= dbNeo4J.getDriver().session()){
-
-            session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ("match (u:User {username: $username}) -[f:FOLLOWS]-> (b:Anime {title:$title}) " +
-                                "delete f",
-                        parameters(
-                                "title", anime_title,
-                                "username", username
-                        ));
-                return null;
-            } );
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-            System.out.println("unable to unfollow anime due to an error");
-        }
-        System.out.println("Correctly unfollowed anime");
     }
 
     public void followUser(String username, String to_follow_username){
@@ -398,7 +398,7 @@ public class UserManagerNeo4J {
         int temp_psw=1;
         while(temp_psw==1){
 
-            if (password_user== null || password_user=="") {
+            if (password_user== null || password_user.equals("")) {
                 System.out.println("Invalid Password !!! \n");
                 System.out.println("Re-insert the password or press 0 to go back:");
                 password_user = sc.nextLine();
@@ -520,7 +520,7 @@ public class UserManagerNeo4J {
     public Set<String> getVerySuggestedUsers(String username){
         // set can't contain duplicate username strings
 
-        Set<String> very_sugggested_users = new HashSet<String>();
+        Set<String> very_sugggested_users = new HashSet<>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -552,7 +552,7 @@ public class UserManagerNeo4J {
 
     public Set<String> getSuggestedUsersLowPriority(String username){
         // set can't contain duplicate title strings
-        Set<String> sugggested_users = new HashSet<String>();
+        Set<String> sugggested_users = new HashSet<>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -598,4 +598,59 @@ public class UserManagerNeo4J {
         return suggested_users;
     }
 
+    public Set<String> getFollowedAnime(User user) {
+        Set<String> followed_anime = new HashSet<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u:User)-[:FOLLOWS]->(a:Anime)" +
+                                " WHERE u.username = $username " +
+                                "RETURN a.title",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String followed=r.get("a.title").asString();
+                    followed_anime.add(followed);
+
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get followed anime due to an error");
+        }
+        return followed_anime;
+    }
+
+    public Set<String> getFollowedUsers(User user) {
+        Set<String> followed_users = new HashSet<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)" +
+                                " WHERE u1.username = $username and u1<>u2 " +
+                                "RETURN u2.username",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String followed=r.get("u2.username").asString();
+                    followed_users.add(followed);
+
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get followed users due to an error");
+        }
+        return followed_users;
+    }
 }

@@ -49,7 +49,7 @@ public class Interface {
                 else{
                     user = logged_user;
                     System.out.println(GREEN+"**************************************"+RESET);
-                    System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+RESET+"!");
+                    System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+"!"+RESET);
                     registered_home_page.showMenu();
                 }
 
