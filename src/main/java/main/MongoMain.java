@@ -6,6 +6,10 @@ import it.unipi.large_scale.anime_advisor.dbManager.*;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import org.bson.Document;
 
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
+
 //da rimuovere
 
 
@@ -23,7 +27,12 @@ public class MongoMain {
         AnimeManagerMongoDBCRUD amc= new AnimeManagerMongoDBCRUD();
         AnimeManagerMongoDBAgg amg=new AnimeManagerMongoDBAgg();
         Anime anime=new Anime();
-        anime.setAnime_name("Anime Test");
+        Anime a=new Anime();
+        a.setAnime_name("akira");
+        HashMap<Integer,String> r;
+        HashMap<String,Double> b;
+
+       /* anime.setAnime_name("Anime Test");
         anime.setEpisodes(20);
         anime.setPremiered(1999);
         String[] g={"Action","Adventure"};
@@ -39,13 +48,34 @@ public class MongoMain {
         anime.setScoredby(0);
         anime.setScored(0.0);
         anime.setMembers(0);
-        amc.createAnime(anime,collection);
-        amc.readAnime(anime,collection);
+        amc.createAnime(anime,collection); */
         //TEST MONGO CRUD
-        amg.entityProdByType(collection,"studio",1999);
+        //amg.entityProdByType(collection,"studio",1999);
+
+        System.out.println("studio 0");
+
+       amg.highAvgEntity(collection,"studio",0);
+
+        System.out.println("studio 2000");
+        amg.highAvgEntity(collection,"studio",2000);
+
+        System.out.println("genre 0 ");
+        amg.highAvgEntity(collection,"genre",2000);
+
+        System.out.println("genre 2000");
+        amg.highAvgEntity(collection,"genre",0);
+
+        System.out.println("producer 0");
+        amg.highAvgEntity(collection,"producer",2000);
+
+        System.out.println("producer 2000");
+        amg.highAvgEntity(collection,"producer",2000);
+
 
 
         mongoM.closeMongo();
+
+
 
 
 
