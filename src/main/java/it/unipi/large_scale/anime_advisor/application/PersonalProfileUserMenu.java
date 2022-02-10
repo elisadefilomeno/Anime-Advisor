@@ -117,7 +117,7 @@ public class PersonalProfileUserMenu {
         }
         switch (value_case) {
             case 1 -> {
-                System.out.println("Insert the number of the anime you want to visit: ");
+                System.out.println("Insert the number of the user you want to visit: ");
                 int user_number = 0;
                 try{
                     user_number = Integer.parseInt(sc.nextLine());
