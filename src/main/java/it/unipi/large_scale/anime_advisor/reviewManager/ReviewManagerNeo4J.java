@@ -67,7 +67,7 @@ public class ReviewManagerNeo4J{
         try (Session session = dbNeo4J.getDriver().session()) {
             session.run(
                     "MATCH (r:Review{ title: $titleR}), (a:Anime{title: $title})" +
-                            " MERGE (a)-[:REFERRED_TO]->(r)",
+                            " MERGE (r)-[:REFERRED_TO]->(a)",
                     parameters("titleR", r.getTitle(),
                             "title",a.getAnime_name())
             );
@@ -248,6 +248,109 @@ public class ReviewManagerNeo4J{
         }
         System.out.println(rev_count>0);
         return (rev_count>0);
+    }
+
+    public ArrayList<Review> list_Review(Anime a){
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review) -[f:REFERRED_TO]-> (a:Anime {title:$title}) "+
+                                " RETURN r.title,r.text,r.last_update LIMIT 10",
+                        parameters(
+                                "title", a.getAnime_name()
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
+    }
+    public ArrayList<Review> listLatestReviewByAnime(Anime a){
+
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review) -[f:REFERRED_TO]-> (a:Anime {title:$title}) "+
+                                " RETURN r.title,r.text,r.last_update ORDER BY r.last_update DESC LIMIT 10",
+                        parameters(
+                                "title", a.getAnime_name()
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
+    }
+    public ArrayList<Review> filterReviewByKeyWord(Anime a,String keyword){
+
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review) -[f:REFERRED_TO]-> (a:Anime {title:$title}) "+
+                                " WHERE r.title CONTAINS $keyword RETURN r.title,r.text,r.last_update ORDER BY r.last_update DESC LIMIT 10",
+                        parameters(
+                                "title", a.getAnime_name(),
+                                "keyword",keyword
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
     }
 
    /* public static void main(String[] args) throws Exception {

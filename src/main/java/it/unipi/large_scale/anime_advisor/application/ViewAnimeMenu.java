@@ -14,6 +14,7 @@ import static it.unipi.large_scale.anime_advisor.application.Main.anime_collecti
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 
 public class ViewAnimeMenu {
+    private final BrowseReviewsMenu browseReviewsMenu = new BrowseReviewsMenu();
     public void showMenu(Anime anime) {
         AnimeManagerMongoDBCRUD crud = new AnimeManagerMongoDBCRUD();
         BrowseAnimeMenu backMenu = new BrowseAnimeMenu();
@@ -23,7 +24,7 @@ public class ViewAnimeMenu {
         System.out.println("What would you like to do?");
         System.out.println("Digit:");
         System.out.println("1) Follow anime");
-        System.out.println("2) Review anime");
+        System.out.println("2) Review anime"); //io
         System.out.println("3) Vote anime");
         System.out.println("4) Update anime");
         System.out.println("5) Delete anime");
@@ -43,7 +44,9 @@ public class ViewAnimeMenu {
         switch (value_case) {
             case 1:
                 break;
-            case 2:
+            case 2:     browseReviewsMenu.showMenu(anime);
+
+
             case 3: {
                 int score=-1;
                     while (!(score>=0)&&!(score<=10)) {
