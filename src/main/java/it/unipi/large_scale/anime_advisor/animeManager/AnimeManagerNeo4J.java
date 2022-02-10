@@ -18,10 +18,10 @@ public class AnimeManagerNeo4J{
         this.dbNeo4J = dbNeo4J;
     }
 
-    public void createAnime(String anime_title) {
+    public boolean createAnime(String anime_title) {
         if(checkIfPresent(anime_title)){
             System.out.println("Anime already present\n");
-        return;
+        return false;
         }
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -33,12 +33,14 @@ public class AnimeManagerNeo4J{
                 );
                 return null;
             });
-            System.out.println("Anime node inserted correctly\n");
+            System.out.println("Anime inserted correctly\n");
 
         }catch(Exception ex){
             ex.printStackTrace();
             System.out.println("Unable to create node due to an error");
+            return false;
         }
+        return true;
     }
 
     public void readAnime(Anime anime) {
@@ -97,14 +99,14 @@ public class AnimeManagerNeo4J{
 
     }
 
-    public void deleteAnime(String anime_title) {
+    public boolean deleteAnime(String anime_title) {
         if(anime_title==null){
             System.out.println("Anime title not inserted, unable to delete");
-            return;
+            return false;
         }
         if(!checkIfPresent(anime_title)){
             System.out.println("Cannot delete, anime not present in database");
-            return;
+            return false;
         }
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -116,11 +118,13 @@ public class AnimeManagerNeo4J{
                 );
                 return null;
             });
+            System.out.println("Anime deleted correctly\n");
+
 
         }catch(Exception ex){
             ex.printStackTrace();
         }
-
+        return true;
     }
 
     public void followAnime(String username, String anime_title){
