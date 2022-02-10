@@ -1,8 +1,5 @@
 package it.unipi.large_scale.anime_advisor.application;
 
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
@@ -23,7 +20,7 @@ public class PersonalProfileUserMenu {
     private Interface anInterface;
 
     private ViewAnimeMenu viewAnimeMenu;
-    private ViewUserMenu viewUserMenu;
+//    private ViewUserMenu viewUserMenu;
     private ViewReviewMenu viewReviewMenu;
     private Registered_Home_page registered_home_page;
     
@@ -50,9 +47,9 @@ public class PersonalProfileUserMenu {
         System.out.println("Digit:");
         System.out.println("0) Go Back To Home Page");
         System.out.println("1) Modify your profile");
-        System.out.println("2) View all the anime you are following");
+        System.out.println("2) View all the anime you like");
         System.out.println("3) View all the users you are following");
-        System.out.println("4) View all the reviews you have posted");
+        System.out.println("4) View all the reviews you have written");
 
         System.out.println(GREEN+"**************************************"+RESET);
         System.out.println("Write your command here:");
@@ -67,9 +64,9 @@ public class PersonalProfileUserMenu {
         }
         switch (value_case) {
             case 1 -> modifyProfile();
-            case 2 -> viewFollowedAnime();
+            case 2 -> viewLikedAnime();
             case 3 -> viewFollowedUsers();
-            case 4 -> viewPostedReviews();
+            case 4 -> viewWrittenReviews();
             case 0 -> {
                 this.registered_home_page = new Registered_Home_page();
                 registered_home_page.showMenu();
@@ -78,8 +75,8 @@ public class PersonalProfileUserMenu {
         }
     }
 
-    private void viewPostedReviews() {
-        System.out.println("TO DO: viewPostedReviews");
+    private void viewWrittenReviews() {
+        System.out.println("TO DO: viewWrittenReviews");
         Set<String> followed_users = userManagerNeo4J.getFollowedUsers(user);
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Followed Users:");
@@ -115,23 +112,23 @@ public class PersonalProfileUserMenu {
         }
         switch (value_case) {
             case 1 -> {
-                System.out.println("Insert the number of the review you want to see: ");
-                int user_number = 0;
-                try{
-                    user_number = Integer.parseInt(sc.nextLine());
-                }
-                catch(Exception e){
-                    System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
-                }
-                if(!user_map_to_access_users.containsKey(user_number)){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu();
-                }
-                User u = new User();
-                u.setUsername(user_map_to_access_users.get(user_number));
-                viewUserMenu = new ViewUserMenu();
-                viewUserMenu.showMenu(u);
+//                System.out.println("Insert the number of the review you want to see: ");
+//                int user_number = 0;
+//                try{
+//                    user_number = Integer.parseInt(sc.nextLine());
+//                }
+//                catch(Exception e){
+//                    System.out.println("ATTENTION! Wrong command");
+//                    this.showMenu();
+//                }
+//                if(!user_map_to_access_users.containsKey(user_number)){
+//                    System.out.println("ATTENTION! Wrong number");
+//                    this.showMenu();
+//                }
+//                User u = new User();
+//                u.setUsername(user_map_to_access_users.get(user_number));
+//                viewUserMenu = new ViewUserMenu();
+//                viewUserMenu.showMenu(u);
             }
             case 0 -> this.showMenu();
             default -> System.out.println("ATTENTION! Wrong command");
@@ -174,34 +171,34 @@ public class PersonalProfileUserMenu {
             this.showMenu();
         }
         switch (value_case) {
-            case 1 -> {
-                System.out.println("Insert the number of the user you want to visit: ");
-                int user_number = 0;
-                try{
-                    user_number = Integer.parseInt(sc.nextLine());
-                }
-                catch(Exception e){
-                    System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
-                }
-                if(!user_map_to_access_users.containsKey(user_number)){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu();
-                }
-                User u = new User();
-                u.setUsername(user_map_to_access_users.get(user_number));
-                viewUserMenu = new ViewUserMenu();
-                viewUserMenu.showMenu(u);
-            }
+//            case 1 -> {
+//                System.out.println("Insert the number of the user you want to visit: ");
+//                int user_number = 0;
+//                try{
+//                    user_number = Integer.parseInt(sc.nextLine());
+//                }
+//                catch(Exception e){
+//                    System.out.println("ATTENTION! Wrong command");
+//                    this.showMenu();
+//                }
+//                if(!user_map_to_access_users.containsKey(user_number)){
+//                    System.out.println("ATTENTION! Wrong number");
+//                    this.showMenu();
+//                }
+//                User u = new User();
+//                u.setUsername(user_map_to_access_users.get(user_number));
+//                viewUserMenu = new ViewUserMenu();
+//                viewUserMenu.showMenu(u);
+//            }
             case 0 -> this.showMenu();
             default -> System.out.println("ATTENTION! Wrong command");
         }
     }
 
-    private void viewFollowedAnime() {
-        Set<String> followed_anime = userManagerNeo4J.getFollowedAnime(user);
+    private void viewLikedAnime() {
+        Set<String> followed_anime = userManagerNeo4J.getLikedAnime(user);
         System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("Followed Anime:");
+        System.out.println("Liked Anime:");
         HashMap<Integer, String> user_map_to_access_anime= new HashMap<>();
         anInterface = new Interface();
         int key = 0;
@@ -213,7 +210,7 @@ public class PersonalProfileUserMenu {
             anInterface.printResults(user_map_to_access_anime);
         }
         else
-            System.out.println("You don't follow any anime");
+            System.out.println("You don't like any anime");
 
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("What would you like to do?");
