@@ -1,7 +1,9 @@
 package it.unipi.large_scale.anime_advisor.application;
 
+import it.unipi.large_scale.anime_advisor.entity.User;
+
 public class ViewUserMenu {
-    public void showMenu(){
+    public void showMenu(User u){
         System.out.println("To do");
         //1) vede info user,
         // 2) vuoi seguire l'utente?

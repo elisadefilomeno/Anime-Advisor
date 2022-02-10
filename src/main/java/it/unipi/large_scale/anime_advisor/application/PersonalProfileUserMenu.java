@@ -23,6 +23,7 @@ public class PersonalProfileUserMenu {
     private Interface anInterface;
     private AnimeManagerNeo4J animeManagerNeo4J;
     private ViewAnimeMenu viewAnimeMenu;
+    private ViewUserMenu viewUserMenu;
     private Registered_Home_page registered_home_page;
     
     
@@ -129,9 +130,10 @@ public class PersonalProfileUserMenu {
                     System.out.println("ATTENTION! Wrong number");
                     this.showMenu();
                 }
-                User u = new User(user_map_to_access_users.get(user_number));
+                User u = new User();
+                u.setUsername(user_map_to_access_users.get(user_number));
                 viewUserMenu = new ViewUserMenu();
-                viewUserMenu.showMenu(anime);
+                viewUserMenu.showMenu(u);
             }
             case 0 -> this.showMenu();
             default -> System.out.println("ATTENTION! Wrong command");
