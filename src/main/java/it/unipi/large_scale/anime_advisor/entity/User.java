@@ -10,6 +10,22 @@ public class User {
     private boolean logged_in;  // default = false
     private boolean is_admin;  // default = false
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User() {
+    }
+
+    public User(String username, String password, String gender, boolean logged_in, boolean is_admin) {
+        this.username = username;
+        this.password = password;
+        this.gender = gender;
+        this.logged_in = logged_in;
+        this.is_admin = is_admin;
+    }
+
     //SET METHODS
     public void setUsername(String username) {
         this.username = username;
@@ -51,6 +67,7 @@ public class User {
     public boolean getIs_admin() {
         return is_admin;
     }
+
 
     //OTHERS METHODS
     @Override

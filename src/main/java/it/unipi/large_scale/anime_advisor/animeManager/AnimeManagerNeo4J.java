@@ -6,6 +6,7 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
 
+
 import java.util.*;
 
 import static org.neo4j.driver.Values.parameters;
@@ -122,6 +123,55 @@ public class AnimeManagerNeo4J{
 
     }
 
+    public void followAnime(String username, String anime_title){
+        if(!checkIfPresent(anime_title)){
+            System.out.println("Anime not present in the database, cannot follow it");
+            return;
+        }
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run ("match (u:User) where u.username= $username " +
+                                "match (a:Anime) where a.title=$title " +
+                                "merge (u)-[:FOLLOWS]->(a)",
+                        parameters(
+                                "title", anime_title,
+                                "username", username
+                        ));
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("unable to follow anime due to an error");
+        }
+        System.out.println("Correctly followed anime");
+    }
+
+    public void unfollowAnime(String username, String anime_title){
+        if(!checkIfPresent(anime_title)){
+            System.out.println("Anime not present in the database, cannot unfollow it");
+            return;
+        }
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run ("match (u:User {username: $username}) -[f:FOLLOWS]-> (b:Anime {title:$title}) " +
+                                "delete f",
+                        parameters(
+                                "title", anime_title,
+                                "username", username
+                        ));
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("unable to unfollow anime due to an error");
+        }
+        System.out.println("Correctly unfollowed anime");
+    }
+
     public boolean checkIfPresent(String anime_title){
         if(anime_title==null){
             System.out.println("Anime title not inserted");
@@ -190,6 +240,35 @@ public class AnimeManagerNeo4J{
 
 
     //ANALYTICS
+    public NavigableMap<String, Integer> getTop10MostFollowedAnime(){
+        TreeMap<String, Integer> n_most_followed_anime_map = new TreeMap<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH(u:User)-[f:FOLLOWS]->(a:Anime) " +
+                                "WITH a, count(u) AS count " +
+                                "ORDER BY count DESC " +
+                                "RETURN a.title, count LIMIT 10"
+                );
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    if(!r.get("a.title").isNull()){
+                        String anime_title=r.get("a.title").asString();
+                        int n_followers = r.get("count").asInt();
+                        n_most_followed_anime_map.put(anime_title, n_followers);
+                    };
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get very suggested anime due to an error");
+        }
+        return n_most_followed_anime_map;
+    }
+
 
     public Set<String> getVerySuggestedAnime(String username){
         // set can't contain duplicate title strings

@@ -20,7 +20,7 @@ public class Main {
             userManagerNeo4J =new UserManagerNeo4J(dbNeo4J);
             DbManagerMongoDB mongoM=new DbManagerMongoDB("mongodb://localhost:27017");
             mongoM.startMongo("Anime_Advisor");
-            MongoCollection<Document> anime_collection= mongoM.getCollection("anime");
+            anime_collection= mongoM.getCollection("anime");
 
         } catch (Exception e) {
             System.out.println("Error");

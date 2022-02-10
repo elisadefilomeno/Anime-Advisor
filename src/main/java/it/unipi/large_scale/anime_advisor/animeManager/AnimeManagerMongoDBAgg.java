@@ -2,6 +2,7 @@ package it.unipi.large_scale.anime_advisor.animeManager;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
@@ -14,78 +15,125 @@ import java.util.Map;
 
 public class AnimeManagerMongoDBAgg {
 
-    //top 10 anime by specified field
-    public void topTenAnimeByField(MongoCollection<Document>doc,String field,int year,String t,String[] genres){
+    //top 10 anime by specified field(Genres (multiple),year,source, type
+    public HashMap<Integer,String> topTenAnimeByField(MongoCollection<Document>doc,String field,int year,String t,String[] genres,int limitg){
         //By Year
+        HashMap<Integer,String> results=new HashMap<Integer,String>();
         if(field.equals("premiered")){
             try{
-                doc.aggregate(
+                MongoCursor<Document> cursor =doc.aggregate(
                         Arrays.asList(
                         Aggregates.match(Filters.eq("premiered",year)),
                         Aggregates.sort(Sorts.descending("scored")),
                         Aggregates.limit(10)
 
                         )
-                ).forEach(d->System.out.println(d.toJson()));
+                ).iterator();
+                int temp=1;
+                while (cursor.hasNext()){
+                    results.put(temp,cursor.next().get("name").toString());
+                    temp++;
+                }
+                return results;
 
             } catch (MongoException e){
                 System.out.println("An error has occurred:"+e);
+                return null;
             }
         }
         //By genre, User MUST specify which genre
         if(field.equals("genre")){
             try{
-                doc.aggregate(
-                        Arrays.asList(
-                                Aggregates.match(Filters.all("genre",genres)),
-                                Aggregates.sort(Sorts.descending("scored")),
-                                Aggregates.limit(10)
+                MongoCursor<Document> cursor;
+                if(limitg==1) {
+                   cursor= doc.aggregate(
+                            Arrays.asList(
+                                    Aggregates.match(Filters.all("genre", genres)),
+                                    Aggregates.sort(Sorts.descending("scored")),
+                                    Aggregates.limit(10)
 
-                        )
-                ).forEach(d->System.out.println(d.toJson()));
+                            )
+                    ).iterator();
+                }
+                else{
+                  cursor=  doc.aggregate(
+                            Arrays.asList(
+                                    Aggregates.match(Filters.all("genre", genres)),
+                                    Aggregates.sort(Sorts.descending("scored"))
+                            )
+                    ).iterator();
+
+                }
+                int temp=1;
+                while (cursor.hasNext()){
+                    results.put(temp,cursor.next().get("name").toString());
+                    temp++;
+                }
+                return results;
 
             } catch (MongoException e){
                 System.out.println("An error has occurred:"+e);
+                return null;
+
             }
         }
         if(field.equals("type")){
             try{
-                doc.aggregate(
+                MongoCursor<Document> cursor =doc.aggregate(
                         Arrays.asList(
                                 Aggregates.match(Filters.eq("type",t)),
                                 Aggregates.sort(Sorts.descending("scored")),
                                 Aggregates.limit(10)
 
                         )
-                ).forEach(d->System.out.println(d.toJson()));
+                ).iterator();
+                int temp=1;
+                while (cursor.hasNext()){
+                    results.put(temp,cursor.next().get("name").toString());
+                    temp++;
+                }
+                return results;
 
             } catch (MongoException e){
                 System.out.println("An error has occurred:"+e);
+                return null;
+
             }
         }
         if(field.equals("source")){
             try{
-                doc.aggregate(
+                MongoCursor<Document> cursor =doc.aggregate(
                         Arrays.asList(
                                 Aggregates.match(Filters.eq("source",t)),
                                 Aggregates.sort(Sorts.descending("scored")),
                                 Aggregates.limit(10)
 
                         )
-                ).forEach(d->System.out.println(d.toJson()));
+                ).iterator();
+                int temp=1;
+                while (cursor.hasNext()){
+                    results.put(temp,cursor.next().get("name").toString());
+                    temp++;
+                }
+                return results;
 
             } catch (MongoException e){
                 System.out.println("An error has occurred:"+e);
+                return null;
+
             }
         }
+        System.out.println("Wrong field specified");
+        return null;
 
     }
     //entity with the highes average score in an year or all over the years
     //entity can be Studio Genre or Producer
+    //NOTE: when you use this in the interface method create a new hash map there with INDEX-NAME
     public void highAvgEntity (MongoCollection<Document>doc,String entity, int year){
         if(year!=0) {
             try {
-                doc.aggregate(
+              doc.aggregate(
                         Arrays.asList(
                                 Aggregates.match(Filters.eq("premiered", year)),
                                 Aggregates.unwind("$".concat(entity)),
@@ -94,26 +142,27 @@ public class AnimeManagerMongoDBAgg {
                                 Aggregates.limit(10)
 
                         )
-                ).forEach(d -> System.out.println(d.toJson()));
+                ).forEach(d->System.out.println(d.toJson()));
+            } catch (MongoException e){
+                System.out.println("An error has occurred:"+e);
 
-            } catch (MongoException e) {
-                System.out.println("An error has occurred:" + e);
             }
         }
         else {
             try {
                 doc.aggregate(
                         Arrays.asList(
+                                Aggregates.match(Filters.ne(entity,"Unknown")),
                                 Aggregates.unwind("$".concat(entity)),
                                 Aggregates.group("$".concat(entity),Accumulators.avg("average","$scored")),
                                 Aggregates.sort(Sorts.descending("average")),
                                 Aggregates.limit(10)
 
                         )
-                ).forEach(d -> System.out.println(d.toJson()));
+                ).forEach(d->System.out.println(d.toJson()));
+            } catch (MongoException e){
+                System.out.println("An error has occurred:"+e);
 
-            } catch (MongoException e) {
-                System.out.println("An error has occurred:" + e);
             }
 
 

@@ -13,12 +13,14 @@ import com.mongodb.client.result.UpdateResult;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
-
+import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 
 
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class AnimeManagerMongoDBCRUD{
 
@@ -34,6 +36,52 @@ public class AnimeManagerMongoDBCRUD{
 
         return collection.countDocuments(query) != 0;
     }
+
+    public void printDoc(Document doc){
+        //System.out.println(doc.toJson());
+        System.out.println("Name:" + doc.get("name"));
+        System.out.println("Episodes:" + doc.get("episodes"));
+        System.out.println("Premiered:" + doc.get("premiered"));
+        System.out.println("Genres:" + doc.get("genre"));
+        System.out.println("Type:" + doc.get("type"));
+        System.out.println("Source:" + doc.get("source"));
+        System.out.println("Score:" + doc.get("scored"));
+        System.out.println("Scored By:" + doc.get("scoredBy"));
+        System.out.println("Followers:" + doc.get("members"));
+        System.out.println("Studio:" + doc.get("studio"));
+        System.out.println("Producer:" + doc.get("producer"));
+        System.out.println("Licensor:" + doc.get("licensor"));
+    }
+    public void printAnimeResults(HashMap<Integer,String> map){
+        int elements=map.size();
+        int temp=0;
+        int answ=0;
+        Scanner sc=new Scanner(System.in);
+        for(int i=0;i<elements;i++){
+            answ=0;
+            System.out.println((i+1)+") "+map.get(i+1));
+            temp++;
+            if(temp==10) {
+                while (answ != 1 && answ != 2) {
+                    try {
+                        System.out.println("Do you want to see more results?\n1) YES 2) NO");
+                        answ = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("ATTENTION! Wrong command\n");
+                        continue;
+                    }
+                }
+                    if (answ == 1) {
+                        temp = 0;
+                    }
+                    if (answ == 2) break;
+
+            }
+        }
+        return;
+    }
+
+
 
     //Creates a new document and put it into the collection specified
     public void createAnime(Anime anime, MongoCollection<Document> collection) {
@@ -59,15 +107,32 @@ public class AnimeManagerMongoDBCRUD{
         }
     }
 
-    //Find and print if present the document specified in the collection
-    public void readAnime(Anime anime, MongoCollection<Document> collection) {
+    //Find and print if present the document specified in the collection Return anime result
+    public Anime readAnime(Anime anime, MongoCollection<Document> collection) {
         if(!checkIfPresent(anime, collection)){
             System.out.println("Document not found\n");
-            return;}
+            return null;}
        Document result= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
-        System.out.println(result.toJson());
-
+       // printDoc(result);
+        printDoc(result);
+        Anime a=new Anime();
+        a.setAnime_name(result.get("name").toString());
+        return a;
     }
+    //Return an hashmap with the number(key) of anime names (value) having the specified genre
+    public HashMap<Integer,String> findAnimeByGenre(String genre, MongoCollection<Document> collection) {
+        HashMap<Integer,String> results=new HashMap<Integer, String>();
+       try (MongoCursor<Document> cursor = collection.find(eq("genre",genre)).iterator())
+       {
+           int temp=1;
+           while (cursor.hasNext()){
+               results.put(temp,cursor.next().get("name").toString());
+               temp++;
+           }
+             return results;  }
+       catch(MongoException e){System.out.println("Error during search");return null;}
+    }
+
 
     public void updateAnime(Anime anime, MongoCollection<Document> db) {
 

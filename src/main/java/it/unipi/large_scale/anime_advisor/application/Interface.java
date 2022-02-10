@@ -7,11 +7,13 @@ import java.util.Scanner;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.*;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo4J;
+import it.unipi.large_scale.anime_advisor.application.BrowseAnimeMenu;
 
 
 public class Interface {
-    protected static User user;
+    public static User user=null;
     private Registered_Home_page registered_home_page = new Registered_Home_page();
+    private BrowseAnimeMenu browse_anime_menu= new BrowseAnimeMenu();
 
     public void showMenu(){
         int value_case =0;
@@ -47,7 +49,7 @@ public class Interface {
                 else{
                     user = logged_user;
                     System.out.println(GREEN+"**************************************"+RESET);
-                    System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+RESET+"!");
+                    System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+"!"+RESET);
                     registered_home_page.showMenu();
                 }
 
@@ -60,8 +62,7 @@ public class Interface {
                 continue;
             }
             else if(value_case==3){
-
-                System.out.println("TO DO: Browse Anime");
+                browse_anime_menu.showMenu();
                 continue;
             }
         }
