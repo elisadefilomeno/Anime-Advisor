@@ -1,11 +1,14 @@
 package it.unipi.large_scale.anime_advisor.application;
 
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -17,8 +20,9 @@ import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 public class PersonalProfileUserMenu {
     private UserManagerNeo4J userManagerNeo4J;
+    private AnimeManagerMongoDBCRUD am;
     private AnimeManagerNeo4J animeManagerNeo4J;
-    private BrowseAnimeMenu browseAnimeMenu;
+    private ViewAnimeMenu viewAnimeMenu;
     private Registered_Home_page registered_home_page;
     
     
@@ -95,18 +99,62 @@ public class PersonalProfileUserMenu {
         Set<String> followed_anime = userManagerNeo4J.getFollowedAnime(user);
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Followed Anime:");
-        System.out.println(followed_anime);
+        HashMap<Integer, String> user_map_to_access_anime= new HashMap<>();
+        am = new AnimeManagerMongoDBCRUD();
+        int key = 0;
+        if(!followed_anime.isEmpty()){
+            for(String anime: followed_anime){
+                key++;
+                user_map_to_access_anime.put(key, anime);
+            }
+            am.printAnimeResults(user_map_to_access_anime);
+        }
+        else
+            System.out.println("You don't follow any anime");
+
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("What would you like to do?");
         System.out.println("Digit:");
-        System.out.println("0) Go Back");
+        System.out.println("0) Go Back to your profile");
         System.out.println("1) View specific Anime info");
-        System.out.println("2) See next anime followed");
 
-
+        System.out.println(GREEN+"**************************************"+RESET);
+        System.out.println("Write your command here:");
+        Scanner sc =new Scanner(System.in);
+        int value_case=0;
+        try{
+            value_case = Integer.parseInt(sc.nextLine());
+        }
+        catch(Exception e){
+            System.out.println("ATTENTION! Wrong command");
+            this.showMenu();
+        }
+        switch (value_case) {
+            case 1 -> {
+                System.out.println("Insert the number of the anime you want to visit: ");
+                int anime_number = 0;
+                try{
+                    anime_number = Integer.parseInt(sc.nextLine());
+                }
+                catch(Exception e){
+                    System.out.println("ATTENTION! Wrong command");
+                    this.showMenu();
+                }
+                if(!user_map_to_access_anime.containsKey(anime_number)){
+                    System.out.println("ATTENTION! Wrong number");
+                    this.showMenu();
+                }
+                Anime anime = new Anime();
+                anime.setAnime_name(user_map_to_access_anime.get(anime_number));
+                viewAnimeMenu = new ViewAnimeMenu();
+                viewAnimeMenu.showMenu(anime);
+            }
+            case 0 -> this.showMenu();
+            default -> System.out.println("ATTENTION! Wrong command");
+        }
         System.out.println("TO DO: viewFollowedAnime");
-
     }
+
 
     private void modifyProfile() {
         System.out.println(GREEN + "**************************************" + RESET);
