@@ -2,21 +2,18 @@ package it.unipi.large_scale.anime_advisor.entity;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.lang.String;
 
 public final class Review {
 
-    private int id;
+
     private String profile;
     private String anime_title;
     private String title;       //title review
     private String text;         //text of the review
-    private int    score;        //user score
     private LocalDate last_update;   //date upload review
 
     //SET METHODS
-    public void setId(int id){
-        this.id = id;
-    }
     public void setProfile(String profile){
         this.profile=profile;
     }
@@ -29,17 +26,12 @@ public final class Review {
     public void setText(String text){
         this.text=text;
     }
-    public void setScore(int score){
-        this.score=score;
-    }
     public  void setLast_update(LocalDate d){
         this.last_update=d;
     }
 
     //GET METHODS
-    public int getId(){
-        return this.id;
-    }
+
     public String getProfile(){
         return this.profile;
     }
@@ -52,23 +44,20 @@ public final class Review {
     public String getText(){
         return this.text;
     }
-    public int getScore() {
-        return score;
-    }
     public LocalDate getLast_update(){return last_update;}
 
     public String toString(){
         String string=(
-                "Id : " +this.id +"\n" +
-                "User profile: "+this.profile+"\n"+
                 "Title review"+this.title+"\n"+
-                "Anime name: " +this.anime_title +"\n"+
-                "Review: \n" +this.text +"\n"+
-                "User score: " +this.score +"\n"+
+                "Review: " +this.text +"\n"+
                 "Last Update:" + this.last_update.toString()
                 );
         return string;
     }
 
-
+    public static LocalDate stringToDate(String s){
+        String [] parts = new String [3];
+        LocalDate data = LocalDate.of(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
+        return data;
+    }
 }

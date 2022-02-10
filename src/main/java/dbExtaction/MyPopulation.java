@@ -1,15 +1,15 @@
 package dbExtaction;
 
+import com.mongodb.client.MongoCollection;
+import it.unipi.large_scale.anime_advisor.dbManager.DbManagerMongoDB;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 
 import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Session;
+import org.bson.Document;
+import org.neo4j.driver.*;
 import org.neo4j.driver.internal.value.LocalDateTimeValue;
-
+import it.unipi.large_scale.anime_advisor.application.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
@@ -17,6 +17,10 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
+import it.unipi.large_scale.anime_advisor.animeManager.*;
+import it.unipi.large_scale.anime_advisor.application.*;
+
+
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -31,18 +35,8 @@ public class MyPopulation implements AutoCloseable {
             driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password)); //authentication without encryption
     }
 
-    //Popolazione degli anime
-   /* public String[] getAnimeNames(ArrayList<Anime> animes) {
-        int size = animes.size();
-        String[] anime_names = new String[size];
-        int pos=0;
-        for(Anime a: animes){
-            anime_names[pos]=a.getAnime_name();
-            pos+=1;
-        }
-        return anime_names;
-    }*/
-    public ArrayList<Anime> loadAnimes(String file_path) throws FileNotFoundException {
+
+    public ArrayList<Anime>  loadAnimes(String file_path) throws FileNotFoundException {
         ArrayList<Anime> animes = new ArrayList<Anime>();
         boolean first = true;
         String csvRows;
@@ -63,7 +57,7 @@ public class MyPopulation implements AutoCloseable {
         }
         return animes;
     }
-    public void addAnimeToGraph(ArrayList<Anime> anime_list){
+    public void              addAnimeToGraph(ArrayList<Anime> anime_list){
         int i=0;
         try (Session session = driver.session()) {
             for(Anime a: anime_list) {
@@ -84,13 +78,14 @@ public class MyPopulation implements AutoCloseable {
     }
 
     //Population Users
-    public ArrayList<User> loadUsers(String file_path) throws FileNotFoundException {
+    public ArrayList<User>   loadUsers(String file_path) throws FileNotFoundException {
         ArrayList<User> users = new ArrayList<User>();
         boolean first = true;
         String csvRows;
         Scanner usersSc = new Scanner(new File(file_path));
         //parsing a CSV file into the constructor of Scanner class
         usersSc.useDelimiter(";");
+    int count =0;
 
         while (usersSc.hasNext()) {
 
@@ -103,7 +98,6 @@ public class MyPopulation implements AutoCloseable {
             String logged_in = (fields[3].trim());
             String is_admin = (fields[4].trim());
 
-
             User u = new User();
             u.setGender(gender);
             u.setUsername(username);
@@ -115,7 +109,7 @@ public class MyPopulation implements AutoCloseable {
         usersSc.close();
         return users;
     }
-    public void addUsersToGraph(ArrayList<User> user_list){
+    public void              addUsersToGraph(ArrayList<User> user_list){
            try (Session session = driver.session()) {
             int i=0;
             for(User u: user_list) {
@@ -139,12 +133,16 @@ public class MyPopulation implements AutoCloseable {
 
     //Population Reviews
     public ArrayList<Review> loadReviews(String file_path) throws FileNotFoundException{
-        ArrayList<Review> reviews = new ArrayList<Review>();
-        boolean first = true;
+
+        ArrayList<Review> reviews  = new ArrayList<Review>();
         String csvRows;
-        Scanner reviewSc = new Scanner(new File(file_path));
-        reviewSc.useDelimiter("/n");
+        boolean           first    = true;
+        Scanner           reviewSc = new Scanner(new File(file_path));
+
         int i =0;
+
+        reviewSc.useDelimiter("/n");
+
         while (reviewSc.hasNext()) {
             i = i+1;
             csvRows = reviewSc.nextLine();
@@ -155,39 +153,44 @@ public class MyPopulation implements AutoCloseable {
             }
 
             String[] fields = csvRows.split(",");
-            while(fields.length<6){
+
+            while(fields.length<5){
+
                 csvRows = reviewSc.nextLine();
-                fields = csvRows.split(",");
+                fields  = csvRows.split(",");
             }
 
-            String id_string = (fields[0].trim());
-            String profile= (fields[1].trim());
-            //String score = (fields[4].trim());
-            String anime_name = (fields[2].trim());
-            String title=(fields[3].trim());
-            String text = (fields[4].trim());
+            String profile         = (fields[0].trim());
+            String anime_name      = (fields[1].trim());
+            String text            = (fields[2].trim());
+            String title           = (fields[4].trim());
+
 
             //Carico la data che inizialmente e' una stringa e la converto in LocalDate
-            String last_update = (fields[5].trim());
-            String [] parts =  last_update.split("-");
-            LocalDate date = LocalDate.of(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
+            String last_update  = (fields[3].trim());
+            String [] parts     =  last_update.split("-");
+            LocalDate date      = LocalDate.of(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
 
+
+            //Fill Review's attributes
             Review r = new Review();
-            r.setId(Integer.parseInt(id_string));
+
             r.setProfile(profile);
             r.setTitle(title);
             r.setAnime_title(anime_name);
             r.setText(text);
             r.setLast_update(date);
+
             reviews.add(r);
         }
+
         reviewSc.close();
         return reviews;
     }
-    public void addReviewsToGraph(ArrayList<Review> review_list){
+    public void              addReviewsToGraph(ArrayList<Review> review_list){
         try (Session session = driver.session()) {
             int i=0;
-            System.out.println("PRINEE");
+
             for(Review r: review_list) {
                 i+=1;
                 session.run("MERGE (r:Review {text: $text,title: $title,last_update:$last_update})",
@@ -206,41 +209,107 @@ public class MyPopulation implements AutoCloseable {
                 }
             }
         }
+        catch (Exception e){
+            System.out.println("Error");
+        }
 
     }
 
     //Add relations
-    public void createFollowsRelationshipUserAnime(int number_of_users, int number_of_edges, String[] anime_names){
+    public void createFollowsRelationshipUserAnime (String[] user,ArrayList<Anime> anime,MongoCollection<Document> anime_collection){
         Random rand = new Random();
-        for(int i =0; i<=number_of_edges; i++){
-            int random_user_psw = rand.nextInt(number_of_users);
-            int random_anime_name_pos = rand.nextInt(anime_names.length);
-            String random_anime_name = anime_names[random_anime_name_pos];
-            try (Session session = driver.session()){
-                session.run(
-                        "MATCH (u:User) WHERE u.password = $user " + "MATCH (a:Anime) WHERE a.name = $anime " +
-                                "MERGE (u)-[:FOLLOWS]->(a)",
-                        parameters("user", Integer.toString(random_user_psw), "anime", random_anime_name)
-                );
-            }
+        int NFollows=0;
+        int indexFollower=0;
 
+        for(int i =0; i<anime.size(); i++){
+            //Calcolo randomicamente il numero di followers totale per ogni anime
+            NFollows = rand.nextInt(0,20);
+            if(NFollows>0) {
+                for (int j = 0; j < NFollows; j++) {
+                    //Calcolo randomicamente l'utente che segue l'anime
+                    indexFollower=rand.nextInt(0, user.length);
+
+                    try (Session session = driver.session()) {
+                        session.run(
+                                "Match (u:User{username:$user}),(a:Anime{title:$anime}) MERGE (u)-[:LIKE]->(a)",
+                                parameters("user", user[indexFollower], "anime", anime.get(i).getAnime_name())
+                        );
+                    }
+
+                    catch (Exception e)
+                    {
+                        System.out.println("Error");
+                    }
+
+                }
+            }
 
         }
     }
 
-         /*       session.run(
-                        "MATCH (r:Review) WHERE r.id = $r_id " + "MATCH (a:Anime) WHERE a.title = $title " +
-                                "MERGE (r)-[:REFERRED_TO]->(a)",
-                        parameters("r_id", r.getId(), "title", r.getAnime_title())
-                );
+    public void createFollowsRelationshipBetweenUsers (String[] user ){
+
+        Random rand = new Random();
+        int maxNumberFollower=1;
+        int randomValueUsers=0;
+        int indexRandomUser=0;
+
+        for(int i =0; i<user.length; i++){
+            //Scelgo numero utenti seguiti in maniera casuale
+            randomValueUsers=rand.nextInt(0,maxNumberFollower);
+            if(randomValueUsers>0) {
+                for (int j = 0; j < randomValueUsers; j++) {
+                    //Scelgo indice utente seguito casualmente
+                    indexRandomUser = rand.nextInt(0, user.length);
+                    try (Session session = driver.session()) {
+                        session.run(
+                                "Match (u1:User{username:$user1}),(u2:User{username:$user2}) WHERE u1<>u2 merge (u1)-[:FOLLOWS]->(u2)",
+                                parameters("user1", user[i],
+                                        "user2", user[indexRandomUser])
+                        );
+                    }
+                    catch(Exception e)
+                    {
+                        System.out.println("Error");
+                    }
+                }
+            }
+        }
+    }
+    public void createRelationshipAnimeReviews(ArrayList<Review> review_list) {
+        try (Session session = driver.session()) {
+
+            //Associazione commento ->review legame presente nel csv review
+            for (Review r : review_list) {
+
                 session.run(
-                        "MATCH (r:Review) WHERE r.id = $r_id " + "MATCH (u:User) WHERE u.username = $username " +
-                                "MERGE (u)-[:CREATED]->(r)",
-                        parameters("r_id", r.getId(), "username", r.getProfile())
+                        "MATCH (r:Review{ title: $titleR}), (a:Anime{title: $titleA})" +
+                                " MERGE (r)-[:REFERRED_TO]->(a)",
+                        parameters("titleR", r.getTitle(),
+                                "titleA",r.getAnime_title())
                 );
-*/
 
+            }
 
+        }
+    }
+    public void createRelationshipUserReviews(ArrayList<Review> review_list) {
+        try (Session session = driver.session()) {
+
+            //Associazione commento ->review legame presente nel csv review
+            for (Review r : review_list) {
+
+                session.run(
+                        "MATCH (r:Review{ title: $titleR}), (a:User{username: $user})" +
+                                " MERGE (a)-[:WRITE]->(r)",
+                        parameters("titleR", r.getTitle(),
+                                "user",r.getProfile())
+                );
+
+            }
+
+        }
+    }
 
     //Popolazione
     @Override
@@ -250,19 +319,47 @@ public class MyPopulation implements AutoCloseable {
 
     public static void main(String[] args) throws Exception{
         MyPopulation gp = new MyPopulation();
-        //ArrayList<User> users = gp.loadUsers("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\UserCompleto.csv");//Fatto
-       // System.out.println("Total number of users: " + Integer.toString(users.size()));//Fatto
-       // ArrayList<Anime> animes = gp.loadAnimes("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\animeGraph.csv");
-       // System.out.println("Total number of anime: " + Integer.toString(animes.size()));
+
+        DbManagerMongoDB mongoM=new DbManagerMongoDB("mongodb://localhost:27017");
+        mongoM.startMongo("Anime_Advisor");
+        MongoCollection<Document> anime_collection= mongoM.getCollection("anime");
+
+        ArrayList<User> users = gp.loadUsers("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\UserCompleto.csv");
+        System.out.println("Total number of users: " + Integer.toString(users.size()));
+
+        ArrayList<Anime> animes = gp.loadAnimes("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\animeGraph.csv");
+        System.out.println("Total number of anime: " + Integer.toString(animes.size()));
+
         ArrayList<Review> reviews = gp.loadReviews("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\reviewGraph.csv");
         System.out.println("Total number of reviews: " + Integer.toString(reviews.size()));
+/*
+        gp.addAnimeToGraph(animes);
+        System.out.println("FIniSH Anime");
 
-       // gp.addAnimeToGraph(animes);
-        //System.out.println("FIniSH Anime");
-        //gp.addUsersToGraph(users);//Fatto
-       // System.out.println("finish User");//Fatto
+        gp.addUsersToGraph(users);
+        System.out.println("FINITO user");
+
         gp.addReviewsToGraph(reviews);
-        System.out.println("FIniSH review");
+        System.out.println("FINITO ADDING");
+*/
+        //Costruisco un vettore che contiene tutti i nomi degli utenti
+        int countName=0;
+        String[] allUsers = new String [users.size()];
+        for(User u : users){
+            allUsers[countName]=u.getUsername();
+            countName++;
+        }
+        System.out.println("Start Relation");
+      //  gp.createFollowsRelationshipBetweenUsers(allUsers);
+        System.out.println("FINITO Follow");
+
+    //    gp.createFollowsRelationshipUserAnime(allUsers,animes,anime_collection);
+        System.out.println("Finito Like");
+
+        gp.createRelationshipUserReviews(reviews);
+        gp.createRelationshipAnimeReviews(reviews);
+        System.out.println("FINISHHHHHH");
+
 
      /*   int number_of_users = users.size();
         int n_follows_edges_users = number_of_users / 2;

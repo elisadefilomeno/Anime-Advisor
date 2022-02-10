@@ -10,9 +10,9 @@ public class ReviewTest extends TestCase {
     @Test
     public void test_toString() {
         Review rew = new Review();
-        rew.setId(11);
+
         rew.setProfile("Nick");
-        rew.setScore(10);
+
         rew.setAnime_title("Naruto");
         rew.setText("questa è la mia recensione...");
 
