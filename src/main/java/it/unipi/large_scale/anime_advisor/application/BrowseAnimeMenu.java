@@ -2,18 +2,19 @@ package it.unipi.large_scale.anime_advisor.application;
 
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.User;
+import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import javax.print.Doc;
+import java.util.*;
 
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.*;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 import static it.unipi.large_scale.anime_advisor.application.Main.anime_collection;
+import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 
 public class BrowseAnimeMenu {
@@ -27,6 +28,7 @@ public class BrowseAnimeMenu {
     AnimeManagerMongoDBCRUD crud= new AnimeManagerMongoDBCRUD();
     AnimeManagerMongoDBAgg aggregation=new AnimeManagerMongoDBAgg();
     ViewAnimeMenu animeMenu=new ViewAnimeMenu();
+    AnimeManagerNeo4J animeNeo;
     Anime anime=new Anime();
     Interface inte;
 
@@ -34,7 +36,7 @@ public class BrowseAnimeMenu {
 
 
         //menu with extra option for admin
-        if (checkIsAdmin(user) && user!=null) {
+        if (checkIsAdmin(user)) {
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
             System.out.println("What would you like to do?");
@@ -71,10 +73,10 @@ public class BrowseAnimeMenu {
                     this.browseAnimeTitle();
                     break;
                 case 5: //INSERT
-                    this.researchByGenre();
+                    this.createAnimeFromInput();
                     break;
                 case 6: //DELETE
-                    this.researchByGenre();
+                    this.deleteAnimeFromInput();
                     break;
                     //case 3 : profileUserMenu.showMenu();
                 case 0:
@@ -109,13 +111,15 @@ public class BrowseAnimeMenu {
                 this.showMenu();
             }
             switch (value_case) {
-                case 1:
+                case 1: //FIND BY NAME
                     this.browseAnimeTitle();
                     break;
-                case 2:
+                case 2: //FIND BY GENRE
                     this.researchByGenre();
                     break;
-                //case 3 : profileUserMenu.showMenu();
+                case 3: //ADVANCED SEARCH
+                    this.researchByGenre();
+                    break;
                 case 0:
                     return;
                 default:
@@ -498,12 +502,12 @@ public class BrowseAnimeMenu {
         int temp=0;
         while(temp==0) {
             System.out.println("Insert the number of episodes");
-            try {
-                ep = sc.nextInt();
+            try{
+                ep = Integer.parseInt(sc.nextLine());
                 temp=1;
-            } catch (NumberFormatException e) {
-                System.out.println("Wrong input!");
-                temp=0;
+            }
+                        catch (NumberFormatException e){System.out.println("Wrong input!");
+                continue;
             }
         }//WHILE FOR INPUT EPISODES AND CATCH ERRORS
         this.anime.setEpisodes(ep);
@@ -513,32 +517,72 @@ public class BrowseAnimeMenu {
         temp=0;
         while(temp==0) {
             System.out.println("Insert the year of premierer");
-            try {
-                ep = sc.nextInt();
+            try{
+                ep = Integer.parseInt(sc.nextLine());
                 temp=1;
-            } catch (NumberFormatException e) {
-                System.out.println("Wrong input!");
-                temp=0;
+            }
+            catch (NumberFormatException e){System.out.println("Wrong input!");
+                continue;
             }
         }//WHILE FOR INPUT EPISODES AND CATCH ERRORS
         this.anime.setPremiered(ep);
 
-        //SET SOURCE
+        //SET SOURCE1
+
         this.anime.setSource(this.setString("source"));
 
         //SET TYPE
         this.anime.setType(this.setString("type"));
+        this.anime.toString();
+       if( crud.createAnime(this.anime,anime_collection)){ //CREATE ANIME IN MONGO
+           animeNeo= new AnimeManagerNeo4J(dbNeo4J);
+            if(animeNeo.createAnime(this.anime.getAnime_name())){ //CREATE ANIME IN NEO4J
+                System.out.println("Anime inserted!");
+                this.anime.toString();
+                animeMenu.showMenu(this.anime);
+            }
+            else{
+                if(crud.deleteAnime(this.anime,anime_collection)){
+                    System.out.println("Error during the anime creation...\nReturn to menu");
+                this.showMenu();}
+                else{
+                    System.out.println("Error during mongoDB anime deletion");
+                }
 
-       if( crud.createAnime(anime,anime_collection)){ //CREATE ANIME IN MONGO
-
-        System.out.println("Anime inserted!");
-        animeMenu.showMenu(anime);}
+            }
+       }
        else{
            System.out.println("An error has occurred\nAnime not inserted");
            this.showMenu();
        }
         }
 
+        //DELETE ANIME IN MONGO AND NEO4J
+    public void deleteAnimeFromInput(){
+        System.out.println("Insert the Anime name to delete: ");
+        Scanner sc=new Scanner(System.in);
+        String name=null;
+        animeNeo= new AnimeManagerNeo4J(dbNeo4J);
+        try{
+        name= sc.nextLine().toString();}
+        catch(Exception e){
+            System.out.println("Invalid input");
+        }
+        Anime temp=new Anime();
+        temp.setAnime_name(name);
+        Document backup_doc= crud.getAnime(name,anime_collection);
+        if(crud.deleteAnime(temp,anime_collection)){ //MONGO DELETE
+            if(animeNeo.deleteAnime(name)) //DELETE NEO4J
+                System.out.println("Anime "+name+" deleted successfully");
+            else {
+                System.out.println("Error during the elimination of the element");
+                anime_collection.insertOne(backup_doc);     //IF MONGO DELETES AND NEO4J THE FILE GET REINSERTED INTO MONGO
+            }
+        }
+        else
+            System.out.println("Error during the elimination.\nCannot delete");
+        this.showMenu();
+    }
 
 
 
@@ -557,17 +601,22 @@ public class BrowseAnimeMenu {
         int ok=-1;
         String chars=null;
         Scanner sc=new Scanner(System.in);
-        System.out.println(GREEN+"Insert"+string+": ");
+        System.out.println(GREEN+"Insert "+string+": ");
         while(ok==-1) {
             try {
-                chars = sc.nextLine();
+                chars = sc.nextLine().toString();
                 ok=1;
             } catch (Exception e) {
                 System.out.println("Input error");
                 ok=-1;
             }
         }
+        System.out.println(chars);
+        if(chars!=null)
         return chars;
+        else
+            System.out.println("Error during the inserting of the "+string);
+                    return null;
     }
 
     public String[] setArray(String field){
@@ -589,7 +638,7 @@ public class BrowseAnimeMenu {
             pos++;
             while (yn != 1 && yn != 2) {
 
-                System.out.println("Do you want to select more producers?\n1)YES 2)NO");
+                System.out.println("Do you want to select more"+field+"s?\n1)YES 2)NO");
                 try {
                     yn = Integer.parseInt(sc.nextLine());
                 } catch (NumberFormatException e) {
