@@ -5,18 +5,15 @@ import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.User;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import it.unipi.large_scale.anime_advisor.entity.User;
 
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.*;
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 import static it.unipi.large_scale.anime_advisor.application.Main.anime_collection;
-import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo4J;
 
 
 public class BrowseAnimeMenu {
@@ -31,6 +28,7 @@ public class BrowseAnimeMenu {
     AnimeManagerMongoDBAgg aggregation=new AnimeManagerMongoDBAgg();
     ViewAnimeMenu animeMenu=new ViewAnimeMenu();
     Anime anime=new Anime();
+    Interface inte;
 
     public void showMenu() {
 
@@ -45,7 +43,8 @@ public class BrowseAnimeMenu {
             System.out.println("2) Find anime by genre");
             System.out.println("3) Advanced search");
             System.out.println("4) Update Anime");
-            System.out.println("5) Delete Anime");
+            System.out.println("5) Insert Anime");
+            System.out.println("6) Delete Anime");
             System.out.println("0) Go back");
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println("Write your command here:");
@@ -59,12 +58,24 @@ public class BrowseAnimeMenu {
                     this.showMenu();
                 }
             switch (value_case) {
-                case 1:
+                case 1: //FIND BY NAME
                     this.browseAnimeTitle();
                     break;
-                case 2:
+                case 2: //FIND BY GENRE
                         this.researchByGenre();
                         break;
+                case 3: //ADVANCED SEARCH
+                    this.researchByGenre();
+                    break;
+                case 4: //UPDATE
+                    this.browseAnimeTitle();
+                    break;
+                case 5: //INSERT
+                    this.researchByGenre();
+                    break;
+                case 6: //DELETE
+                    this.researchByGenre();
+                    break;
                     //case 3 : profileUserMenu.showMenu();
                 case 0:
                     return;
@@ -112,7 +123,7 @@ public class BrowseAnimeMenu {
                     break;
             }
         }
-    }
+    } //SHOW MENU
 
 
     public void browseAnimeTitle(){
@@ -128,7 +139,7 @@ public class BrowseAnimeMenu {
             System.out.println("Invalid name\n");
             this.showMenu();
         }
-    }
+    } //BROWSE ANIME
 
     public void researchByGenre(){
             Scanner sc = new Scanner(System.in);
@@ -415,13 +426,14 @@ public class BrowseAnimeMenu {
                 if(pos==0){
                     this.showMenu();}
                 else{
+                    inte=new Interface();
                     String[] arrayGenres= new String[pos];
                     for(int i=0;i<genresChoosen.size();i++)
                         arrayGenres[i]=genresChoosen.get(i);
                     //Insertion of the animes founded into an hashmap and selection of
                     //an anime to visit
                     animeResults= aggregation.topTenAnimeByField(anime_collection,"genre",0,null,arrayGenres,0);
-                    crud.printAnimeResults(animeResults);
+                    inte.printResults(animeResults);
                     int x=0;
                     int animecheck=0;
                     while(x==0) {
@@ -457,13 +469,149 @@ public class BrowseAnimeMenu {
                         }
                     }
                 }
+            } //RESEARCH BY GENRE
+
+
+    public void createAnimeFromInput(){
+        Scanner sc=new Scanner(System.in);
+        String chars;
+        Anime anime=new Anime();
+
+        //SET NAME
+        this.anime.setAnime_name(this.setString("name"));
+        //SET GENRES
+        this.anime.setGenre(this.setArray("genre"));
+        //SET STUDIO
+        this.anime.setStudio(this.setArray("studio"));
+        //SET PRODUCER
+        this.anime.setProducer(this.setArray("producer"));
+        //SET LICENSOR
+        this.anime.setLicensor(this.setArray("licensor"));
+        //SET MEMBERS
+        this.anime.setMembers(0);
+        //SET SCORED
+        this.anime.setScored(0);
+        //SET SCORED BY
+        this.anime.setScoredby(0);
+        //SET EPISODES
+        int ep=0;
+        int temp=0;
+        while(temp==0) {
+            System.out.println("Insert the number of episodes");
+            try {
+                ep = sc.nextInt();
+                temp=1;
+            } catch (NumberFormatException e) {
+                System.out.println("Wrong input!");
+                temp=0;
             }
+        }//WHILE FOR INPUT EPISODES AND CATCH ERRORS
+        this.anime.setEpisodes(ep);
+
+        //SET PREMIERED
+        ep=0;
+        temp=0;
+        while(temp==0) {
+            System.out.println("Insert the year of premierer");
+            try {
+                ep = sc.nextInt();
+                temp=1;
+            } catch (NumberFormatException e) {
+                System.out.println("Wrong input!");
+                temp=0;
+            }
+        }//WHILE FOR INPUT EPISODES AND CATCH ERRORS
+        this.anime.setPremiered(ep);
+
+        //SET SOURCE
+        this.anime.setSource(this.setString("source"));
+
+        //SET TYPE
+        this.anime.setType(this.setString("type"));
+
+       if( crud.createAnime(anime,anime_collection)){
+        System.out.println("Anime inserted!");
+        animeMenu.showMenu(anime);}
+       else{
+           System.out.println("An error has occurred\nAnime not inserted");
+           this.showMenu();
+       }
+        }
+
+
+
+
+
+
+
+
     public boolean checkIsAdmin(User user){
         if(user==null){
             return false;
         }
         return user.getIs_admin();
     }
+
+    public String setString(String string){
+        int ok=-1;
+        String chars=null;
+        Scanner sc=new Scanner(System.in);
+        System.out.println(GREEN+"Insert"+string+": ");
+        while(ok==-1) {
+            try {
+                chars = sc.nextLine();
+                ok=1;
+            } catch (Exception e) {
+                System.out.println("Input error");
+                ok=-1;
+            }
+        }
+        return chars;
+    }
+
+    public String[] setArray(String field){
+        int pos=0;
+        int wh=-1;
+        int yn=-1;
+        String chars;
+        Scanner sc=new Scanner(System.in);
+        List<String> strChoosen= new ArrayList<>();
+        while(wh==-1) {
+            System.out.println(GREEN+"Insert a "+field+": ");
+            try {
+                chars = sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("Input error");
+                return null;
+            }
+            strChoosen.add(chars);
+            pos++;
+            while (yn != 1 && yn != 2) {
+
+                System.out.println("Do you want to select more producers?\n1)YES 2)NO");
+                try {
+                    yn = Integer.parseInt(sc.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Wrong input!");
+                    continue;
+                }
+                if(yn==1){
+                    yn=-1;
+                    break;}
+                if(yn==2){
+                    yn=-1;
+                    wh=0;
+                    break;}
+            }//WHILE Y OR N
+        } //WHILE INPUT GENRES
+        //CREATE AND INSERT THE ARRAY
+        String[] type= new String[pos];
+        for(int i=0;i<strChoosen.size();i++){
+            type[i]=strChoosen.get(i);
+        }
+        return type;
+    }
+
 
 
 }
