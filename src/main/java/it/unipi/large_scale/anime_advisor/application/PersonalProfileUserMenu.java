@@ -138,7 +138,6 @@ public class PersonalProfileUserMenu {
             case 0 -> this.showMenu();
             default -> System.out.println("ATTENTION! Wrong command");
         }
-U
     }
 
     private void viewFollowedAnime() {
