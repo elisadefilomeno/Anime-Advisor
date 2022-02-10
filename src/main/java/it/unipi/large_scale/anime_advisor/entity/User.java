@@ -68,6 +68,7 @@ public class User {
         return is_admin;
     }
 
+
     //OTHERS METHODS
     @Override
     public String toString() {

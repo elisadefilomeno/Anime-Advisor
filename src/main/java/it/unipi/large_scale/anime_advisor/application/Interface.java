@@ -11,7 +11,7 @@ import it.unipi.large_scale.anime_advisor.application.BrowseAnimeMenu;
 
 
 public class Interface {
-    public static User user;
+    public static User user=null;
     private Registered_Home_page registered_home_page = new Registered_Home_page();
     private BrowseAnimeMenu browse_anime_menu= new BrowseAnimeMenu();
 

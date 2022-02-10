@@ -33,8 +33,10 @@ public class BrowseAnimeMenu {
     Anime anime=new Anime();
 
     public void showMenu() {
+
+
         //menu with extra option for admin
-        if (user.getIs_admin() && user!=null) {
+        if (checkIsAdmin(user) && user!=null) {
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
             System.out.println("What would you like to do?");
@@ -43,8 +45,7 @@ public class BrowseAnimeMenu {
             System.out.println("2) Find anime by genre");
             System.out.println("3) Advanced search");
             System.out.println("4) Update Anime");
-            System.out.println("5) Insert new Anime");
-            System.out.println("6) Delete Anime");
+            System.out.println("5) Delete Anime");
             System.out.println("0) Go back");
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println("Write your command here:");
@@ -58,26 +59,14 @@ public class BrowseAnimeMenu {
                     this.showMenu();
                 }
             switch (value_case) {
-                case 1: //FIND BY NAME
+                case 1:
                     this.browseAnimeTitle();
                     break;
-                case 2: //FIND BY GENRE
+                case 2:
                         this.researchByGenre();
                         break;
-                case 3: //ADVANCED RESEARCH
-                    this.researchByGenre();
-                    break;
-                case 4: //UPDATE
-                    this.browseAnimeTitle();
-                    break;
-                case 5: //INSERT
-                    this.researchByGenre();
-                    break;
-                case 6: //DELETE
-                    this.researchByGenre();
-                    break;
                     //case 3 : profileUserMenu.showMenu();
-                case 0: //GO BACK
+                case 0:
                     return;
                 default:
                     System.out.println("Wrong command!");
@@ -469,25 +458,15 @@ public class BrowseAnimeMenu {
                     }
                 }
             }
-
-            public void insert(){
-            Anime anime=new Anime();
-            String chars;
-            Scanner sc=new Scanner(System.in);
-            int numb;
-            System.out.println(GREEN+"Anime creation"+RESET);
-            System.out.println(GREEN+"Insert name: ");
-            try{
-                chars=sc.nextLine();
-            }
-            catch (Exception e){
-                System.out.println("Invalid input");
-            }
+    public boolean checkIsAdmin(User user){
+        if(user==null){
+            return false;
+        }
+        return user.getIs_admin();
+    }
 
 
-
-            }
-        }//CLASS
+}
 
 
 
