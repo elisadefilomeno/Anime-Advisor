@@ -529,7 +529,8 @@ public class BrowseAnimeMenu {
         //SET TYPE
         this.anime.setType(this.setString("type"));
 
-       if( crud.createAnime(anime,anime_collection)){
+       if( crud.createAnime(anime,anime_collection)){ //CREATE ANIME IN MONGO
+
         System.out.println("Anime inserted!");
         animeMenu.showMenu(anime);}
        else{
