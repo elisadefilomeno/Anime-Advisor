@@ -23,10 +23,11 @@ public class ViewAnimeMenu {
         System.out.println("What would you like to do?");
         System.out.println("Digit:");
         System.out.println("1) Follow anime");
-        System.out.println("2) Review");
-        System.out.println("3) Update anime");
-        System.out.println("4) Delete anime");
-        System.out.println("5) Go back");
+        System.out.println("2) Review anime");
+        System.out.println("3) Vote anime");
+        System.out.println("4) Update anime");
+        System.out.println("5) Delete anime");
+        System.out.println("6) Go back");
         System.out.println(GREEN + "**************************************" + RESET);        //1) vede info anime,
 
 
@@ -43,7 +44,28 @@ public class ViewAnimeMenu {
             case 1:
                 break;
             case 2:
-            case 3:
+            case 3: {
+                int score=-1;
+                    while (!(score>=0)&&!(score<=10)) {
+                        try {
+                            System.out.println("Insert a score between 1 and 10 or press 0 to go back");
+                            score = Integer.parseInt(sc.nextLine());
+                        } catch (NumberFormatException n) {
+                            System.out.println("Wrong input.");
+                        }
+                    }
+                        if(score==0){
+                            this.showMenu(anime);
+                        }
+                        else{
+                            crud.updateAnimeMeanScored(anime,anime_collection,score);
+                            System.out.println("Thank you for voting!");
+                            this.showMenu(anime);
+                        }
+
+                this.showMenu(anime);
+            }
+
             case 4:
             case 5:
                 backMenu.showMenu();
@@ -55,5 +77,15 @@ public class ViewAnimeMenu {
             // 6) vuoi vedere le recensioni?
             // 7 e 8) if user è admin mostra l'opzione di eliminare l'anime o modificarlo
         }
+    } //MENU
+
+    public void updateSection(Anime anime){
+
+
+
     }
-}
+
+
+
+
+} //CLASS
