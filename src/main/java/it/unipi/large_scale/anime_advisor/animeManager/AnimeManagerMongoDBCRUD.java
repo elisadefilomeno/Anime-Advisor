@@ -27,7 +27,9 @@ public class AnimeManagerMongoDBCRUD{
 
     //Check if the document is present with case insensitivity option
     public boolean checkIfPresent(Anime anime,MongoCollection<Document> collection){
-        Document doc= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
+        //Document doc= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
+        Document doc= collection.find(eq("name",anime.getAnime_name())).first();
+
         return doc != null;
     }
     //check if an element is present in the array field of an anime
@@ -53,7 +55,14 @@ public class AnimeManagerMongoDBCRUD{
         System.out.println("Licensor:" + doc.get("licensor"));
     }
 
+    public Document getAnime(String name, MongoCollection<Document> collection){
+        Anime t=new Anime();
+        t.setAnime_name(name);
+        if(!checkIfPresent(t,collection)){System.out.println("Anime not present"); return null;  }
+        Document result= collection.find(eq("name",new Document("$regex",t.getAnime_name()).append("$options","i"))).first();
+            return result;
 
+    }
 
 
     //Creates a new document and put it into the collection specified
@@ -85,8 +94,10 @@ public class AnimeManagerMongoDBCRUD{
         if(!checkIfPresent(anime, collection)){
             System.out.println("Document not found\n");
             return null;}
-       Document result= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
-       // printDoc(result);
+       //Document result= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
+        Document result= collection.find(eq("name",anime.getAnime_name())).first();
+
+        // printDoc(result);
         printDoc(result);
         Anime a=new Anime();
         a.setAnime_name(result.get("name").toString());

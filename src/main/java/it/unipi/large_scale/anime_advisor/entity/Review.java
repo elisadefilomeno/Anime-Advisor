@@ -6,7 +6,6 @@ import java.lang.String;
 
 public final class Review {
 
-
     private String profile;
     private String anime_title;
     private String title;       //title review
@@ -48,7 +47,7 @@ public final class Review {
 
     public String toString(){
         String string=(
-                "Title review"+this.title+"\n"+
+                "Title review: "+this.title+"\n"+
                 "Review: " +this.text +"\n"+
                 "Last Update:" + this.last_update.toString()
                 );

@@ -2,11 +2,13 @@ package it.unipi.large_scale.anime_advisor.userManager;
 
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
@@ -28,9 +30,10 @@ public class UserManagerNeo4J {
         //Controllo gia presente anche in SignIn
         if(checkIfPresent(u.getUsername())) {
             System.out.println("User already present");
+            return;
         }
 
-         try(Session session= dbNeo4J.getDriver().session()){
+         try(Session session= dbNeo4J.getDriver().session()) {
             session.writeTransaction((TransactionWork<Void>) tx -> {
                 tx.run( "MERGE (u:User {username: $username, " +
                                 "password: $password, gender: $gender, " +
@@ -157,6 +160,65 @@ public class UserManagerNeo4J {
         return u;
     }
 
+    public User promoteToAdmin(User u){
+        if (u.getUsername() == null) {
+            System.out.println("Username not inserted, unable to promote");
+        }
+        if(u.getIs_admin()){
+            System.out.println("This user is already an Admin!");
+            return u;
+        }
+        try (Session session = dbNeo4J.getDriver().session()) {
+
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run("MATCH (u:User) WHERE u.username = $username " +
+                                "SET  u.is_admin=$is_admin",
+                        parameters(
+                                "username",u.getUsername(),
+                                "is_admin", true
+                        )
+                );
+                return null;
+            });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Unable to promote user due to an error");
+        }
+        u.setIs_admin(true);
+        System.out.println("Correctly promoted "+ u.getUsername()+" to Admin");
+        return u;
+    }
+
+    public User retrocedeAdmin(User u){
+        if (u.getUsername() == null) {
+            System.out.println("Username not inserted, unable to retrocede");
+        }
+        if(!u.getIs_admin()){
+            System.out.println("This user already wasn't an Admin!");
+            return u;
+        }
+        try (Session session = dbNeo4J.getDriver().session()) {
+
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run("MATCH (u:User) WHERE u.username = $username " +
+                                "SET  u.is_admin=$is_admin",
+                        parameters(
+                                "username",u.getUsername(),
+                                "is_admin", false
+                        )
+                );
+                return null;
+            });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Unable to retrocede admin due to an error");
+        }
+        u.setIs_admin(false);
+        System.out.println("Correctly retroced "+ u.getUsername()+" from Admin status");
+        return u;
+    }
 
     public void deleteUser(User u) {
         if (u.getUsername() == null) {
@@ -214,6 +276,38 @@ public class UserManagerNeo4J {
         }
     }
 
+    public boolean checkIfFollowing(String follower, String followed) {
+        if (follower == null || followed == null) {
+            System.out.println("Username not inserted");
+            return false;
+        }
+
+        try (Session session = dbNeo4J.getDriver().session()) {
+            int count;
+            count = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (follower:User)-[:FOLLOWS]->(followed:User) " +
+                                "WHERE follower.username=$follower_username and  followed.username=$followed_username " +
+                                "RETURN count(followed) as count",
+                        parameters(
+                                "follower_username", follower,
+                                "followed_username", followed
+                        )
+                );
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+                    return (r.get("count").asInt());
+                }
+
+                return null;
+            });
+            return (count > 0);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
     public User getUserByUsername(String username) {
         User user=new User();
         try (Session session = dbNeo4J.getDriver().session()) {
@@ -253,6 +347,10 @@ public class UserManagerNeo4J {
     }
 
     public void followUser(String username, String to_follow_username){
+        if (checkIfFollowing(username, to_follow_username)) {
+            System.out.println("You are already following this user!");
+            return;
+        }
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -274,6 +372,10 @@ public class UserManagerNeo4J {
     }
 
     public void unfollowUser(String username, String to_follow_username){
+        if (!checkIfFollowing(username, to_follow_username)) {
+            System.out.println("You don't follow this user!");
+            return;
+        }
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
@@ -518,7 +620,8 @@ public class UserManagerNeo4J {
     }
 
     public Set<String> getVerySuggestedUsers(String username){
-        // set can't contain duplicate username strings
+        // They have the highest priority, given a user u1 if u1 is following user u2
+        // and u2 is following user u3, then u3 is very suggested to u1.
 
         Set<String> very_sugggested_users = new HashSet<>();
 
@@ -551,7 +654,9 @@ public class UserManagerNeo4J {
     }
 
     public Set<String> getSuggestedUsersLowPriority(String username){
-        // set can't contain duplicate title strings
+        // They have the lowest priority level, if a user u1 is following user u2 and u2 is
+        // following a user u3 and u3 is following a user u4, then u4 is suggested to u1.
+
         Set<String> sugggested_users = new HashSet<>();
 
         try(Session session= dbNeo4J.getDriver().session()){
@@ -598,22 +703,22 @@ public class UserManagerNeo4J {
         return suggested_users;
     }
 
-    public Set<String> getFollowedAnime(User user) {
-        Set<String> followed_anime = new HashSet<>();
+    public Set<String> getLikedAnime(User user) {
+        Set<String> liked_anime = new HashSet<>();
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.readTransaction(tx -> {
                 Result result = tx.run (
-                        "MATCH (u:User)-[:FOLLOWS]->(a:Anime)" +
-                                " WHERE u.username = $username " +
+                        "MATCH (u:User)-[:LIKE]->(a:Anime) " +
+                                "WHERE u.username = $username " +
                                 "RETURN a.title",
                         parameters(
                                 "username", user.getUsername()
                         ));
                 while(result.hasNext()){
                     org.neo4j.driver.Record r= result.next();
-                    String followed=r.get("a.title").asString();
-                    followed_anime.add(followed);
+                    String liked=r.get("a.title").asString();
+                    liked_anime.add(liked);
 
                 }
                 return null;
@@ -621,9 +726,9 @@ public class UserManagerNeo4J {
 
         }catch(Exception ex){
             ex.printStackTrace();
-            System.out.println("Unable to get followed anime due to an error");
+            System.out.println("Unable to get liked anime due to an error");
         }
-        return followed_anime;
+        return liked_anime;
     }
 
     public Set<String> getFollowedUsers(User user) {
@@ -652,5 +757,41 @@ public class UserManagerNeo4J {
             System.out.println("Unable to get followed users due to an error");
         }
         return followed_users;
+    }
+
+    public Set<Review> getWrittenReviews(User user) {
+        Set<Review> written_reviews = new HashSet<Review>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u:User)-[:WRITE]->(r:Review)-[:REFERRED_TO]->(a:Anime)" +
+                                " WHERE u.username = $username" +
+                                " RETURN r.title, r.text, r.last_update, a.title ",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String anime_title = r.get("a.title").asString();
+                    String review_title=r.get("r.title").asString();
+                    String text = r.get("r.text").asString();
+                    LocalDate last_update = r.get("r.last_update").asLocalDate();
+                    Review review = new Review();
+                    review.setText(text);
+                    review.setProfile(user.getUsername());
+                    review.setTitle(review_title);
+                    review.setAnime_title(anime_title);
+                    review.setLast_update(last_update);
+                    written_reviews.add(review);
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get written reviews due to an error");
+        }
+        return written_reviews;
     }
 }
