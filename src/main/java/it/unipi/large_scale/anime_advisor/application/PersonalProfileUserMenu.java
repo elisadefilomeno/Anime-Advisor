@@ -21,14 +21,16 @@ import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 public class PersonalProfileUserMenu {
     private UserManagerNeo4J userManagerNeo4J;
     private Interface anInterface;
-    private AnimeManagerNeo4J animeManagerNeo4J;
+
     private ViewAnimeMenu viewAnimeMenu;
     private ViewUserMenu viewUserMenu;
+    private ViewReviewMenu viewReviewMenu;
     private Registered_Home_page registered_home_page;
     
     
     public void showMenu(){
         userManagerNeo4J = new UserManagerNeo4J(dbNeo4J);
+
 
         System.out.println("TO DO: VISUALIZE PROFILE");
         System.out.println(GREEN+"**************************************"+RESET);
@@ -78,6 +80,62 @@ public class PersonalProfileUserMenu {
 
     private void viewPostedReviews() {
         System.out.println("TO DO: viewPostedReviews");
+        Set<String> followed_users = userManagerNeo4J.getFollowedUsers(user);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("Followed Users:");
+        HashMap<Integer, String> user_map_to_access_users= new HashMap<>();
+        anInterface = new Interface();
+        int key = 0;
+        if(!followed_users.isEmpty()){
+            for(String user: followed_users){
+                key++;
+                user_map_to_access_users.put(key, user);
+            }
+            anInterface.printResults(user_map_to_access_users);
+        }
+        else
+            System.out.println("You don't follow any user");
+
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("What would you like to do?");
+        System.out.println("Digit:");
+        System.out.println("0) Go Back to your profile");
+        System.out.println("1) View specific User info");
+
+        System.out.println(GREEN+"**************************************"+RESET);
+        System.out.println("Write your command here:");
+        Scanner sc =new Scanner(System.in);
+        int value_case=0;
+        try{
+            value_case = Integer.parseInt(sc.nextLine());
+        }
+        catch(Exception e){
+            System.out.println("ATTENTION! Wrong command");
+            this.showMenu();
+        }
+        switch (value_case) {
+            case 1 -> {
+                System.out.println("Insert the number of the review you want to see: ");
+                int user_number = 0;
+                try{
+                    user_number = Integer.parseInt(sc.nextLine());
+                }
+                catch(Exception e){
+                    System.out.println("ATTENTION! Wrong command");
+                    this.showMenu();
+                }
+                if(!user_map_to_access_users.containsKey(user_number)){
+                    System.out.println("ATTENTION! Wrong number");
+                    this.showMenu();
+                }
+                User u = new User();
+                u.setUsername(user_map_to_access_users.get(user_number));
+                viewUserMenu = new ViewUserMenu();
+                viewUserMenu.showMenu(u);
+            }
+            case 0 -> this.showMenu();
+            default -> System.out.println("ATTENTION! Wrong command");
+        }
 
     }
 
