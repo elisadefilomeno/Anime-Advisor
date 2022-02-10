@@ -127,9 +127,13 @@ public class AnimeManagerNeo4J{
         return true;
     }
 
-    public void followAnime(String username, String anime_title){
+    public void likeAnime(String username, String anime_title){
         if(!checkIfPresent(anime_title)){
-            System.out.println("Anime not present in the database, cannot follow it");
+            System.out.println("Anime not present in the database, cannot like it");
+            return;
+        }
+        if(checkIfAlreadyLiked(username,anime_title)){
+            System.out.println("You arleady like this anime!");
             return;
         }
         try(Session session= dbNeo4J.getDriver().session()){
@@ -137,7 +141,7 @@ public class AnimeManagerNeo4J{
             session.writeTransaction((TransactionWork<Void>) tx -> {
                 tx.run ("match (u:User) where u.username= $username " +
                                 "match (a:Anime) where a.title=$title " +
-                                "merge (u)-[:FOLLOWS]->(a)",
+                                "merge (u)-[:LIKE]->(a)",
                         parameters(
                                 "title", anime_title,
                                 "username", username
@@ -147,20 +151,24 @@ public class AnimeManagerNeo4J{
 
         }catch(Exception ex){
             ex.printStackTrace();
-            System.out.println("unable to follow anime due to an error");
+            System.out.println("unable to like anime due to an error");
         }
-        System.out.println("Correctly followed anime");
+        System.out.println("Correctly liked anime");
     }
 
-    public void unfollowAnime(String username, String anime_title){
+    public void unlikeAnime(String username, String anime_title){
         if(!checkIfPresent(anime_title)){
-            System.out.println("Anime not present in the database, cannot unfollow it");
+            System.out.println("Anime not present in the database, cannot unlike it");
+            return;
+        }
+        if(!checkIfAlreadyLiked(username,anime_title)){
+            System.out.println("You didn't like this anime!");
             return;
         }
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run ("match (u:User {username: $username}) -[f:FOLLOWS]-> (b:Anime {title:$title}) " +
+                tx.run ("match (u:User {username: $username}) -[f:LIKE]-> (b:Anime {title:$title}) " +
                                 "delete f",
                         parameters(
                                 "title", anime_title,
@@ -171,9 +179,41 @@ public class AnimeManagerNeo4J{
 
         }catch(Exception ex){
             ex.printStackTrace();
-            System.out.println("unable to unfollow anime due to an error");
+            System.out.println("unable to unlike anime due to an error");
         }
-        System.out.println("Correctly unfollowed anime");
+        System.out.println("Correctly unliked anime");
+    }
+
+    public boolean checkIfAlreadyLiked(String username, String anime_title) {
+        if (anime_title == null || username == null) {
+            System.out.println("Invalid names");
+            return false;
+        }
+
+        try (Session session = dbNeo4J.getDriver().session()) {
+            int count;
+            count = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User)-[:LIKE]->(a:Anime) " +
+                                "WHERE u.username=$username and  a.title=$title " +
+                                "RETURN count(a) as count",
+                        parameters(
+                                "username", username,
+                                "title", anime_title
+                        )
+                );
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+                    return (r.get("count").asInt());
+                }
+
+                return null;
+            });
+            return (count > 0);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public boolean checkIfPresent(String anime_title){
@@ -204,53 +244,52 @@ public class AnimeManagerNeo4J{
         }
     }
 
-    public Set<User> getFollowers(String anime_title){
-        Set<User> followers = new HashSet<User>();
+    public Set<User> getLikedUsers(String anime_title){
+        Set<User> likers = new HashSet<User>();
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.readTransaction(tx->{
-                Result result = tx.run("MATCH (anime:Anime)<-[f:FOLLOWS]-(follower:User) " +
+                Result result = tx.run("MATCH (anime:Anime)<-[f:LIKE]-(liker:User) " +
                                 "WHERE anime.title = $title "+
-                                "RETURN follower.username, follower.password, follower.logged_in," +
-                                "follower.is_admin, follower.gender, follower.birthday",
+                                "RETURN liker.username, liker.password, liker.logged_in," +
+                                "liker.is_admin, liker.gender",
                         parameters(
                                 "title", anime_title
                         ));
 
                 while(result.hasNext()){
                     org.neo4j.driver.Record r= result.next();
-                    User follower = new User();
-                    follower.setUsername(r.get("follower.username").asString());
-                    follower.setPassword(r.get("follower.password").asString());
-                    if(!r.get("follower.logged_in").isNull()){
-                        follower.setLogged_in(r.get("follower.logged_in").asBoolean());
+                    User liker = new User();
+                    liker.setUsername(r.get("liker.username").asString());
+                    liker.setPassword(r.get("liker.password").asString());
+                    if(!r.get("liker.logged_in").isNull()){
+                        liker.setLogged_in(r.get("liker.logged_in").asBoolean());
                     }
-                    if(!r.get("follower.is_admin").isNull()) {
-                        follower.setIs_admin(r.get("follower.is_admin").asBoolean());
+                    if(!r.get("liker.is_admin").isNull()) {
+                        liker.setIs_admin(r.get("liker.is_admin").asBoolean());
                     }
-                    follower.setGender(r.get("follower.gender").asString());
-                    follower.setBirthday(r.get("follower.birthday").asLocalDate());
-                    followers.add(follower);
+                    liker.setGender(r.get("liker.gender").asString());
+                    likers.add(liker);
                 }
-                return followers;
+                return likers;
             });
 
         }catch(Exception ex){
             ex.printStackTrace();
             return null;
         }
-        return followers;
+        return likers;
     }
 
 
     //ANALYTICS
-    public NavigableMap<String, Integer> getTop10MostFollowedAnime(){
-        TreeMap<String, Integer> n_most_followed_anime_map = new TreeMap<>();
+    public NavigableMap<String, Integer> getTop10MostLikedAnime(){
+        TreeMap<String, Integer> n_most_liked_anime_map = new TreeMap<>();
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.readTransaction(tx -> {
                 Result result = tx.run (
-                        "MATCH(u:User)-[f:FOLLOWS]->(a:Anime) " +
+                        "MATCH(u:User)-[f:LIKE]->(a:Anime) " +
                                 "WITH a, count(u) AS count " +
                                 "ORDER BY count DESC " +
                                 "RETURN a.title, count LIMIT 10"
@@ -259,8 +298,8 @@ public class AnimeManagerNeo4J{
                     org.neo4j.driver.Record r= result.next();
                     if(!r.get("a.title").isNull()){
                         String anime_title=r.get("a.title").asString();
-                        int n_followers = r.get("count").asInt();
-                        n_most_followed_anime_map.put(anime_title, n_followers);
+                        int n_likers = r.get("count").asInt();
+                        n_most_liked_anime_map.put(anime_title, n_likers);
                     };
                 }
                 return null;
@@ -270,12 +309,13 @@ public class AnimeManagerNeo4J{
             ex.printStackTrace();
             System.out.println("Unable to get very suggested anime due to an error");
         }
-        return n_most_followed_anime_map;
+        return n_most_liked_anime_map;
     }
 
 
     public Set<String> getVerySuggestedAnime(String username){
-        // set can't contain duplicate title strings
+        // They have the highest priority, given a user u1 if u1 is following user u2
+        // and U2 liked an anime a and has also writted on a, then a is very suggested to u1.
 
         Set<String> very_sugggested_anime = new HashSet<String>();
 
@@ -283,8 +323,8 @@ public class AnimeManagerNeo4J{
 
             session.readTransaction(tx -> {
                 Result result = tx.run (
-                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(a:Anime)<-[:REFERRED_TO]-(r:Review)<-[:CREATED]-(u2)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(a) AND u1.username = $username " +
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:LIKE]->(a:Anime)<-[:REFERRED_TO]-(r:Review)<-[:WRITE]-(u2)" +
+                                " WHERE NOT (u1)-[:LIKE]->(a) AND u1.username = $username " +
                                 "RETURN a.title LIMIT 20",
                         parameters(
                                 "username", username
@@ -308,15 +348,17 @@ public class AnimeManagerNeo4J{
     }
 
     public Set<String> getSuggestedAnimeMediumPriority(String username){
-        // set can't contain duplicate title strings
+        // They have the second priority level, if a user u1 is following user u2 and u2 liked
+        // an anime a, then a is suggested to u1.
+
         Set<String> sugggested_anime = new HashSet<String>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
             session.readTransaction(tx -> {
                 Result result = tx.run (
-                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(a:Anime)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(a) AND u1.username = $username " +
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:LIKE]->(a:Anime)" +
+                                " WHERE NOT (u1)-[:LIKE]->(a) AND u1.username = $username " +
                                 "RETURN a.title LIMIT 20",
                         parameters(
                                 "username", username
@@ -340,7 +382,8 @@ public class AnimeManagerNeo4J{
     }
 
     public Set<String> getCommentedByFriendAnime(String username){
-        // set can't contain duplicate title strings
+        // They have the lowest priority level, if a user u1 follows a user u2
+        // who has written a review on an anime a, then a is suggested as "commented by a friend" at u1.
 
         Set<String> sugggested_anime = new HashSet<String>();
 
@@ -348,8 +391,8 @@ public class AnimeManagerNeo4J{
 
             session.readTransaction(tx -> {
                 Result result = tx.run (
-                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:CREATED]->(r:Review)-[:REFERRED_TO]->(a:Anime)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(a) AND u1.username = $username " +
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:WRITE]->(r:Review)-[:REFERRED_TO]->(a:Anime)" +
+                                " WHERE NOT (u1)-[:LIKE]->(a) AND u1.username = $username " +
                                 "RETURN a.title LIMIT 20",
                         parameters(
                                 "username", username
@@ -373,6 +416,8 @@ public class AnimeManagerNeo4J{
     }
 
     public List<String> getNSuggestedAnime(String username, int number_of_suggested){
+        // suggest N Anime to a user considering three levels of priorities to anime
+
         Set<String> verySuggestedAnime = getVerySuggestedAnime(username);
         List<String> suggested_anime = new ArrayList<String>(verySuggestedAnime);
 

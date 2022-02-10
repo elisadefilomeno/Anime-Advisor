@@ -6,7 +6,6 @@ public class User {
     private String username;
     private String password;
     private String gender;
-    private LocalDate birthday= LocalDate.of(1900,1,1); //default value
     private boolean logged_in;  // default = false
     private boolean is_admin;  // default = false
 
@@ -36,9 +35,6 @@ public class User {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-    }
 
     public void setLogged_in(boolean logged_in) {
         this.logged_in = logged_in;
@@ -56,9 +52,6 @@ public class User {
     }
     public String getGender() {
         return this.gender;
-    }
-    public LocalDate getBirthday() {
-        return this.birthday;
     }
 
     public boolean getLogged_in() {
@@ -80,16 +73,6 @@ public class User {
                         "Gender: " + this.gender + "\n"
 
         );
-//        String format = "dd/MM/yyyy";
-//        DateFormat df = new SimpleDateFormat(format);
-//        String birthdayAsString = df.format(this.birthday);
-//        String str = ("" +
-//                "Birthday: " + birthdayAsString + "\n"
-//        );
-        String str = ("" +
-                "Birthday: " + birthday.toString() + "\n"
-        );
-        string.append(str);
         string.append("Logged_in: "+String.valueOf(this.logged_in)+ "\n" +
                 "Is_admin: "+ String.valueOf(this.is_admin)
         );
@@ -101,7 +84,6 @@ public class User {
         this.username = u.getUsername();
         this.password = u.getPassword();
         this.gender = u.getGender();
-        this.birthday=u.getBirthday();
         this.logged_in = u.getLogged_in();
         this.is_admin = u.getIs_admin();
     }
