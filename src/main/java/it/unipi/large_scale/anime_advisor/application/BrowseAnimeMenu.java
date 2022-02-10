@@ -33,8 +33,10 @@ public class BrowseAnimeMenu {
     Anime anime=new Anime();
 
     public void showMenu() {
+
+
         //menu with extra option for admin
-        if (user.getIs_admin() && user!=null) {
+        if (checkIsAdmin(user) && user!=null) {
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
             System.out.println("What would you like to do?");
@@ -456,7 +458,15 @@ public class BrowseAnimeMenu {
                     }
                 }
             }
+    public boolean checkIsAdmin(User user){
+        if(user==null){
+            return false;
         }
+        return user.getIs_admin();
+    }
+
+
+}
 
 
 
