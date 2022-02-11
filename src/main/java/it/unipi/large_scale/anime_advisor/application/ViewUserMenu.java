@@ -24,90 +24,95 @@ public class ViewUserMenu {
             PersonalProfileUserMenu personalProfileUserMenu = new PersonalProfileUserMenu();
             personalProfileUserMenu.showMenu();
         }
-        userManagerNeo4J = new UserManagerNeo4J(dbNeo4J);
-        System.out.println("TO DO: )View this user written reviews, liked anime, followed users");
-        System.out.println(GREEN+"**************************************"+RESET);
-        System.out.println(GREEN+"USER PROFILE:"+RESET);
-        StringBuilder string = new StringBuilder();
-        string.append("Username: ").append(u.getUsername()).append("\n")
-                .append("Gender: ").append(u.getGender()).append("\n");
-        if(u.getIs_admin())
-            string.append("Status: Admin\n");
-        else
-            string.append("Status: Not an Admin\n");
-        System.out.println(string);
+        else {
+            userManagerNeo4J = new UserManagerNeo4J(dbNeo4J);
 
-        System.out.println(GREEN+"**************************************"+RESET);
-        System.out.println("What would you like to do?");
-        System.out.println("Digit:");
-        System.out.println("0) Go Back To Home Page");
-        System.out.println("1) Follow this user");
-        System.out.println("2) Unfollow this user");
-        if(user.getIs_admin()){
-            System.out.println("3) Promote this user to Admin");
-            System.out.println("4) Retrocede this Admin to Registered User");
-            System.out.println("5) Delete this user");
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println(GREEN + "USER PROFILE:" + RESET);
+            StringBuilder string = new StringBuilder();
+            string.append("Username: ").append(u.getUsername()).append("\n")
+                    .append("Gender: ").append(u.getGender()).append("\n");
+            if (u.getIs_admin())
+                string.append("Status: Admin");
+            else
+                string.append("Status: Not an Admin");
+            System.out.println(string);
+
+            System.out.println("Numbers Follows: "+userManagerNeo4J.getNumberUserFollow(u.getUsername()));
+            System.out.println("Numbers Follower: "+userManagerNeo4J.getNumberFollowers(u.getUsername()));
+
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("What would you like to do?");
+            System.out.println("Digit:");
+            System.out.println("0) Go Back To Home Page");
+            System.out.println("1) Follow this user");
+            System.out.println("2) Unfollow this user");
+            if (user.getIs_admin()) {
+                System.out.println("3) Promote this user to Admin");
+                System.out.println("4) Retrocede this Admin to Registered User");
+                System.out.println("5) Delete this user");
+            }
+
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("Write your command here:");
+            Scanner sc = new Scanner(System.in);
+            int value_case;
+            try {
+                value_case = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+                return;
+            }
+            switch (value_case) {
+                case 1 -> {
+                    userManagerNeo4J.followUser(user.getUsername(), u.getUsername());
+                    this.showMenu(u);
+                }
+                case 2 -> {
+                    userManagerNeo4J.unfollowUser(user.getUsername(), u.getUsername());
+                    this.showMenu(u);
+                }
+                case 3 -> {
+                    if (!user.getIs_admin()) {
+                        System.out.println("ATTENTION! Wrong number");
+                        this.showMenu(u);
+                    }
+                    if (u.getIs_admin()) {
+                        System.out.println("This user is already an Admin!");
+                        this.showMenu(u);
+                    }
+                    u = userManagerNeo4J.promoteToAdmin(u);
+                    this.showMenu(u);
+                }
+                case 4 -> {
+                    if (!user.getIs_admin()) {
+                        System.out.println("ATTENTION! Wrong number");
+                        this.showMenu(u);
+                    }
+                    if (!u.getIs_admin()) {
+                        System.out.println("This user wasn't an Admin!");
+                        this.showMenu(u);
+                    }
+                    u = userManagerNeo4J.retrocedeAdmin(u);
+                    this.showMenu(u);
+                }
+                case 5 -> {
+                    if (!user.getIs_admin()) {
+                        System.out.println("ATTENTION! Wrong number");
+                        this.showMenu(u);
+                    }
+                    userManagerNeo4J.deleteUser(u);
+                    Registered_Home_page rgh = new Registered_Home_page();
+                    rgh.showMenu();
+                }
+                case 0 -> {
+                    Registered_Home_page registered_home_page = new Registered_Home_page();
+                    registered_home_page.showMenu();
+                }
+                default -> System.out.println("ATTENTION! Wrong command");
+            }
+
+
         }
-
-        System.out.println(GREEN+"**************************************"+RESET);
-        System.out.println("Write your command here:");
-        Scanner sc =new Scanner(System.in);
-        int value_case;
-        try{
-            value_case = Integer.parseInt(sc.nextLine());
-        }
-        catch(Exception e){
-            System.out.println("ATTENTION! Wrong command");
-            return;
-        }
-        switch (value_case) {
-            case 1 -> {userManagerNeo4J.followUser(user.getUsername(),u.getUsername());
-                this.showMenu(u);
-            }
-            case 2 -> {userManagerNeo4J.unfollowUser(user.getUsername(), u.getUsername());
-                this.showMenu(u);
-            }
-            case 3 -> {
-                if(!user.getIs_admin()){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu(u);
-                }
-                if(u.getIs_admin()){
-                    System.out.println("This user is already an Admin!");
-                    this.showMenu(u);
-                }
-                u = userManagerNeo4J.promoteToAdmin(u);
-                this.showMenu(u);
-            }
-            case 4 -> {
-                if(!user.getIs_admin()){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu(u);
-                }
-                if(!u.getIs_admin()){
-                    System.out.println("This user wasn't an Admin!");
-                    this.showMenu(u);
-                }
-                u=userManagerNeo4J.retrocedeAdmin(u);
-                this.showMenu(u);
-            }
-            case 5 -> {
-                if(!user.getIs_admin()){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu(u);
-                }
-                userManagerNeo4J.deleteUser(u);
-                Registered_Home_page rgh = new Registered_Home_page();
-                rgh.showMenu();
-            }
-            case 0 -> {Registered_Home_page registered_home_page = new Registered_Home_page();
-                registered_home_page.showMenu();
-            }
-            default -> System.out.println("ATTENTION! Wrong command");
-        }
-
-
-
-
     }
 }

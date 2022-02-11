@@ -59,8 +59,8 @@ public class BrowseAnimeMenu {
                 }
             switch (value_case) {
                 case 1: //FIND BY NAME
-                   // this.browseAnimeTitle();
-                    this.findAnime();
+                    this.browseAnimeTitle();
+                    //this.findAnime();
                     break;
                 case 2: //FIND BY GENRE
                         this.researchByGenre();
