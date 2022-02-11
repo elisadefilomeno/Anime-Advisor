@@ -1,24 +1,24 @@
 package dbExtaction;
 
-import com.mongodb.client.MongoCollection;
-import it.unipi.large_scale.anime_advisor.dbManager.DbManagerMongoDB;
-import it.unipi.large_scale.anime_advisor.entity.Anime;
-
+//import com.mongodb.client.MongoCollection;
+//import it.unipi.large_scale.anime_advisor.dbManager.DbManagerMongoDB;
+/*import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.Review;
-import it.unipi.large_scale.anime_advisor.entity.User;
-import org.bson.Document;
+import it.unipi.large_scale.anime_advisor.entity.User; */
+import it.unipi.large_scale.anime_advisor.entity.*;
+//import org.bson.Document;
 import org.neo4j.driver.*;
-import org.neo4j.driver.internal.value.LocalDateTimeValue;
-import it.unipi.large_scale.anime_advisor.application.*;
+//import org.neo4j.driver.internal.value.LocalDateTimeValue;
+//import it.unipi.large_scale.anime_advisor.application.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
+//import java.text.DateFormat;
+//import java.text.SimpleDateFormat;
+//import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
-import it.unipi.large_scale.anime_advisor.animeManager.*;
-import it.unipi.large_scale.anime_advisor.application.*;
+//import it.unipi.large_scale.anime_advisor.animeManager.*;
+//import it.unipi.large_scale.anime_advisor.application.*;
 
 
 
@@ -57,7 +57,7 @@ public class MyPopulation implements AutoCloseable {
         }
         return animes;
     }
-    public void              addAnimeToGraph(ArrayList<Anime> anime_list){
+    public void addAnimeToGraph(ArrayList<Anime> anime_list){
         int i=0;
         try (Session session = driver.session()) {
             for(Anime a: anime_list) {
@@ -78,7 +78,7 @@ public class MyPopulation implements AutoCloseable {
     }
 
     //Population Users
-    public ArrayList<User>   loadUsers(String file_path) throws FileNotFoundException {
+    public ArrayList<User> loadUsers(String file_path) throws FileNotFoundException {
         ArrayList<User> users = new ArrayList<User>();
         boolean first = true;
         String csvRows;
@@ -109,7 +109,7 @@ public class MyPopulation implements AutoCloseable {
         usersSc.close();
         return users;
     }
-    public void              addUsersToGraph(ArrayList<User> user_list){
+    public void addUsersToGraph(ArrayList<User> user_list){
            try (Session session = driver.session()) {
             int i=0;
             for(User u: user_list) {
@@ -216,14 +216,14 @@ public class MyPopulation implements AutoCloseable {
     }
 
     //Add relations
-    public void createFollowsRelationshipUserAnime (String[] user,ArrayList<Anime> anime,MongoCollection<Document> anime_collection){
+    public void createFollowsRelationshipUserAnime (String[] user,ArrayList<Anime> anime){
         Random rand = new Random();
         int NFollows=0;
         int indexFollower=0;
 
         for(int i =0; i<anime.size(); i++){
             //Calcolo randomicamente il numero di followers totale per ogni anime
-            NFollows = rand.nextInt(0,20);
+            NFollows = rand.nextInt(0,15);
             if(NFollows>0) {
                 for (int j = 0; j < NFollows; j++) {
                     //Calcolo randomicamente l'utente che segue l'anime
@@ -250,7 +250,7 @@ public class MyPopulation implements AutoCloseable {
     public void createFollowsRelationshipBetweenUsers (String[] user ){
 
         Random rand = new Random();
-        int maxNumberFollower=1;
+        int maxNumberFollower=15;
         int randomValueUsers=0;
         int indexRandomUser=0;
 
@@ -320,9 +320,7 @@ public class MyPopulation implements AutoCloseable {
     public static void main(String[] args) throws Exception{
         MyPopulation gp = new MyPopulation();
 
-        DbManagerMongoDB mongoM=new DbManagerMongoDB("mongodb://localhost:27017");
-        mongoM.startMongo("Anime_Advisor");
-        MongoCollection<Document> anime_collection= mongoM.getCollection("anime");
+
 
         ArrayList<User> users = gp.loadUsers("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\UserCompleto.csv");
         System.out.println("Total number of users: " + Integer.toString(users.size()));
@@ -332,7 +330,7 @@ public class MyPopulation implements AutoCloseable {
 
         ArrayList<Review> reviews = gp.loadReviews("C:\\Users\\onpep\\Desktop\\FilePerGrafo\\reviewGraph.csv");
         System.out.println("Total number of reviews: " + Integer.toString(reviews.size()));
-/*
+
         gp.addAnimeToGraph(animes);
         System.out.println("FIniSH Anime");
 
@@ -341,7 +339,7 @@ public class MyPopulation implements AutoCloseable {
 
         gp.addReviewsToGraph(reviews);
         System.out.println("FINITO ADDING");
-*/
+
         //Costruisco un vettore che contiene tutti i nomi degli utenti
         int countName=0;
         String[] allUsers = new String [users.size()];
@@ -350,10 +348,10 @@ public class MyPopulation implements AutoCloseable {
             countName++;
         }
         System.out.println("Start Relation");
-      //  gp.createFollowsRelationshipBetweenUsers(allUsers);
+        gp.createFollowsRelationshipBetweenUsers(allUsers);
         System.out.println("FINITO Follow");
 
-    //    gp.createFollowsRelationshipUserAnime(allUsers,animes,anime_collection);
+        gp.createFollowsRelationshipUserAnime(allUsers,animes);
         System.out.println("Finito Like");
 
         gp.createRelationshipUserReviews(reviews);
@@ -361,19 +359,17 @@ public class MyPopulation implements AutoCloseable {
         System.out.println("FINISHHHHHH");
 
 
-     /*   int number_of_users = users.size();
+         /*   int number_of_users = users.size();
         int n_follows_edges_users = number_of_users / 2;
         gp.createFollowsRelationshipBetweenUsers(number_of_users, n_follows_edges_users);
         String[] anime_names = gp.getAnimeNames(animes);
         int n_follows_edges_user_anime = number_of_users*5;
         gp.createFollowsRelationshipUserAnime(number_of_users, n_follows_edges_user_anime, anime_names);
-*/
-
+        */
 
     }
 
 
 }
-
 
 

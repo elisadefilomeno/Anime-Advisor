@@ -71,7 +71,7 @@ public class ReviewManagerNeo4J{
         try (Session session = dbNeo4J.getDriver().session()) {
             session.run(
                     "MATCH (r:Review{ title: $titleR}), (a:Anime{title: $title})" +
-                            " MERGE (a)<-[:REFERRED_TO]-(r)",
+                            " MERGE (r)-[:REFERRED_TO]->(a)",
                     parameters("titleR", r.getTitle(),
                             "title",a.getAnime_name())
             );
@@ -194,7 +194,7 @@ public class ReviewManagerNeo4J{
 
     }
 
-    public void deleteReview(String title_rev,String title_anime,String profile) {
+    public void deleteReview(String title_rev) {
 
         if(!checkIfPresent(title_rev)){
             System.out.println("Review not found !");
@@ -202,12 +202,10 @@ public class ReviewManagerNeo4J{
         }
         try(Session session= dbNeo4J.getDriver().session()){
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run( "MATCH (r:Review{title:$titleR}),(a:Anime{title:$titleA}),"+
-                                "(u:User{username:$user})DETACH DELETE r",
+                tx.run( "MATCH (r:Review{title:$titleR}) DETACH DELETE r",
                         parameters(
-                                "titleR", title_rev,
-                                "titleA",title_anime,
-                                "user",profile
+                                "titleR", title_rev
+
                         )
                 );
                 return null;
@@ -283,8 +281,111 @@ public class ReviewManagerNeo4J{
             ex.printStackTrace();
             System.out.println("There is a problem");
         }
-        System.out.println(rev_count>0);
+
         return (rev_count>0);
+    }
+
+    public ArrayList<Review> list_ReviewFound(Anime a){
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review) -[f:REFERRED_TO]-> (a:Anime {title:$title}) "+
+                                " RETURN r.title,r.text,r.last_update LIMIT 10",
+                        parameters(
+                                "title", a.getAnime_name()
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
+    }
+    public ArrayList<Review> listLatestReviewByAnime(Anime a){
+
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review) -[f:REFERRED_TO]-> (a:Anime {title:$title}) "+
+                                " RETURN r.title,r.text,r.last_update ORDER BY r.last_update DESC LIMIT 10",
+                        parameters(
+                                "title", a.getAnime_name()
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
+    }
+    public ArrayList<Review> filterReviewByKeyWord(Anime a,String keyword){
+
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review) -[f:REFERRED_TO]-> (a:Anime {title:$title}) "+
+                                " WHERE r.title CONTAINS $keyword RETURN r.title,r.text,r.last_update ORDER BY r.last_update DESC LIMIT 10",
+                        parameters(
+                                "title", a.getAnime_name(),
+                                "keyword",keyword
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
     }
 
    /* public static void main(String[] args) throws Exception {
