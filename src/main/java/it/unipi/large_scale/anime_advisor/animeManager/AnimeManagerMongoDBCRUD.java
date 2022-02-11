@@ -26,11 +26,23 @@ public class AnimeManagerMongoDBCRUD{
 
 
     //Check if the document is present with case insensitivity option
-    public boolean checkIfPresent(Anime anime,MongoCollection<Document> collection){
+   /* public boolean checkIfPresent(Anime anime,MongoCollection<Document> collection){
         //Document doc= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
         Document doc= collection.find(eq("name",anime.getAnime_name())).first();
 
         return doc != null;
+    }*/
+    public boolean checkIfPresentEquals(Anime anime,MongoCollection<Document> collection){
+        Document results= collection.find(eq("name",anime.getAnime_name())).first();
+        //MongoCursor<Document> results=collection.find(eq("name",new Document("$regex",anime.getAnime_name()))).iterator();
+
+        return results != null;
+    }
+    public boolean checkIfPresent(Anime anime,MongoCollection<Document> collection){
+        Document results= collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).first();
+        //MongoCursor<Document> results=collection.find(eq("name",new Document("$regex",anime.getAnime_name()))).iterator();
+
+        return results != null;
     }
     //check if an element is present in the array field of an anime
     public boolean checkIfPresentinArray(Anime anime,MongoCollection<Document> collection,String array,String el){
@@ -67,7 +79,8 @@ public class AnimeManagerMongoDBCRUD{
 
     //Creates a new document and put it into the collection specified
     public boolean createAnime(Anime anime, MongoCollection<Document> collection) {
-        if(checkIfPresent(anime, collection)){
+       //if(checkIfPresent(anime, collection)){
+        if(checkIfPresentEquals(anime,collection)){
             System.out.println("Document already present\n");
             return false;}
         else {
@@ -94,15 +107,16 @@ public class AnimeManagerMongoDBCRUD{
         if(!checkIfPresent(anime, collection)){
             System.out.println("Document not found\n");
             return null;}
-        HashMap<Integer,String> res=null;
-        MongoCursor<Document> results=collection.find(eq("name",new Document("$regex",anime.getAnime_name()))).iterator();
+        HashMap<Integer,String> res=new HashMap<>();
+        MongoCursor<Document> results=collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).iterator();
         System.out.println("Resutls found:");
         Document temp;
         int pos=1;
         while(results.hasNext()){
             temp=results.next();
-            System.out.println(pos+") "+temp);
+            System.out.println(pos+") "+temp.get("name"));
             res.put(pos,temp.get("name").toString());
+            pos++;
         }
         return res;
 
@@ -144,11 +158,11 @@ public class AnimeManagerMongoDBCRUD{
 
     //Find a document and update it's parameters
     public void updateAnimeName(Anime anime,MongoCollection<Document> collection,String newName) {
-        if(collection.find(eq("name",new Document("$regex",newName).append("$options","i"))).first()!=null){
+        if(collection.find(eq("name",newName)).first()!=null){
             System.out.println("A document with this name is already present. Cannot update\n");
             return;
         }
-        if(checkIfPresent(anime, collection)){
+        if(checkIfPresentEquals(anime, collection)){
         Bson query= new Document().append("name",anime.getAnime_name());
         Bson update= Updates.set("name",newName);
             try {

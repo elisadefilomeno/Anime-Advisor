@@ -1,24 +1,24 @@
 package dbExtaction;
 
-import com.mongodb.client.MongoCollection;
-import it.unipi.large_scale.anime_advisor.dbManager.DbManagerMongoDB;
-import it.unipi.large_scale.anime_advisor.entity.Anime;
-
+//import com.mongodb.client.MongoCollection;
+//import it.unipi.large_scale.anime_advisor.dbManager.DbManagerMongoDB;
+/*import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.Review;
-import it.unipi.large_scale.anime_advisor.entity.User;
-import org.bson.Document;
+import it.unipi.large_scale.anime_advisor.entity.User; */
+import it.unipi.large_scale.anime_advisor.entity.*;
+//import org.bson.Document;
 import org.neo4j.driver.*;
-import org.neo4j.driver.internal.value.LocalDateTimeValue;
-import it.unipi.large_scale.anime_advisor.application.*;
+//import org.neo4j.driver.internal.value.LocalDateTimeValue;
+//import it.unipi.large_scale.anime_advisor.application.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
+//import java.text.DateFormat;
+//import java.text.SimpleDateFormat;
+//import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
-import it.unipi.large_scale.anime_advisor.animeManager.*;
-import it.unipi.large_scale.anime_advisor.application.*;
+//import it.unipi.large_scale.anime_advisor.animeManager.*;
+//import it.unipi.large_scale.anime_advisor.application.*;
 
 
 
@@ -57,7 +57,7 @@ public class MyPopulation implements AutoCloseable {
         }
         return animes;
     }
-    public void              addAnimeToGraph(ArrayList<Anime> anime_list){
+    public void addAnimeToGraph(ArrayList<Anime> anime_list){
         int i=0;
         try (Session session = driver.session()) {
             for(Anime a: anime_list) {
@@ -78,7 +78,7 @@ public class MyPopulation implements AutoCloseable {
     }
 
     //Population Users
-    public ArrayList<User>   loadUsers(String file_path) throws FileNotFoundException {
+    public ArrayList<User> loadUsers(String file_path) throws FileNotFoundException {
         ArrayList<User> users = new ArrayList<User>();
         boolean first = true;
         String csvRows;
@@ -109,7 +109,7 @@ public class MyPopulation implements AutoCloseable {
         usersSc.close();
         return users;
     }
-    public void              addUsersToGraph(ArrayList<User> user_list){
+    public void addUsersToGraph(ArrayList<User> user_list){
            try (Session session = driver.session()) {
             int i=0;
             for(User u: user_list) {
