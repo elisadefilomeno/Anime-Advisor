@@ -283,11 +283,11 @@ public class ReviewManagerNeo4J{
             ex.printStackTrace();
             System.out.println("There is a problem");
         }
-        System.out.println(rev_count>0);
+
         return (rev_count>0);
     }
 
-    public ArrayList<Review> list_Review(Anime a){
+    public ArrayList<Review> list_ReviewFound(Anime a){
         ArrayList<Review> list ;
 
         try(Session session= dbNeo4J.getDriver().session()) {

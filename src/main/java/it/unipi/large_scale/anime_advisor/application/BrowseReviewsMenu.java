@@ -46,14 +46,14 @@ public class BrowseReviewsMenu {
 
                 ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
                 ArrayList<Review> list =  new ArrayList<>();
-                list =rm.list_Review(a);
+                list =rm.list_ReviewFound(a);
                 int count=0;
                 for(Review r: list){
                     count++;
                     System.out.println(GREEN+count+")"+RESET+"  "+r.getTitle());
                 }
                 ViewReviewMenu viewReviewMenu = new ViewReviewMenu ();
-                viewReviewMenu.showMenu(list,a);
+                viewReviewMenu.showReviewMenu(list,a);
 
             }
 
@@ -66,6 +66,10 @@ public class BrowseReviewsMenu {
                     count++;
                     System.out.println(GREEN+count+")"+RESET+"  "+r.getTitle() + WHITE+"   "+r.getLast_update()+RESET);
                 }
+                ViewReviewMenu viewReviewMenu = new ViewReviewMenu ();
+                viewReviewMenu.showReviewMenu(list,a);
+
+
 
             }
 
@@ -87,8 +91,9 @@ public class BrowseReviewsMenu {
                 newReview.setTitle(titleReview);
                 newReview.setText(textReview);
 
-                System.out.println(rm.checkIfPresent(titleReview));
                 rm.createReview(newReview,a,user);
+
+                this.showMenu(a);
 
             }
 
@@ -109,7 +114,12 @@ public class BrowseReviewsMenu {
                 }
                 if(!list.isEmpty()){
                     ViewReviewMenu vrm = new ViewReviewMenu ();
-                    vrm.showMenu(list,a);
+                    vrm.showReviewMenu(list,a);
+                }
+                else
+                {
+                    System.out.println("Not found result !");
+                    this.showMenu(a);
                 }
 
             }
@@ -120,7 +130,10 @@ public class BrowseReviewsMenu {
                 BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
                 browseAnimeMenu.showMenu();
             }
-
+            default:{
+                System.out.println("Wrong command !!!");
+                this.showMenu(a);
+            }
 
         }
 

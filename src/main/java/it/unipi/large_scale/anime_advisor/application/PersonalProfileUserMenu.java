@@ -125,10 +125,10 @@ public class PersonalProfileUserMenu {
                     System.out.println("ATTENTION! Wrong number");
                     this.showMenu();
                 }
-                User u = new User();
+              /*  User u = new User();
                 u.setUsername(user_map_to_access_reviews.get(review_number));
                 viewReviewMenu = new ViewReviewMenu();
-                viewReviewMenu.showMenu(u);
+                viewReviewMenu.showReviewMenu(u);*/
             }
             case 0 -> this.showMenu();
             default -> System.out.println("ATTENTION! Wrong command");

@@ -17,7 +17,7 @@ public class FUNZIONE_VALE {
         public void viewTop10MostFollowedAnime(){ // vale
             // TO DO
             animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
-            Map<String, Integer> top10_anime= animeManagerNeo4J.getTop10MostFollowedAnime();
+           /* Map<String, Integer> top10_anime= animeManagerNeo4J.getTop10MostFollowedAnime();
             int i =0;
             Map<Integer, String> user_map_to_access_anime = new HashMap<>();
             System.out.println(GREEN+"**************************************"+RESET);
@@ -56,6 +56,6 @@ public class FUNZIONE_VALE {
             System.out.println("You have choosen:");
             Anime anime = new Anime(anime_title);
             System.out.println(anime.getAnime_name());
-
+*/
         }
 }

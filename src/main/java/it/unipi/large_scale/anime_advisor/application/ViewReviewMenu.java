@@ -15,7 +15,7 @@ import static it.unipi.large_scale.anime_advisor.application.Main.anime_collecti
 import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 public class ViewReviewMenu {
-    public void showMenu(ArrayList<Review> list, Anime a) {
+    public void showReviewMenu(ArrayList<Review> list, Anime a) {
         if (checkIsAdmin(user) && user!=null) {
             System.out.println(GREEN + "**************************************" + RESET);
 
@@ -35,7 +35,7 @@ public class ViewReviewMenu {
                 value_case = Integer.parseInt(sc.nextLine());
             } catch (Exception e) {
                 System.out.println("ATTENTION! Wrong command");
-                this.showMenu(list, a);
+                this.showReviewMenu(list, a);
             }
 
             switch (value_case) {
@@ -60,22 +60,25 @@ public class ViewReviewMenu {
                         } else {
                             maxIndex = 10;
                         }
-                        if (numberTitle > maxIndex || numberTitle < 0) {
+                        if (numberTitle > maxIndex || numberTitle <=0) {
                             System.out.println("ATTENTION! Wrong command");
-                            this.showMenu(list, a);
+                            this.showReviewMenu(list, a);
                         }
                     } catch (Exception e) {
                         System.out.println("ATTENTION! Wrong command");
-                        this.showMenu(list, a);
+                        this.showReviewMenu(list, a);
                     }
 
                     //-1 perche' in input valori partono da 1
                     System.out.println(list.get(numberTitle - 1).getText());
-                    this.showMenu(list, a);
+                    this.showReviewMenu(list, a);
                 }
 
                 case 2: {
                     System.out.println("Prendere funzione di Eli");
+                }
+                case 3 : {
+                    System.out.println("Deleting Review ...");
                 }
 
 
@@ -107,7 +110,7 @@ public class ViewReviewMenu {
                 value_case = Integer.parseInt(sc.nextLine());
             } catch (Exception e) {
                 System.out.println("ATTENTION! Wrong command");
-                this.showMenu(list, a);
+                this.showReviewMenu(list, a);
             }
 
             switch (value_case) {
@@ -132,18 +135,18 @@ public class ViewReviewMenu {
                         } else {
                             maxIndex = 10;
                         }
-                        if (numberTitle > maxIndex || numberTitle < 0) {
+                        if (numberTitle > maxIndex || numberTitle <= 0) {
                             System.out.println("ATTENTION! Wrong command");
-                            this.showMenu(list, a);
+                            this.showReviewMenu(list, a);
                         }
                     } catch (Exception e) {
                         System.out.println("ATTENTION! Wrong command");
-                        this.showMenu(list, a);
+                        this.showReviewMenu(list, a);
                     }
 
                     //-1 perche' in input valori partono da 1
                     System.out.println(list.get(numberTitle - 1).getText());
-                    this.showMenu(list, a);
+                    this.showReviewMenu(list, a);
                 }
 
                 case 2: {
@@ -158,7 +161,7 @@ public class ViewReviewMenu {
             }
         }
 
-                //1) vede info review, autore,...
+        //1) vede info review, autore,...
         // 2) vuoi leggere il testo?
         // 3) if user è admin mostra l'opzione di eliminare la review
     }
