@@ -1,10 +1,8 @@
 package it.unipi.large_scale.anime_advisor.application;
 
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
-import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
-import it.unipi.large_scale.anime_advisor.entity.Anime;
-import it.unipi.large_scale.anime_advisor.entity.User;
+
+import it.unipi.large_scale.anime_advisor.animeManager.*;
+import it.unipi.large_scale.anime_advisor.entity.*;
 import org.bson.Document;
 
 import javax.print.Doc;

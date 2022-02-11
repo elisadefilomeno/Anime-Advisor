@@ -110,7 +110,7 @@ public class BrowseReviewsMenu {
 
                 for (Review r:list){
                     count++;
-                    System.out.println(GREEN+count+")"+RESET+"  "+r.getTitle() + WHITE+"   "+r.getLast_update()+RESET);
+                    System.out.println(GREEN+count+1+")"+RESET+"  "+r.getTitle() + WHITE+"   "+r.getLast_update()+RESET);
                 }
                 if(!list.isEmpty()){
                     ViewReviewMenu vrm = new ViewReviewMenu ();

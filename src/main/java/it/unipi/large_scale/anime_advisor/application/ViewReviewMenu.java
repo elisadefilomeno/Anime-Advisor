@@ -78,7 +78,42 @@ public class ViewReviewMenu {
                     System.out.println("Prendere funzione di Eli");
                 }
                 case 3 : {
+                    ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
                     System.out.println("Deleting Review ...");
+                    int count=0;
+                    for (Review r : list) {
+                        count++;
+                        System.out.println(GREEN + count + ")" + RESET + "  " + r.getTitle());
+                    }
+                    int numberTitle=-1;
+                    try {
+                        System.out.println("Choose the review that you want delete");
+
+                        numberTitle = Integer.parseInt(sc.nextLine());
+                        int maxIndex = 0;
+                        if (list.size() < 11) {
+                            maxIndex = list.size();
+                        } else {
+                            maxIndex = 10;
+                        }
+                        if (numberTitle > maxIndex || numberTitle <=0) {
+                            System.out.println("ATTENTION! HahWrong command");
+                            this.showReviewMenu(list, a);
+                        }
+                        else{
+                            System.out.println("Deletion successfully !");
+                            rm.deleteReview(list.get(numberTitle-1).getTitle());
+                            list.remove(numberTitle-1);
+                            BrowseReviewsMenu brm = new BrowseReviewsMenu();
+                            brm.showMenu(a);
+
+                        }
+                    } catch (Exception e) {
+                        System.out.println("ATTENTION! Wrong command");
+                        this.showReviewMenu(list, a);
+                    }
+
+
                 }
 
 

@@ -194,7 +194,7 @@ public class ReviewManagerNeo4J{
 
     }
 
-    public void deleteReview(String title_rev,String title_anime,String profile) {
+    public void deleteReview(String title_rev) {
 
         if(!checkIfPresent(title_rev)){
             System.out.println("Review not found !");
@@ -202,12 +202,10 @@ public class ReviewManagerNeo4J{
         }
         try(Session session= dbNeo4J.getDriver().session()){
             session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run( "MATCH (r:Review{title:$titleR}),(a:Anime{title:$titleA}),"+
-                                "(u:User{username:$user})DETACH DELETE r",
+                tx.run( "MATCH (r:Review{title:$titleR}) DETACH DELETE r",
                         parameters(
-                                "titleR", title_rev,
-                                "titleA",title_anime,
-                                "user",profile
+                                "titleR", title_rev
+
                         )
                 );
                 return null;
