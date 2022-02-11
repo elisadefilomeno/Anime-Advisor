@@ -71,7 +71,9 @@ public class MongoMain {
         System.out.println("producer 2000");
         amg.highAvgEntity(collection,"producer",2000);
 
-
+        Anime aaaa=new Anime();
+        aaaa.setAnime_name("cowboy");
+        amc.findResults(aaaa,collection);
 
         mongoM.closeMongo();
 

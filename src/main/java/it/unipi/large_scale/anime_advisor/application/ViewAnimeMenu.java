@@ -26,9 +26,7 @@ public class ViewAnimeMenu {
         System.out.println("1) Follow anime");
         System.out.println("2) Review anime"); //io
         System.out.println("3) Vote anime");
-        System.out.println("4) Update anime");
-        System.out.println("5) Delete anime");
-        System.out.println("6) Go back");
+        System.out.println("4) Go back");
         System.out.println(GREEN + "**************************************" + RESET);        //1) vede info anime,
 
 
@@ -69,7 +67,7 @@ public class ViewAnimeMenu {
                 this.showMenu(anime);
             }
 
-            case 4:
+            case 4:return; //DA PROVARE
             case 5:
                 backMenu.showMenu();
                 break;
