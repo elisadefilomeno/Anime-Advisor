@@ -90,6 +90,25 @@ public class AnimeManagerMongoDBCRUD{
     }
 
     //Find and print if present the document specified in the collection Return anime result
+    public HashMap<Integer,String> findResults(Anime anime,MongoCollection<Document>collection){
+        if(!checkIfPresent(anime, collection)){
+            System.out.println("Document not found\n");
+            return null;}
+        HashMap<Integer,String> res=null;
+        MongoCursor<Document> results=collection.find(eq("name",new Document("$regex",anime.getAnime_name()))).iterator();
+        System.out.println("Resutls found:");
+        Document temp;
+        int pos=1;
+        while(results.hasNext()){
+            temp=results.next();
+            System.out.println(pos+") "+temp);
+            res.put(pos,temp.get("name").toString());
+        }
+        return res;
+
+
+    }
+
     public Anime readAnime(Anime anime, MongoCollection<Document> collection) {
         if(!checkIfPresent(anime, collection)){
             System.out.println("Document not found\n");

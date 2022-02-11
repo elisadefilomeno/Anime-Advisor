@@ -59,7 +59,8 @@ public class BrowseAnimeMenu {
                 }
             switch (value_case) {
                 case 1: //FIND BY NAME
-                    this.browseAnimeTitle();
+                   // this.browseAnimeTitle();
+                    this.findAnime();
                     break;
                 case 2: //FIND BY GENRE
                         this.researchByGenre();
@@ -127,6 +128,25 @@ public class BrowseAnimeMenu {
         }
     } //SHOW MENU
 
+    public void findAnime(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Insert anime title: ");
+        int pos=-1;
+        String scan= sc.nextLine();
+        Anime a= new Anime();
+        a.setAnime_name(scan);
+        HashMap<Integer,String> results= crud.findResults(a,anime_collection);
+        System.out.println("Select the anime to open");
+        while(pos==-1) {
+            try {
+                pos = sc.nextInt();
+            } catch (NumberFormatException e) {
+                System.out.println("Wrong input!");
+            }
+        }
+        a.setAnime_name(results.get(pos));
+        animeMenu.showMenu(a);
+    }
 
     public void browseAnimeTitle(){
         Scanner sc = new Scanner(System.in);
