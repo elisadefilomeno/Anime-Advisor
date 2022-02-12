@@ -1034,7 +1034,7 @@ public class BrowseAnimeMenu {
     }
 
 
-  /*  public Anime advancedSearch(){
+   public Anime advancedSearch(){
         int check=0; //CHECK FOR WHILE
         int input=-1; //CHECK FOR AGGREGATION
         int chose=-1; //CHECK FOR OPTIONS IN AGGREGATION
@@ -1296,7 +1296,7 @@ public class BrowseAnimeMenu {
 
     }*/
 
-    */
+
 
 
 
