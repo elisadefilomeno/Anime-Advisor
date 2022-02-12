@@ -7,7 +7,6 @@ import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -23,7 +22,6 @@ public class PersonalProfileUserMenu {
 
     private ViewAnimeMenu viewAnimeMenu;
     private ViewUserMenu viewUserMenu;
-    private ViewReviewMenu viewReviewMenu;
     private Registered_Home_page registered_home_page;
     
     
@@ -171,7 +169,10 @@ public class PersonalProfileUserMenu {
                 viewUserMenu.showMenu(u);
             }
             case 0 -> this.showMenu();
-            default -> System.out.println("ATTENTION! Wrong command");
+            default -> {
+                System.out.println("ATTENTION! Wrong command");
+                this.showMenu();
+            }
         }
     }
 
@@ -179,17 +180,16 @@ public class PersonalProfileUserMenu {
         Set<Review> written_reviews = userManagerNeo4J.getWrittenReviews(user);
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Written Reviews:");
-        HashMap<Integer, String> user_map_to_access_reviews= new HashMap<>();
+        HashMap<Integer, String> user_map_to_access_reviews = new HashMap<>();
         anInterface = new Interface();
         int key = 0;
-        if(!written_reviews.isEmpty()){
-            for(Review review: written_reviews){
+        if (!written_reviews.isEmpty()) {
+            for (Review review : written_reviews) {
                 key++;
                 user_map_to_access_reviews.put(key, review.getTitle());
             }
             anInterface.printResults(user_map_to_access_reviews);
-        }
-        else
+        } else
             System.out.println("You didn't write any review yet");
 
         System.out.println(GREEN + "**************************************" + RESET);
@@ -198,14 +198,13 @@ public class PersonalProfileUserMenu {
         System.out.println("0) Go Back to your profile");
         System.out.println("1) View specific Review info");
 
-        System.out.println(GREEN+"**************************************"+RESET);
+        System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Write your command here:");
-        Scanner sc =new Scanner(System.in);
-        int value_case=0;
-        try{
+        Scanner sc = new Scanner(System.in);
+        int value_case = 0;
+        try {
             value_case = Integer.parseInt(sc.nextLine());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println("ATTENTION! Wrong command");
             this.showMenu();
         }
@@ -213,14 +212,13 @@ public class PersonalProfileUserMenu {
             case 1 -> {
                 System.out.println("Insert the number of the review you want to see: ");
                 int review_number = 0;
-                try{
+                try {
                     review_number = Integer.parseInt(sc.nextLine());
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
                     this.showMenu();
                 }
-                if(!user_map_to_access_reviews.containsKey(review_number)){
+                if (!user_map_to_access_reviews.containsKey(review_number)) {
                     System.out.println("ATTENTION! Wrong number");
                     this.showMenu();
                 }
@@ -230,155 +228,154 @@ public class PersonalProfileUserMenu {
                 viewReviewMenu.showReviewMenu(u);*/
             }
             case 0 -> this.showMenu();
-            default -> System.out.println("ATTENTION! Wrong command");
-        }
+            default -> {
+                System.out.println("ATTENTION! Wrong command");
+                this.showMenu();
+            }
 
+        }
     }
 
 
-
-
-
-    private void viewLikedAnime() {
-        Set<String> followed_anime = userManagerNeo4J.getLikedAnime(user);
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("Liked Anime:");
-        HashMap<Integer, String> user_map_to_access_anime= new HashMap<>();
-        anInterface = new Interface();
-        int key = 0;
-        if(!followed_anime.isEmpty()){
-            for(String anime: followed_anime){
-                key++;
-                user_map_to_access_anime.put(key, anime);
-            }
-            anInterface.printResults(user_map_to_access_anime);
-        }
-        else
-            System.out.println("You don't like any anime");
-
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("What would you like to do?");
-        System.out.println("Digit:");
-        System.out.println("0) Go Back to your profile");
-        System.out.println("1) View specific Anime info");
-
-        System.out.println(GREEN+"**************************************"+RESET);
-        System.out.println("Write your command here:");
-        Scanner sc =new Scanner(System.in);
-        int value_case=0;
-        try{
-            value_case = Integer.parseInt(sc.nextLine());
-        }
-        catch(Exception e){
-            System.out.println("ATTENTION! Wrong command");
-            this.showMenu();
-        }
-        switch (value_case) {
-            case 1 -> {
-                System.out.println("Insert the number of the anime you want to visit: ");
-                int anime_number = 0;
-                try{
-                    anime_number = Integer.parseInt(sc.nextLine());
+        private void viewLikedAnime () {
+            Set<String> followed_anime = userManagerNeo4J.getLikedAnime(user);
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("Liked Anime:");
+            HashMap<Integer, String> user_map_to_access_anime = new HashMap<>();
+            anInterface = new Interface();
+            int key = 0;
+            if (!followed_anime.isEmpty()) {
+                for (String anime : followed_anime) {
+                    key++;
+                    user_map_to_access_anime.put(key, anime);
                 }
-                catch(Exception e){
-                    System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
-                }
-                if(!user_map_to_access_anime.containsKey(anime_number)){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu();
-                }
-                Anime anime = new Anime();
-                anime.setAnime_name(user_map_to_access_anime.get(anime_number));
-                viewAnimeMenu = new ViewAnimeMenu();
-                viewAnimeMenu.showMenu(anime);
-            }
-            case 0 -> this.showMenu();
-            default -> System.out.println("ATTENTION! Wrong command");
-        }
-    }
+                anInterface.printResults(user_map_to_access_anime);
+            } else
+                System.out.println("You don't like any anime");
 
-    private void modifyProfile() {
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("What would you like to modify?");
-        System.out.println("Digit:");
-        System.out.println("0) Go Back");
-        System.out.println("1) Modify your username");
-        System.out.println("2) Modify your password");
-        System.out.println("3) Modify your gender");
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("Write your command here:");
-        Scanner sc = new Scanner(System.in);
-        int value_case;
-        try {
-            value_case = Integer.parseInt(sc.nextLine());
-        } catch (Exception e) {
-            System.out.println("ATTENTION! Wrong command");
-            value_case = 0;
-        }
-        switch (value_case) {
-            case 1 -> {
-                System.out.println(GREEN + "**************************************" + RESET);
-                System.out.println("Write your new username here:");
-                String new_username = sc.nextLine();
-                user = userManagerNeo4J.modifyUsername(user, new_username);
-                showMenu();
-            }
-            case 2 -> {
-                System.out.println(GREEN + "**************************************" + RESET);
-                System.out.println("Write your new password here:");
-                String new_password = sc.nextLine();
-                User updated_user = userManagerNeo4J.updateUser(
-                        new User(user.getUsername(),new_password, user.getGender(),
-                                user.getLogged_in(), user.getIs_admin()));
-                if(!(updated_user == null)){
-                    user = updated_user;
-                }
-                showMenu();
-            }
-            case 3 -> {
-                System.out.println(GREEN + "**************************************" + RESET);
-                System.out.println("Choose your new gender:");
-                System.out.println("1) Female");
-                System.out.println("2) Male");
-                System.out.println("3) Other");
-                System.out.println("4) I prefer not to specify");
-                System.out.println(GREEN+"**************************************"+RESET);
-                System.out.println("Write your command here:");
-                String new_gender = user.getGender();
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("What would you like to do?");
+            System.out.println("Digit:");
+            System.out.println("0) Go Back to your profile");
+            System.out.println("1) View specific Anime info");
 
-                try {
-                    int gender_case = Integer.parseInt(sc.nextLine());
-                    switch ((gender_case)) {
-                        case 1 -> new_gender ="Female";
-                        case 2 -> new_gender="Male";
-                        case 3 -> new_gender="Other";
-                        case 4 -> new_gender="Not specified";
-                        default -> {
-                            System.out.println("Invalid option!");
-                            showMenu();
-                        }
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("Write your command here:");
+            Scanner sc = new Scanner(System.in);
+            int value_case = 0;
+            try {
+                value_case = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+                this.showMenu();
+            }
+            switch (value_case) {
+                case 1 -> {
+                    System.out.println("Insert the number of the anime you want to visit: ");
+                    int anime_number = 0;
+                    try {
+                        anime_number = Integer.parseInt(sc.nextLine());
+                    } catch (Exception e) {
+                        System.out.println("ATTENTION! Wrong command");
+                        this.showMenu();
                     }
-                } catch (Exception e) {
+                    if (!user_map_to_access_anime.containsKey(anime_number)) {
+                        System.out.println("ATTENTION! Wrong number");
+                        this.showMenu();
+                    }
+                    Anime anime = new Anime();
+                    anime.setAnime_name(user_map_to_access_anime.get(anime_number));
+                    viewAnimeMenu = new ViewAnimeMenu();
+                    viewAnimeMenu.showMenu(anime);
+                }
+                case 0 -> this.showMenu();
+                default -> {System.out.println("ATTENTION! Wrong command");
+                    this.showMenu();}
+            }
+        }
+
+        private void modifyProfile () {
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("What would you like to modify?");
+            System.out.println("Digit:");
+            System.out.println("0) Go Back");
+            System.out.println("1) Modify your username");
+            System.out.println("2) Modify your password");
+            System.out.println("3) Modify your gender");
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("Write your command here:");
+            Scanner sc = new Scanner(System.in);
+            int value_case;
+            try {
+                value_case = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+                value_case = 0;
+            }
+            switch (value_case) {
+                case 1 -> {
+                    System.out.println(GREEN + "**************************************" + RESET);
+                    System.out.println("Write your new username here:");
+                    String new_username = sc.nextLine();
+                    user = userManagerNeo4J.modifyUsername(user, new_username);
+                    showMenu();
+                }
+                case 2 -> {
+                    System.out.println(GREEN + "**************************************" + RESET);
+                    System.out.println("Write your new password here:");
+                    String new_password = sc.nextLine();
+                    User updated_user = userManagerNeo4J.updateUser(
+                            new User(user.getUsername(), new_password, user.getGender(),
+                                    user.getLogged_in(), user.getIs_admin()));
+                    if (!(updated_user == null)) {
+                        user = updated_user;
+                    }
+                    showMenu();
+                }
+                case 3 -> {
+                    System.out.println(GREEN + "**************************************" + RESET);
+                    System.out.println("Choose your new gender:");
+                    System.out.println("1) Female");
+                    System.out.println("2) Male");
+                    System.out.println("3) Other");
+                    System.out.println("4) I prefer not to specify");
+                    System.out.println(GREEN + "**************************************" + RESET);
+                    System.out.println("Write your command here:");
+                    String new_gender = user.getGender();
+
+                    try {
+                        int gender_case = Integer.parseInt(sc.nextLine());
+                        switch ((gender_case)) {
+                            case 1 -> new_gender = "Female";
+                            case 2 -> new_gender = "Male";
+                            case 3 -> new_gender = "Other";
+                            case 4 -> new_gender = "Not specified";
+                            default -> {
+                                System.out.println("Invalid option!");
+                                showMenu();
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("ATTENTION! Wrong command");
+                        showMenu();
+                    }
+
+                    User updated_user = userManagerNeo4J.updateUser(
+                            new User(user.getUsername(), user.getPassword(), new_gender,
+                                    user.getLogged_in(), user.getIs_admin()));
+                    if (!(updated_user == null)) {
+                        user = updated_user;
+                    }
+                    showMenu();
+                }
+                case 0 -> showMenu();
+                default -> {
                     System.out.println("ATTENTION! Wrong command");
                     showMenu();
                 }
-                
-                User updated_user = userManagerNeo4J.updateUser(
-                        new User(user.getUsername(),user.getPassword(), new_gender,
-                                user.getLogged_in(), user.getIs_admin()));
-                if(!(updated_user == null)){
-                    user = updated_user;
-                }
-                showMenu();
-            }
-            case 0 -> showMenu();
-            default -> {
-                System.out.println("ATTENTION! Wrong command");
-                showMenu();
-            }
 
+            }
         }
-    }
+
 
 }
