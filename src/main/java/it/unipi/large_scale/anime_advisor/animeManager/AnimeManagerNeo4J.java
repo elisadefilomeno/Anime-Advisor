@@ -474,4 +474,92 @@ public class AnimeManagerNeo4J{
 
         return suggested_anime;
     }
+
+    public void likeAnime (User u,String titleAnime){
+
+        if(checkIfIsAlredyLike(u,titleAnime)){
+            System.out.println("User alredy follows this anime\n");
+            return;
+        }
+
+        try(Session session= dbNeo4J.getDriver().session()){
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run( "MATCH (u:User{ username: $username}), (a:Anime{title: $title})" +
+                                " MERGE (u)-[:LIKE]->(a)",
+                        parameters(
+                                "title", titleAnime,
+                                "username",u.getUsername()
+                        )
+                );
+                return null;
+            });
+            System.out.println("User follows the anime\n");
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Error");
+
+        }
+
+    }
+
+    public boolean checkIfIsAlredyLike(User u, String titleAnime) {
+
+
+        try (Session session = dbNeo4J.getDriver().session()) {
+            int count;
+            count = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User)-[p:LIKE]->(a:Anime) " +
+                                "WHERE u.username=$user AND  a.title=$title " +
+                                "RETURN count(p) as count",
+                        parameters(
+                                "user", u.getUsername(),
+                                "title", titleAnime
+                        )
+                );
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+                    return (r.get("count").asInt());
+                }
+                else{
+                    System.out.println("Error!");
+                    return null;
+                }
+
+
+            });
+            return (count > 0);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public void unlikeAnime (User u,String titleAnime){
+
+        if(!checkIfIsAlredyLike(u,titleAnime)){
+            System.out.println("Anime is not followed \n");
+            return;
+        }
+
+        try(Session session= dbNeo4J.getDriver().session()){
+            session.writeTransaction((TransactionWork<Void>) tx -> {
+                tx.run( "MATCH p=(u:User{username:$username})-[r:LIKE]->(a:Anime{title:$title}) DELETE r",
+                        parameters(
+                                "title", titleAnime,
+                                "username",u.getUsername()
+                        )
+                );
+                return null;
+            });
+            System.out.println("Anime is not follow \n");
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Error");
+
+        }
+
+    }
 }
