@@ -66,12 +66,12 @@ public class GraphMain {
 //        um.createUser(p);
 //
 //        um.followUser("Francesca", "Elisa");
-        um.followUser("Pippo", "elisa");
+        um.followUser("Elisa", "Pippo");
 //        um.followUser("Pippo", "Francesca");
 
-        um.unfollowUser("Francesca", "elisa");
+//        um.unfollowUser("Francesca", "elisa");
 
-          am.unlikeAnime("Elisa", "Heidi");
+//          am.unlikeAnime("Elisa", "Heidi");
 //          am.likeAnime("Francesca", "Sailor Moon");
 //          am.likeAnime("Francesca", "Sailor Moon");
 //          am.unlikeAnime("Pippo", "Naruto");

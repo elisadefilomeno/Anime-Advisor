@@ -7,6 +7,7 @@ import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.TransactionWork;
+import org.neo4j.driver.internal.value.DateValue;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -630,7 +631,7 @@ public class UserManagerNeo4J {
             session.readTransaction(tx -> {
                 Result result = tx.run (
                         "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(u3:User)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(u3) AND u1.username = $username " +
+                                " WHERE NOT (u1)-[:FOLLOWS]->(u3) and u1<>u3 AND u1.username = $username " +
                                 "RETURN u3.username LIMIT 20",
                         parameters(
                                 "username", username
@@ -664,7 +665,7 @@ public class UserManagerNeo4J {
             session.readTransaction(tx -> {
                 Result result = tx.run (
                         "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(u3:User)-[:FOLLOWS]->(u4:User)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(u4) AND u1.username = $username " +
+                                " WHERE NOT (u1)-[:FOLLOWS]->(u4) and u1<>u4 AND u1.username = $username " +
                                 "RETURN u4.username LIMIT 20",
                         parameters(
                                 "username", username
@@ -759,6 +760,33 @@ public class UserManagerNeo4J {
         return followed_users;
     }
 
+    public Set<String> getFollowers(User user) {
+        Set<String> followers = new HashSet<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)" +
+                                " WHERE u2.username = $username and u1<>u2 " +
+                                "RETURN u1.username",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String follower = r.get("u1.username").asString();
+                    followers.add(follower);
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get followers due to an error");
+        }
+        return followers;
+    }
+
     public Set<Review> getWrittenReviews(User user) {
         Set<Review> written_reviews = new HashSet<Review>();
         try(Session session= dbNeo4J.getDriver().session()){
@@ -793,5 +821,183 @@ public class UserManagerNeo4J {
             System.out.println("Unable to get written reviews due to an error");
         }
         return written_reviews;
+    }
+
+    public ArrayList<User> findUserByKeyWord(String userName,String keyword){
+        ArrayList<User> list ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User) , (u1:User{username:$user}) "+
+                                "WHERE u.username CONTAINS $keyword AND u<>u1 "+
+                                "RETURN u.username,u.password,u.gender "+
+                                "ORDER BY u.last_update LIMIT 10",
+                        parameters(
+                                "user", userName,
+                                "keyword",keyword
+                        )
+                );
+                ArrayList<User> listUser = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    User userFound = new User();
+                    userFound.setUsername(r.get("u.username").asString());
+                    userFound.setPassword(r.get("u.password").asString());
+                    userFound.setGender(r.get("u.gender").asString());
+                    userFound.setIs_admin(false);
+                    userFound.setLogged_in(false);
+
+                    listUser.add(userFound);
+                }
+                return listUser;
+            });
+
+        }
+        return list;
+
+    }
+    public int getNumberUserFollow (String userName){
+        int numberFollow;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            numberFollow = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(u:User{username:$user})-[:FOLLOWS]->(u1:User) "+
+                                "RETURN COUNT(p) as n_follow",
+                        parameters(
+                                "user", userName
+                        )
+                );
+                int n;
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    n = r.get("n_follow").asInt();
+                    return n;
+                }
+                else{
+                    System.out.println("ERROR");
+                    return null;
+                }
+
+
+
+            });
+
+        }
+        return numberFollow;
+    }
+
+    public int getNumberFollowers (String userName){
+        int numberFollow;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            numberFollow = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(u:User{username:$user})<-[:FOLLOWS]-(u1:User) "+
+                                "RETURN COUNT(p) as n_follow",
+                        parameters(
+                                "user", userName
+                        )
+                );
+                int n;
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    n = r.get("n_follow").asInt();
+                    return n;
+                }
+                else{
+                    System.out.println("ERROR");
+                    return null;
+                }
+            });
+
+        }
+        return numberFollow;
+    }
+
+    public int getNumberReviews (String userName){
+        int numberReviews;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            numberReviews = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(u:User{username:$user})-[:WRITE]->(r:Review) "+
+                                "RETURN COUNT(p) as n_follow",
+                        parameters(
+                                "user", userName
+                        )
+                );
+                int n;
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    n = r.get("n_follow").asInt();
+                    return n;
+                }
+                else{
+                    System.out.println("ERROR");
+                    return null;
+                }
+            });
+
+        }
+        return numberReviews;
+    }
+    public ArrayList<String> viewMostActiveUsers(){
+        ArrayList<String> list ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(u:User)-[t:WRITE]->(r:Review) "+
+                                "RETURN COUNT(t) as n_rev,u.username ORDER BY "+
+                                "n_rev DESC LIMIT 10",
+                        parameters()
+                );
+                ArrayList<String> listUser = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    String userFound ;
+                    userFound=r.get("u.username").asString();
+                    listUser.add(userFound);
+                }
+                return listUser;
+            });
+
+        }
+        return list;
+
+    }
+
+    public User getUserFromName(String username){
+        User userFound ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            userFound = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User{username:$username}) RETURN "+
+                                "u.username,u.password,u.gender,u.is_admin,u.logged_in",
+                        parameters(
+                                "username",username
+                        )
+                );
+                User u= new User();
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+
+                    u.setUsername(r.get("u.username").asString());
+                    u.setGender(r.get("u.gender").asString());
+                    u.setPassword(r.get("u.password").asString());
+                    u.setLogged_in(r.get("u.logged_in").asBoolean());
+                    u.setIs_admin(r.get("u.is_admin").asBoolean());
+                    return u;
+                }
+                else{
+                    System.out.println("User not found");
+                    return null;
+                }
+
+            });
+
+        }
+        return userFound;
+
     }
 }
