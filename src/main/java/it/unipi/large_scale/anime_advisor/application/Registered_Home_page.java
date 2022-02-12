@@ -40,7 +40,8 @@ public class Registered_Home_page {
             case 3 -> profileUserMenu.showMenu();
             case 0 -> {if(user!=null){
                 userManagerNeo4J.logOut(user);
-                return;
+                Interface interf = new Interface();
+                interf.showMenu();
             }}
             default -> System.out.println("ATTENTION! Wrong command");
         }

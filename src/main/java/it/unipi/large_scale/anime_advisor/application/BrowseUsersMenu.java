@@ -33,7 +33,7 @@ public class BrowseUsersMenu {
         System.out.println("1) Find User by username");
         System.out.println("2) Show your profile");
         System.out.println("3) View most active users");
-        System.out.println("3) View suggested users to follow");
+        System.out.println("4) View suggested users to follow");
         System.out.println("0) Go Back To Home Page");
         System.out.println(GREEN + "**************************************" + RESET);
 
@@ -148,7 +148,8 @@ public class BrowseUsersMenu {
                 this.viewSuggestedUsers();
 
             case 0: {
-                this.showMenu();
+                Registered_Home_page rhp = new Registered_Home_page();
+                rhp.showMenu();
             }
             default: {
                 System.out.println("Wrong command !!!");

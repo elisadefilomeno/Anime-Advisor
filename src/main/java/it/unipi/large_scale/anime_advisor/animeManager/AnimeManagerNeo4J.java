@@ -1,6 +1,7 @@
 package it.unipi.large_scale.anime_advisor.animeManager;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -279,6 +280,39 @@ public class AnimeManagerNeo4J{
             return null;
         }
         return likers;
+    }
+
+    public Anime getAnimeFromReview(Review rev){
+        Anime a ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            a = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review{title:$title})-[t:REFERRED_TO]->(a:Anime) "+
+                                "RETURN a.title ",
+
+                        parameters(
+                        "title", rev.getTitle()
+                        )
+
+                );
+                Anime anime = new Anime();
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    anime.setAnime_name(r.get("a.title").asString());
+
+                    return anime;
+                }
+                else{
+                    System.out.println("Anime not found");
+                    return null;
+                }
+
+            });
+
+        }
+        return a;
+
     }
 
 
