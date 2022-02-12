@@ -9,8 +9,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 
+import javax.print.Doc;
+import java.lang.constant.DynamicCallSiteDesc;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class AnimeManagerMongoDBAgg {
@@ -133,7 +136,7 @@ public class AnimeManagerMongoDBAgg {
     public void highAvgEntity (MongoCollection<Document>doc,String entity, int year){
         if(year!=0) {
             try {
-              doc.aggregate(
+                MongoCursor<Document> cursor =doc.aggregate(
                         Arrays.asList(
                                 Aggregates.match(Filters.eq("premiered", year)),
                                 Aggregates.unwind("$".concat(entity)),
@@ -142,7 +145,11 @@ public class AnimeManagerMongoDBAgg {
                                 Aggregates.limit(10)
 
                         )
-                ).forEach(d->System.out.println(d.toJson()));
+                ).iterator();
+                while(cursor.hasNext()) {
+                    Document temp = cursor.next();
+                    System.out.println(entity+": "+temp.get("_id").toString()+" Average: "+ temp.get("average"));
+                }
             } catch (MongoException e){
                 System.out.println("An error has occurred:"+e);
 
@@ -150,7 +157,7 @@ public class AnimeManagerMongoDBAgg {
         }
         else {
             try {
-                doc.aggregate(
+                MongoCursor<Document> cursor =doc.aggregate(
                         Arrays.asList(
                                 Aggregates.match(Filters.ne(entity,"Unknown")),
                                 Aggregates.unwind("$".concat(entity)),
@@ -159,7 +166,11 @@ public class AnimeManagerMongoDBAgg {
                                 Aggregates.limit(10)
 
                         )
-                ).forEach(d->System.out.println(d.toJson()));
+                ).iterator();
+                while(cursor.hasNext()){
+                    Document temp=cursor.next();
+                    System.out.println(entity+": "+temp.get("_id").toString()+" Average: "+ temp.get("average"));
+                }
             } catch (MongoException e){
                 System.out.println("An error has occurred:"+e);
 
@@ -190,23 +201,37 @@ public class AnimeManagerMongoDBAgg {
     }
 
 
-    //number of Entity's production by type Studio Producer
-    public void entityProdByType(MongoCollection<Document>doc,String entity, int year){
+    //number of Entity's production per type by Studio Producer
+    public void entityProdByType(MongoCollection<Document>doc,String entity){
         try {
+
             Map<String, Object> multiIdMap = new HashMap<String, Object>();
             multiIdMap.put(entity, "$".concat(entity));
             multiIdMap.put("type", "$type");
 
             Document groupFields = new Document(multiIdMap);
-
-            doc.aggregate(
+            MongoCursor<Document> cursor =doc.aggregate(
                     Arrays.asList(
                             Aggregates.match(Filters.ne(entity,"Unknown")),
                             Aggregates.unwind("$".concat(entity)),
-                            Aggregates.group(groupFields,Accumulators.sum("followers","$members"))
+                            Aggregates.group(new Document(entity,"$".concat(entity)).append("type","$type"),Accumulators.sum("productions",1))
 
                     )
-            ).forEach(d -> System.out.println(d.toJson()));
+            ).iterator();
+            int pos=1;
+            while(cursor.hasNext()){
+                Document temp=cursor.next();
+                Document en=temp.get("_id", Document.class);
+                if(entity.equals("studio")) {
+                    en.get("studio");
+                    System.out.println("Studio:"+en.get("studio").toString()+" Type:"+en.get("type").toString()+" Productions:"+temp.get("productions").toString());
+                }
+                if(entity.equals("producer")) {
+                    en.get("producer");
+                    System.out.println("Producer:"+en.get("producer").toString()+" Type:"+en.get("type").toString()+" Productions:"+temp.get("productions").toString());
+                }
+            }
+
 
         } catch (MongoException e) {
             System.out.println("An error has occurred:" + e);
