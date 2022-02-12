@@ -631,7 +631,7 @@ public class UserManagerNeo4J {
             session.readTransaction(tx -> {
                 Result result = tx.run (
                         "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(u3:User)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(u3) AND u1.username = $username " +
+                                " WHERE NOT (u1)-[:FOLLOWS]->(u3) and u1<>u3 AND u1.username = $username " +
                                 "RETURN u3.username LIMIT 20",
                         parameters(
                                 "username", username
@@ -665,7 +665,7 @@ public class UserManagerNeo4J {
             session.readTransaction(tx -> {
                 Result result = tx.run (
                         "MATCH (u1:User)-[:FOLLOWS]->(u2:User)-[:FOLLOWS]->(u3:User)-[:FOLLOWS]->(u4:User)" +
-                                " WHERE NOT (u1)-[:FOLLOWS]->(u4) AND u1.username = $username " +
+                                " WHERE NOT (u1)-[:FOLLOWS]->(u4) and u1<>u4 AND u1.username = $username " +
                                 "RETURN u4.username LIMIT 20",
                         parameters(
                                 "username", username
