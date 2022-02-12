@@ -1,6 +1,7 @@
 package it.unipi.large_scale.anime_advisor.application;
 
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
@@ -12,6 +13,7 @@ import java.util.Scanner;
 import static it.unipi.large_scale.anime_advisor.application.Main.anime_collection;
 
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
+import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 public class ViewAnimeMenu {
     private final BrowseReviewsMenu browseReviewsMenu = new BrowseReviewsMenu();
@@ -24,9 +26,10 @@ public class ViewAnimeMenu {
         System.out.println("What would you like to do?");
         System.out.println("Digit:");
         System.out.println("1) Follow anime");
-        System.out.println("2) Review anime"); //io
-        System.out.println("3) Vote anime");
-        System.out.println("4) Go back");
+        System.out.println("2) Unfollow anime");
+        System.out.println("3) Review anime"); //io
+        System.out.println("4) Vote anime");
+        System.out.println("0) Go back");
         System.out.println(GREEN + "**************************************" + RESET);        //1) vede info anime,
 
 
@@ -40,12 +43,21 @@ public class ViewAnimeMenu {
             this.showMenu(anime);
         }
         switch (value_case) {
-            case 1:
-                break;
-            case 2:     browseReviewsMenu.showMenu(anime);
+            case 1:{
+                AnimeManagerNeo4J am =new AnimeManagerNeo4J(dbNeo4J);
+                am.likeAnime(user,anime.getAnime_name());
+                this.showMenu(anime);
+            }
+            case 2:{
+                AnimeManagerNeo4J am =new AnimeManagerNeo4J(dbNeo4J);
+                am.unlikeAnime(user,anime.getAnime_name());
+                this.showMenu(anime);
+
+            }
+            case 3:     browseReviewsMenu.showMenu(anime);
 
 
-            case 3: {
+            case 4: {
                 int score=-1;
                     while (!(score>=0)&&!(score<=10)) {
                         try {
@@ -67,8 +79,8 @@ public class ViewAnimeMenu {
                 this.showMenu(anime);
             }
 
-            case 4:return; //DA PROVARE
-            case 5:
+            case 5:return; //DA PROVARE
+            case 0:
                 backMenu.showMenu();
                 break;
             // 2) vuoi lasciare una recensione?
