@@ -77,7 +77,7 @@ public class BrowseAnimeMenu {
                         break;
                     }
                     case 3: { //ADVANCED SEARCH
-                        this.researchByGenre();
+                        this.advancedSearch();
                         break;
                     }
                     case 4: { //UPDATE
@@ -155,7 +155,7 @@ public class BrowseAnimeMenu {
                         break;
                     }
                     case 3: { //ADVANCED SEARCH
-                        this.researchByGenre();
+                        this.advancedSearch();
                         break;
                     }
                     case 0: {
@@ -175,6 +175,7 @@ public class BrowseAnimeMenu {
     } //SHOW MENU
 
     public Anime pickAnime(HashMap<Integer,String> results){
+        Interface inte=new Interface();
         inte.printResults(results);
         int x=0;
         int select=-1;
@@ -1042,7 +1043,7 @@ public class BrowseAnimeMenu {
         String stringInput= new String();
         while(check==0){
             System.out.println(GREEN + "ADVANCED SEARCH MENU" + RESET);
-            System.out.println("Choose one of the following options" +
+            System.out.println("Choose one of the following options\n" +
                     "1)Top rated animes by field\n" +
                     "2)Studio/Genre/Producer with the highest average\n" +
                     "3)Top followed animes\n" +
@@ -1061,7 +1062,7 @@ public class BrowseAnimeMenu {
             }
             switch (input){
                 case 1:{
-                System.out.println("Select a field from 1)Year\n2)Source\n3)Type\nPress 0 to go back\n");
+                System.out.println("Select a field from\n1)Year\n2)Source\n3)Type\nPress 0 to go back\n");
                int answ=-1;
                int innansw=-1;
                while(answ==-1) {
@@ -1072,6 +1073,7 @@ public class BrowseAnimeMenu {
                        System.out.println("Attention! Wrong input!");
                        answ = -1;
                    }
+                   if(answ==0) return  null;
                    if(answ==1){
                        System.out.println("Please choose a year between 1917-2023");
                        while(innansw==-1){
@@ -1095,7 +1097,7 @@ public class BrowseAnimeMenu {
                        }//ANSW FOR PICKING AN YEAR
                    }//ANSW =1 YEAR
                    if(answ==2) { //SOURCE
-                       System.out.println("Please choose a source type between\n" +
+                       System.out.println("Please choose a source  between\n" +
                                "1)Original\n2)TV\n3)Music\n4)Manga\n5)Visual Novel\n6)Game\n" +
                                "7)Book\nPress 0 to go back");
                        HashMap<Integer, String> temp = new HashMap<>();
@@ -1123,14 +1125,14 @@ public class BrowseAnimeMenu {
                                return null;
                            else {
                                HashMap<Integer, String> results = new HashMap<>();
-                               results = aggregation.topTenAnimeByField(anime_collection, "type", innansw, temp.get(innansw), null, 10);
+                               results = aggregation.topTenAnimeByField(anime_collection, "source", innansw, temp.get(innansw), null, 10);
                                return this.pickAnime(results);
                            }//ELSE GOOD TYPE PICK
                        }//ANSW FOR PICKING A SOURCE
                    }//ANSW =2 SOURCE
                    if(answ==3){ //TYPE
                        System.out.println("Please choose a type between\n" +
-                               "1)TV\n2)Special\n3)OVA\n4)Movie\n5)Web\n6)Music\n");
+                               "1)TV\n2)Special\n3)OVA\n4)Movie\n5)Web\n6)Music\nPress 0 to go back");
                        HashMap<Integer, String> temp = new HashMap<>();
                        temp.put(1, "TV");
                        temp.put(2, "Special");
@@ -1163,17 +1165,80 @@ public class BrowseAnimeMenu {
                    if(answ==0)
                        return  null;
                }//ANSWER CHOSE FIELD
+                    break;
                 }//CASE 1
                 case 2:{
-
-
-                }
+                    System.out.println("Select:\n1)Genre\n2)Studio\n3)Producer\nPress 0 to go back");
+                    int answ=-1;
+                    int innansw=-1;
+                    HashMap<Integer,String>temp=new HashMap<>();
+                    temp.put(1,"genre");
+                    temp.put(2,"studio");
+                    temp.put(3,"producer");
+                    while(answ==-1) {
+                        try {
+                            answ = sc.nextInt();
+                            sc.nextLine();
+                        } catch (NumberFormatException e) {
+                            System.out.println("Attention! Wrong input!");
+                            answ = -1;
+                        }
+                    }
+                    if(answ<0 ||answ>3 ){
+                        System.out.println("Wrong input");
+                        answ=-1;
+                    }
+                    if(answ==0)
+                        return null;
+                        else{
+                            System.out.println("Select a year between 1917 and 2023 or select 0 for an overall view");
+                            while(innansw==-1) {
+                                try {
+                                    innansw = sc.nextInt();
+                                    sc.nextLine();
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Attention! Wrong input!");
+                                    innansw = -1;
+                                }
+                                if ((innansw<1917 || innansw>2023)&& innansw!=0){
+                                    System.out.println("Invalid year");
+                                    innansw=-1;
+                                }
+                            }
+                            aggregation.highAvgEntity(anime_collection,temp.get(answ),innansw);
+                        }//GENRE STUDIO AND PRODUCER
+                break;} //CASE 2
                 case 3:{
 
-                }
-                case 4:{
 
-                }
+                }//CASE 3
+                case 4:{
+                    System.out.println("Select:\n1)Studio\n2)Producer\nPress 0 to go back");
+                    int answ=-1;
+                    int innansw=-1;
+                    HashMap<Integer,String>temp=new HashMap<>();
+                    temp.put(1,"studio");
+                    temp.put(2,"producer");
+                    while(answ==-1) {
+                        try {
+                            answ = sc.nextInt();
+                            sc.nextLine();
+                        } catch (NumberFormatException e) {
+                            System.out.println("Attention! Wrong input!");
+                            answ = -1;
+                        }
+                    }
+                    if(answ<0 ||answ>2 ){
+                        System.out.println("Wrong input");
+                        answ=-1;
+                    }
+                    if(answ==0)
+                        return null;
+                    else{
+                        aggregation.entityProdByType(anime_collection,temp.get(answ));
+                    }
+
+                }//CASE 4
                 case 0:{check=1; break;}
                 default:{System.out.println("Attention! Wrong command!"); break;}
 
@@ -1181,14 +1246,60 @@ public class BrowseAnimeMenu {
 
             }//SWITCH
         }//WHILE CHECK 0
+            return null;
+    }
+}
 
+    /*
+    public void viewTop10MostFollowedAnime(){
 
+           AnimeManagerNeo4J animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
+           Map<String, Integer> top10_anime= animeManagerNeo4J.getTop10MostFollowedAnime();
+            int i =0;
+            Map<Integer, String> user_map_to_access_anime = new HashMap<>();
+            System.out.println(GREEN+"**************************************"+RESET);
+            System.out.println("Which anime would you like to see?");
+            System.out.println("Digit:");
 
+            for (String key : top10_anime.keySet()) {
+                i++;
+                user_map_to_access_anime.put(i,key);
+                System.out.println(Integer.toString(i)+") Anime: "+ key+ ", " +
+                        "number of followers: "+ top10_anime.get(key).toString());
+            }
+            System.out.println(GREEN+"**************************************"+RESET);
 
+            System.out.println("Write your command here:");
+            Scanner sc =new Scanner(System.in);
+            int anime_key;
+            try{
+                anime_key = Integer.parseInt(sc.nextLine());
+            }
+            catch(Exception e){
+                // TO DO
+                System.out.println("ATTENTION! Wrong command");
+                //this.showMenu();
+                return;
+            }
+            if(!user_map_to_access_anime.containsKey(anime_key)){
+                // TO DO
+                System.out.println("Wrong number digited");
+                //this.showMenu();
+                return;
+            }
+            String anime_title = user_map_to_access_anime.get(anime_key);
+            System.out.println(GREEN+"**************************************"+RESET);
+
+            System.out.println("You have choosen:");
+            Anime anime = new Anime(anime_title);
+            System.out.println(anime.getAnime_name());
 
     }*/
 
-}
+    */
+
+
+
 
 
 
