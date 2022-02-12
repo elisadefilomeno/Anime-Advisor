@@ -3,6 +3,7 @@ package it.unipi.large_scale.anime_advisor.application;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
+import it.unipi.large_scale.anime_advisor.reviewManager.ReviewManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
@@ -18,6 +19,7 @@ import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 public class PersonalProfileUserMenu {
     private UserManagerNeo4J userManagerNeo4J;
+    private ReviewManagerNeo4J reviewManagerNeo4J;
     private Interface anInterface;
 
     private ViewAnimeMenu viewAnimeMenu;
@@ -222,10 +224,10 @@ public class PersonalProfileUserMenu {
                     System.out.println("ATTENTION! Wrong number");
                     this.showMenu();
                 }
-              /*  User u = new User();
-                u.setUsername(user_map_to_access_reviews.get(review_number));
-                viewReviewMenu = new ViewReviewMenu();
-                viewReviewMenu.showReviewMenu(u);*/
+                reviewManagerNeo4J = new ReviewManagerNeo4J(dbNeo4J);
+                Review selected_review = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
+                ViewReviewMenu viewReviewMenu = new ViewReviewMenu();
+                viewReviewMenu.showReviewMenu(selected_review);
             }
             case 0 -> this.showMenu();
             default -> {
@@ -236,8 +238,7 @@ public class PersonalProfileUserMenu {
         }
     }
 
-
-        private void viewLikedAnime () {
+    private void viewLikedAnime () {
             Set<String> followed_anime = userManagerNeo4J.getLikedAnime(user);
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println("Liked Anime:");
@@ -294,7 +295,7 @@ public class PersonalProfileUserMenu {
             }
         }
 
-        private void modifyProfile () {
+    private void modifyProfile () {
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println("What would you like to modify?");
             System.out.println("Digit:");
@@ -376,6 +377,5 @@ public class PersonalProfileUserMenu {
 
             }
         }
-
 
 }
