@@ -38,7 +38,7 @@ public class UserManagerNeo4J {
             session.writeTransaction((TransactionWork<Void>) tx -> {
                 tx.run( "MERGE (u:User {username: $username, " +
                                 "password: $password, gender: $gender, " +
-                                "logged_in: $logged_in, is_admin: $logged_in})",
+                                "logged_in: $logged_in, is_admin: $is_admin})",
                         parameters(
                                 "username", u.getUsername(),
                                 "password", u.getPassword(),

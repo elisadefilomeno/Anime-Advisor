@@ -1034,7 +1034,7 @@ public class BrowseAnimeMenu {
     }
 
 
-    public Anime advancedSearch(){
+  /*  public Anime advancedSearch(){
         int check=0; //CHECK FOR WHILE
         int input=-1; //CHECK FOR AGGREGATION
         int chose=-1; //CHECK FOR OPTIONS IN AGGREGATION
@@ -1294,7 +1294,7 @@ public class BrowseAnimeMenu {
             Anime anime = new Anime(anime_title);
             System.out.println(anime.getAnime_name());
 
-    }
+    }*/
 
     */
 
