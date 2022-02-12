@@ -135,6 +135,8 @@ public class BrowseUsersMenu {
                 else{
 
                     ViewUserMenu vum = new ViewUserMenu();
+                    User u = new User();
+                    u= userManagerNeo4J.getUserFromName(listUsers.get(indexUser-1))
                     //Metti funzioni che recupera l'oggetto dato il  nome
                    // vum.showMenu(listUsers.get(indexUser-1));
                 }

@@ -940,4 +940,38 @@ public class UserManagerNeo4J {
 
     }
 
+    public User getUserFromName(String username){
+        User userFound ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            userFound = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User{username:$username}) RETURN "+
+                                "u.username,u.password,u.gender,u.is_admin,u.logged_in",
+                        parameters(
+                                "username",username
+                        )
+                );
+                User u= new User();
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+
+                    u.setUsername(r.get("u.username").asString());
+                    u.setGender(r.get("u.gender").asString());
+                    u.setPassword(r.get("u.password").asString());
+                    u.setLogged_in(r.get("u.logged_in").asBoolean());
+                    u.setIs_admin(r.get("u.is_admin").asBoolean());
+                    return u;
+                }
+                else{
+                    System.out.println("User not found");
+                    return null;
+                }
+
+            });
+
+        }
+        return userFound;
+
+    }
 }
