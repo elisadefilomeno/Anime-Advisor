@@ -914,6 +914,32 @@ public class UserManagerNeo4J {
         return numberFollow;
     }
 
+    public int getNumberReviews (String userName){
+        int numberReviews;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            numberReviews = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(u:User{username:$user})-[:WRITE]->(r:Review) "+
+                                "RETURN COUNT(p) as n_follow",
+                        parameters(
+                                "user", userName
+                        )
+                );
+                int n;
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    n = r.get("n_follow").asInt();
+                    return n;
+                }
+                else{
+                    System.out.println("ERROR");
+                    return null;
+                }
+            });
+
+        }
+        return numberReviews;
+    }
     public ArrayList<String> viewMostActiveUsers(){
         ArrayList<String> list ;
         try(Session session= dbNeo4J.getDriver().session()) {

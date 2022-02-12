@@ -44,6 +44,10 @@ public class PersonalProfileUserMenu {
                 .append("Gender: ").append(user.getGender());
 
         System.out.println(string);
+        System.out.println("Reviews Written: "+userManagerNeo4J.getNumberReviews(user.getUsername()));
+        System.out.println("Numbers Follows: "+userManagerNeo4J.getNumberUserFollow(user.getUsername()));
+        System.out.println("Numbers Follower: "+userManagerNeo4J.getNumberFollowers(user.getUsername()));
+
         System.out.println(GREEN+"**************************************"+RESET);
         System.out.println("What would you like to do?");
         System.out.println("Digit:");
@@ -75,7 +79,11 @@ public class PersonalProfileUserMenu {
                 this.registered_home_page = new Registered_Home_page();
                 registered_home_page.showMenu();
             }
-            default -> System.out.println("ATTENTION! Wrong command");
+            default -> {
+                System.out.println("ATTENTION! Wrong command");
+                this.showMenu();
+            }
+
         }
     }
 
