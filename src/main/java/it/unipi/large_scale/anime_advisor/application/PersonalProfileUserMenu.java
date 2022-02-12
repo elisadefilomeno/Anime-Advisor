@@ -7,6 +7,7 @@ import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class PersonalProfileUserMenu {
     
     public void showMenu(){
         userManagerNeo4J = new UserManagerNeo4J(dbNeo4J);
-        System.out.println("TO DO:5) View all the users who are following you");
+
 
 
         System.out.println(GREEN+"**************************************"+RESET);
@@ -50,7 +51,8 @@ public class PersonalProfileUserMenu {
         System.out.println("1) Modify your profile");
         System.out.println("2) View all the anime you like");
         System.out.println("3) View all the users you are following");
-        System.out.println("4) View all the reviews you have written");
+        System.out.println("4) View all your followers");
+        System.out.println("5) View all the reviews you have written");
 
         System.out.println(GREEN+"**************************************"+RESET);
         System.out.println("Write your command here:");
@@ -67,11 +69,100 @@ public class PersonalProfileUserMenu {
             case 1 -> modifyProfile();
             case 2 -> viewLikedAnime();
             case 3 -> viewFollowedUsers();
-            case 4 -> viewWrittenReviews();
+            case 4 -> viewFollowers();
+            case 5 -> viewWrittenReviews();
             case 0 -> {
                 this.registered_home_page = new Registered_Home_page();
                 registered_home_page.showMenu();
             }
+            default -> System.out.println("ATTENTION! Wrong command");
+        }
+    }
+
+    private void viewFollowers() {
+        Set<String> followers = userManagerNeo4J.getFollowers(user);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("Your followers:");
+        HashMap<Integer, String> user_map_to_access_users= new HashMap<>();
+        anInterface = new Interface();
+        int key = 0;
+        if(!followers.isEmpty()){
+            for(String user: followers){
+                key++;
+                user_map_to_access_users.put(key, user);
+            }
+            anInterface.printResults(user_map_to_access_users);
+        }
+        else {
+            System.out.println("You don't have any followers");
+            this.showMenu();
+        }
+
+        this.viewSelectUserMenu(user_map_to_access_users);
+    }
+
+    private void viewFollowedUsers() {
+        Set<String> followed_users = userManagerNeo4J.getFollowedUsers(user);
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("Followed Users:");
+        HashMap<Integer, String> user_map_to_access_users= new HashMap<>();
+        anInterface = new Interface();
+        int key = 0;
+        if(!followed_users.isEmpty()){
+            for(String user: followed_users){
+                key++;
+                user_map_to_access_users.put(key, user);
+            }
+            anInterface.printResults(user_map_to_access_users);
+        }
+        else {
+            System.out.println("You don't follow any user");
+            this.showMenu();
+        }
+
+        this.viewSelectUserMenu(user_map_to_access_users);
+
+    }
+
+    private void viewSelectUserMenu(HashMap<Integer, String> user_map_to_access_users){
+        System.out.println(GREEN + "**************************************" + RESET);
+        System.out.println("What would you like to do?");
+        System.out.println("Digit:");
+        System.out.println("0) Go Back to your profile");
+        System.out.println("1) View specific User info");
+
+        System.out.println(GREEN+"**************************************"+RESET);
+        System.out.println("Write your command here:");
+        Scanner sc =new Scanner(System.in);
+        int value_case=0;
+        try{
+            value_case = Integer.parseInt(sc.nextLine());
+        }
+        catch(Exception e){
+            System.out.println("ATTENTION! Wrong command");
+            this.showMenu();
+        }
+        switch (value_case) {
+            case 1 -> {
+                System.out.println("Insert the number of the user you want to visit: ");
+                int user_number = 0;
+                try{
+                    user_number = Integer.parseInt(sc.nextLine());
+                }
+                catch(Exception e){
+                    System.out.println("ATTENTION! Wrong command");
+                    this.showMenu();
+                }
+                if(!user_map_to_access_users.containsKey(user_number)){
+                    System.out.println("ATTENTION! Wrong number");
+                    this.showMenu();
+                }
+                User u = new User();
+                u.setUsername(user_map_to_access_users.get(user_number));
+                viewUserMenu = new ViewUserMenu();
+                viewUserMenu.showMenu(u);
+            }
+            case 0 -> this.showMenu();
             default -> System.out.println("ATTENTION! Wrong command");
         }
     }
@@ -136,64 +227,9 @@ public class PersonalProfileUserMenu {
 
     }
 
-    private void viewFollowedUsers() {
-        Set<String> followed_users = userManagerNeo4J.getFollowedUsers(user);
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("Followed Users:");
-        HashMap<Integer, String> user_map_to_access_users= new HashMap<>();
-        anInterface = new Interface();
-        int key = 0;
-        if(!followed_users.isEmpty()){
-            for(String user: followed_users){
-                key++;
-                user_map_to_access_users.put(key, user);
-            }
-            anInterface.printResults(user_map_to_access_users);
-        }
-        else
-            System.out.println("You don't follow any user");
 
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println("What would you like to do?");
-        System.out.println("Digit:");
-        System.out.println("0) Go Back to your profile");
-        System.out.println("1) View specific User info");
 
-        System.out.println(GREEN+"**************************************"+RESET);
-        System.out.println("Write your command here:");
-        Scanner sc =new Scanner(System.in);
-        int value_case=0;
-        try{
-            value_case = Integer.parseInt(sc.nextLine());
-        }
-        catch(Exception e){
-            System.out.println("ATTENTION! Wrong command");
-            this.showMenu();
-        }
-        switch (value_case) {
-            case 1 -> {
-                System.out.println("Insert the number of the user you want to visit: ");
-                int user_number = 0;
-                try{
-                    user_number = Integer.parseInt(sc.nextLine());
-                }
-                catch(Exception e){
-                    System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
-                }
-                if(!user_map_to_access_users.containsKey(user_number)){
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu();
-                }
-                User u = new User();
-                u.setUsername(user_map_to_access_users.get(user_number));
-                viewUserMenu = new ViewUserMenu();
-                viewUserMenu.showMenu(u);
-            }
-            case 0 -> this.showMenu();
-            default -> System.out.println("ATTENTION! Wrong command");
-        }
-    }
+
 
     private void viewLikedAnime() {
         Set<String> followed_anime = userManagerNeo4J.getLikedAnime(user);

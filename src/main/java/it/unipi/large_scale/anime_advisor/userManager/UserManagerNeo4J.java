@@ -760,6 +760,33 @@ public class UserManagerNeo4J {
         return followed_users;
     }
 
+    public Set<String> getFollowers(User user) {
+        Set<String> followers = new HashSet<>();
+        try(Session session= dbNeo4J.getDriver().session()){
+
+            session.readTransaction(tx -> {
+                Result result = tx.run (
+                        "MATCH (u1:User)-[:FOLLOWS]->(u2:User)" +
+                                " WHERE u2.username = $username and u1<>u2 " +
+                                "RETURN u1.username",
+                        parameters(
+                                "username", user.getUsername()
+                        ));
+                while(result.hasNext()){
+                    org.neo4j.driver.Record r= result.next();
+                    String follower = r.get("u1.username").asString();
+                    followers.add(follower);
+                }
+                return null;
+            } );
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            System.out.println("Unable to get followers due to an error");
+        }
+        return followers;
+    }
+
     public Set<Review> getWrittenReviews(User user) {
         Set<Review> written_reviews = new HashSet<Review>();
         try(Session session= dbNeo4J.getDriver().session()){
@@ -912,4 +939,5 @@ public class UserManagerNeo4J {
         return list;
 
     }
+
 }
