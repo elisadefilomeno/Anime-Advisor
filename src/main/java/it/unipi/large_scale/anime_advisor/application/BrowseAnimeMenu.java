@@ -5,7 +5,6 @@ import it.unipi.large_scale.anime_advisor.animeManager.*;
 import it.unipi.large_scale.anime_advisor.entity.*;
 import org.bson.Document;
 
-import javax.print.Doc;
 import java.util.*;
 
 import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.*;
@@ -32,116 +31,191 @@ public class BrowseAnimeMenu {
 
     public void showMenu() {
 
-
         //menu with extra option for admin
-        if (checkIsAdmin(user)) {
-            System.out.println(GREEN + "**************************************" + RESET);
-            System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
-            System.out.println("What would you like to do?");
-            System.out.println("Digit:");
-            System.out.println("1) Find anime by name");
-            System.out.println("2) Find anime by genre");
-            System.out.println("3) Advanced search");
-            System.out.println("4) Update Anime");
-            System.out.println("5) Insert Anime");
-            System.out.println("6) Delete Anime");
-            System.out.println("0) Go back");
-            System.out.println(GREEN + "**************************************" + RESET);
-            System.out.println("Write your command here:");
+        int stop=0;
 
-            Scanner sc = new Scanner(System.in);
-            int value_case = -1;
-            try {
-                value_case = Integer.parseInt(sc.nextLine());
-            } catch (Exception e) {
-                System.out.println("ATTENTION! Wrong command");
+        if (checkIsAdmin(user)) {
+
+            while (stop == 0) {
+
+                System.out.println(GREEN + "**************************************" + RESET);
+                System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
+                System.out.println("What would you like to do?");
+                System.out.println("Digit:");
+                System.out.println("1) Find anime by name");
+                System.out.println("2) Find anime by genre");
+                System.out.println("3) Advanced search");
+                System.out.println("4) Update Anime");
+                System.out.println("5) Insert Anime");
+                System.out.println("6) Delete Anime");
+                System.out.println("0) Go back");
+                System.out.println(GREEN + "**************************************" + RESET);
+                System.out.println("Write your command here:");
+
+                Scanner sc = new Scanner(System.in);
+                int value_case = -1;
+                try {
+                    value_case = Integer.parseInt(sc.nextLine());
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
                     this.showMenu();
                 }
-            switch (value_case) {
-                case 1: //FIND BY NAME
-                    Anime a=this.findAnime();
-                    if(a!=null)
-                        animeMenu.showMenu(a);
-                    else
-                        this.showMenu();
-                    // this.browseAnimeTitle();
-                    break;
-                case 2: //FIND BY GENRE
+                switch (value_case) {
+                    case 1: { //FIND BY NAME
+                        Anime a = this.findAnime();
+                        if (a != null)
+                            animeMenu.showMenu(a);
+                        //else
+                        //  this.showMenu();
+                        break;
+                    }
+                    case 2: { //FIND BY GENRE
+                       // this.researchByGenre();
+                        Anime a=this.researchByGenre();
+                        if(a!=null)
+                            animeMenu.showMenu(a);
+                        break;
+                    }
+                    case 3: { //ADVANCED SEARCH
                         this.researchByGenre();
                         break;
-                case 3: //ADVANCED SEARCH
-                    this.researchByGenre();
-                    break;
-                case 4: //UPDATE
-                    Anime b=this.findAnime();
-                    if(b!=null)
-                        this.updateAnime(b);
-                    else
-                        this.showMenu();                    break;
-                case 5: //INSERT
-                    this.createAnimeFromInput();
-                    break;
-                case 6: //DELETE
-                    Anime c=this.findAnime();
-                    if(c!=null)
-                        this.deleteAnimeFromInput(c);
-                    else
+                    }
+                    case 4: { //UPDATE
+                        Anime b = this.findAnime();
+                        if (b != null)
+                            this.updateAnime(b);
+                        // else
+                        //   this.showMenu();
+                        break;
+                    }
+                    case 5: { //INSERT
+                        this.createAnimeFromInput();
+                        break;
+                    }
+                    case 6: { //DELETE
+                        Anime c = this.findAnime();
+                        if (c != null)
+                            this.deleteAnimeFromInput(c);
+                        //     else
+                        //       this.showMenu();
+                        break;
+                        //case 3 : profileUserMenu.showMenu();
+                    }
+                    case 0: {
+                        stop = 1;
+                        break;
+                    }
+                    default: {
+                        System.out.println("Wrong command!");
                         this.showMenu();
-                    break;
-                    //case 3 : profileUserMenu.showMenu();
-                case 0:
+                        break;
+                    }
+                }
+
+                if (stop == 1)
                     return;
-                default:
-                    System.out.println("Wrong command!");
-                    this.showMenu();
-            }
-        }
+            }//CHECK STOP
+        } //IF ADMIN
 
 
         //menu for NORMAL USER
         else {
-            System.out.println(GREEN + "**************************************" + RESET);
-            System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
-            System.out.println("What would you like to do?");
-            System.out.println("Digit:");
-            System.out.println("1) Find anime by name");
-            System.out.println("2) Find anime by genre");
-            System.out.println("3) Advanced search");
-            System.out.println("0) Go back");
-            System.out.println(GREEN + "**************************************" + RESET);
-            System.out.println("Write your command here:");
+            while (stop == 0) {
 
-            Scanner sc = new Scanner(System.in);
-            int value_case = -1;
-            try {
-                value_case = Integer.parseInt(sc.nextLine());
-            } catch (Exception e) {
-                System.out.println("ATTENTION! Wrong command");
-                this.showMenu();
-            }
-            switch (value_case) {
-                case 1: //FIND BY NAME
-                    Anime anime=this.findAnime();
-                    if (anime!=null)
-                        animeMenu.showMenu(this.findAnime());
-                    else
+                System.out.println(GREEN + "**************************************" + RESET);
+                System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
+                System.out.println("What would you like to do?");
+                System.out.println("Digit:");
+                System.out.println("1) Find anime by name");
+                System.out.println("2) Find anime by genre");
+                System.out.println("3) Advanced search");
+                System.out.println("0) Go back");
+                System.out.println(GREEN + "**************************************" + RESET);
+                System.out.println("Write your command here:");
+
+                Scanner sc = new Scanner(System.in);
+                int value_case = -1;
+                try {
+                    value_case = Integer.parseInt(sc.nextLine());
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
+                    this.showMenu();
+                }
+                switch (value_case) {
+                    case 1: { //FIND BY NAME
+                        Anime a = this.findAnime();
+                        if (a != null)
+                            animeMenu.showMenu(a);
+                        //else
+                        //  this.showMenu();
+                        break;
+                    }
+                    case 2: { //FIND BY GENRE
+                        this.researchByGenre();
+                        break;
+                    }
+                    case 3: { //ADVANCED SEARCH
+                        this.researchByGenre();
+                        break;
+                    }
+                    case 0: {
+                        stop = 1;
+                        break;
+                    }
+                    default: {
+                        System.out.println("Wrong command!");
                         this.showMenu();
-                    // this.browseAnimeTitle();
-                    break;
-                case 2: //FIND BY GENRE
-                    this.researchByGenre();
-                    break;
-                case 3: //ADVANCED SEARCH
-                    this.researchByGenre();
-                    break;
-                case 0:
+                        break;
+                    }
+                }
+                if (stop == 1)
                     return;
-                default:
-                    System.out.println("Wrong command!");
-                    break;
+            }//CHECK STOP
+        } //IF USER
+    } //SHOW MENU
+
+    public Anime pickAnime(HashMap<Integer,String> results){
+        inte.printResults(results);
+        int x=0;
+        int select=-1;
+        Scanner sc=new Scanner(System.in);
+        int animecheck=0;
+        while(x==0) {
+            int animechoosen=-1;
+            System.out.println("Do you want to go to one of these anime's page?\n" +
+                    "1)YES 2)NO");
+            try {
+                select = Integer.parseInt(sc.nextLine());
+            } catch (Exception b) {
+                System.out.println("Attention! Wrong command!");
+                continue;
+            }
+            if(select!=1 && select!=2)
+                continue;
+            if(select==2)
+                break;
+            if(select==1){
+                while (animecheck==0) {
+                    System.out.println("Insert the number of the anime you want to visit");
+                    try {
+                        animechoosen = Integer.parseInt(sc.nextLine());
+                        animecheck = 1;
+                    } catch (NumberFormatException a) {
+                        System.out.println("Attention! Wrong command!");
+                        animecheck = 0;
+                        continue;
+                    }
+                }
+                Anime anime=new Anime();
+                anime.setAnime_name(results.get(animechoosen));
+                //animeMenu.showMenu(anime);
+                return anime;
             }
         }
-    } //SHOW MENU
+
+            return null;} //RESEARCH BY GENRE
+
+
 
     public Anime findAnime(){
         Scanner sc = new Scanner(System.in);
@@ -171,314 +245,313 @@ public class BrowseAnimeMenu {
         return a;
     }
 
-    public void browseAnimeTitle(){
+    public Anime researchByGenre() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Insert anime title: ");
-        String scan= sc.nextLine();
-        Anime t=new Anime();
-        t.setAnime_name(scan);
-        anime=crud.readAnime(t,anime_collection);
-        if(anime!=null)
-            animeMenu.showMenu(anime);
-        else{
-            System.out.println("Invalid name\n");
-            this.showMenu();
-        }
-    } //BROWSE ANIME
-
-    public void researchByGenre(){
-            Scanner sc = new Scanner(System.in);
         int select = -1;
-        List<String> genresChoosen= new ArrayList<>();
-            HashMap<Integer,String>animeResults;
-            int pos=0;
-            while(select!=0) {
-                int yn=-1; //YES OR NO VALUE
-                String genreList = ("Insert one or more genres from the following list or presso 0 to go back:\n" +
-                        "1)Action\t2)Drama\t3)Gag\t4)Mecha\t5)Sports\n" +
-                        "6)Slice of Life\t7)Music\t8)Thriller\t9)Shoujo\t10)Hentai\n" +
-                        "11)Shounen\t12)Seinen\t13)Josei\t14)Isekai\t15)Ecchi");
-                System.out.println(genreList);
-                try {
-                    select = Integer.parseInt(sc.nextLine());
-                } catch (Exception e) {
-                    System.out.println("ATTENTION! Wrong command");
-                    continue;
-                }
-                if (!(select >= 1) && !(select <= 15) && (select != 0)) {
-                    System.out.println("Please chose a genre or press 0 to go stop");
-                    continue;
-                }
-                if (select == 1) {
-                    genresChoosen.add("Action");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
+        List<String> genresChoosen = new ArrayList<>();
+        HashMap<Integer, String> animeResults;
+        int pos = 0;
+        while (select != 0) {
+            int yn = -1; //YES OR NO VALUE
+            String genreList = ("Insert one or more genres from the following list or presso 0 to go back:\n" +
+                    "1)Action\t2)Drama\t3)Gag\t4)Mecha\t5)Sports\n" +
+                    "6)Slice of Life\t7)Music\t8)Thriller\t9)Shoujo\t10)Hentai\n" +
+                    "11)Shounen\t12)Seinen\t13)Josei\t14)Isekai\t15)Ecchi");
+            System.out.println(genreList);
+            try {
+                select = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+                continue;
+            }
+            if (!(select >= 1) && !(select <= 15) && (select != 0)) {
+                System.out.println("Please chose a genre or press 0 to go stop");
+                continue;
+            }
+            if (select == 1) {
+                genresChoosen.add("Action");
+                pos++;
+                while (yn != 1 && yn != 2) {
 
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
                         continue;
-                    else
-                        break;
-                }
-                if (select == 2) {
-                    genresChoosen.add("Drama");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 3) {
-                    genresChoosen.add("Gag");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 4) {
-                    genresChoosen.add("Mecha");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 5) {
-                    genresChoosen.add("Sports");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 6) {
-                    genresChoosen.add("Slice of Life");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 7) {
-                    genresChoosen.add("Music");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 8) {
-                    genresChoosen.add("Thriller");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 9) {
-                    genresChoosen.add("Shoujo");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 10) {
-                    genresChoosen.add("Hentai");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 11) {
-                    genresChoosen.add("Shounen");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 12) {
-                    genresChoosen.add("Seinen");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 13) {
-                    genresChoosen.add("Josei");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 14) {
-                    genresChoosen.add("Isekai");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try{
-                            yn = Integer.parseInt(sc.nextLine());
-                        }
-                        catch (NumberFormatException e){System.out.println("Wrong input!");
-                            continue;
-                        }                    }
-                    if (yn == 1)
-                        continue;
-                    else
-                        break;
-                }
-                if (select == 15) {
-                    genresChoosen.add("Ecchi");
-                    pos++;
-                    while (yn != 1 && yn != 2) {
-
-                        System.out.println("Do you want to select more genres?\n1)YES 2)NO");
-                        try {
-                            yn = Integer.parseInt(sc.nextLine());
-                        } catch (NumberFormatException e) {
-                            System.out.println("Wrong input!");
-                            continue;
-                        }
                     }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 2) {
+                genresChoosen.add("Drama");
+                pos++;
+                while (yn != 1 && yn != 2) {
 
-                    if (yn == 1)
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
                         continue;
-                    else
-                        break;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 3) {
+                genresChoosen.add("Gag");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 4) {
+                genresChoosen.add("Mecha");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 5) {
+                genresChoosen.add("Sports");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 6) {
+                genresChoosen.add("Slice of Life");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 7) {
+                genresChoosen.add("Music");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 8) {
+                genresChoosen.add("Thriller");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 9) {
+                genresChoosen.add("Shoujo");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 10) {
+                genresChoosen.add("Hentai");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 11) {
+                genresChoosen.add("Shounen");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 12) {
+                genresChoosen.add("Seinen");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 13) {
+                genresChoosen.add("Josei");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 14) {
+                genresChoosen.add("Isekai");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 15) {
+                genresChoosen.add("Ecchi");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
                 }
 
-            } //End while
-                if(pos==0){
-                    this.showMenu();}
-                else{
-                    inte=new Interface();
-                    String[] arrayGenres= new String[pos];
-                    for(int i=0;i<genresChoosen.size();i++)
-                        arrayGenres[i]=genresChoosen.get(i);
-                    //Insertion of the animes founded into an hashmap and selection of
-                    //an anime to visit
-                    animeResults= aggregation.topTenAnimeByField(anime_collection,"genre",0,null,arrayGenres,0);
-                    inte.printResults(animeResults);
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+
+        } //End while
+        if (pos == 0) {
+            return null;
+        } else {
+            inte = new Interface();
+            String[] arrayGenres = new String[pos];
+            for (int i = 0; i < genresChoosen.size(); i++)
+                arrayGenres[i] = genresChoosen.get(i);
+            //Insertion of the animes founded into an hashmap and selection of
+            //an anime to visit
+            animeResults = aggregation.topTenAnimeByField(anime_collection, "genre", 0, null, arrayGenres, 0);
+                  /*  inte.printResults(animeResults);
                     int x=0;
                     int animecheck=0;
                     while(x==0) {
@@ -509,13 +582,15 @@ public class BrowseAnimeMenu {
                             }
                             Anime anime=new Anime();
                             anime.setAnime_name(animeResults.get(animechoosen));
-                            animeMenu.showMenu(anime);
-                            return;
+                            //animeMenu.showMenu(anime);
+                            return anime;
                         }
                     }
                 }
-            } //RESEARCH BY GENRE
-
+            return null;*/
+            return this.pickAnime(animeResults);
+        } //RESEARCH BY GENRE
+    }
 
     public void createAnimeFromInput(){
         Scanner sc=new Scanner(System.in);
@@ -617,16 +692,20 @@ public class BrowseAnimeMenu {
     }
 
         public void updateAnime(Anime anime){
-            System.out.println("What do you want to update?\n1)name\n2)episodes\n3)year\n4)source\n"+
+
+            int check=0;
+            while (check==0) { //WHILE FOR KEEPING1 UP THE MODIFIY MENU
+                System.out.println(GREEN+"-----------------------------------"+RESET);
+                crud.readAnime(anime,anime_collection);
+                System.out.println(GREEN+"-----------------------------------"+RESET);
+                System.out.println(GREEN+"What do you want to update?"+RESET);
+            System.out.println("1)name\n2)episodes\n3)year\n4)source\n"+
                     "5)type\n6)genre\n7)studio\n8)producer\n9)licensor");
             Scanner sc=new Scanner(System.in);
             int input;
-            int check=0;
-            while (check==0) {
                 System.out.println("Choose an option 1-9 or Press 0 to go Back");
                 try {
                     input = Integer.parseInt(sc.nextLine());
-                    check = 1;
                     if(input<0 || input>9){
                         System.out.println("Wrong input!");
                         continue;
@@ -639,7 +718,8 @@ public class BrowseAnimeMenu {
                 }
                 switch (input){
                     default:this.updateAnime(anime);
-                    case 0: this.showMenu();
+                    case 0:{ check=1;
+                        break;}
                     case 1:{
                         String newName=new String();
                         System.out.println("Insert new name: ");
@@ -661,6 +741,7 @@ public class BrowseAnimeMenu {
                         while(check==-1) {
                             try {
                                 ep = sc.nextInt();
+                                sc.nextLine();
                                 if (ep < 0) {
                                     System.out.println("Invalid input");
                                     continue;
@@ -672,7 +753,7 @@ public class BrowseAnimeMenu {
                             }
                         }
                         if (ep==0)
-                            this.showMenu();
+                            break;
                         crud.updateAnimeEpisodes(anime,anime_collection,ep);
                         continue;
                     }//CASE 2
@@ -683,6 +764,7 @@ public class BrowseAnimeMenu {
                         while(check==-1) {
                             try {
                                 ep = sc.nextInt();
+                                sc.nextLine();
                                 if (ep < 0) {
                                     System.out.println("Invalid input");
                                     continue;
@@ -694,7 +776,7 @@ public class BrowseAnimeMenu {
                             }
                         }
                         if (ep==0)
-                            this.showMenu();
+                            continue;
                         crud.updateAnimePremiered(anime,anime_collection,ep);
                         continue;
                     }//CASE 3
@@ -725,127 +807,150 @@ public class BrowseAnimeMenu {
                     case 6:{
                         int more=0;
                         int answ=-1;
+                        String str=new String();
                         while(more==0){
                             System.out.println("Do you want to insert or delete a genre?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
                                     answ=sc.nextInt();
+                                    sc.nextLine();
                                 }
                                 catch (InputMismatchException e){
                                     System.out.println("Wrong input!");
-                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
-                                    this.showMenu();
+                                    more=1;
                                 if(answ==1){
-                                    String str=new String();
                                     System.out.println("Insert a genre to add");
-                                    try{str= sc.nextLine();}
-                                    catch(Exception e){System.out.println("An error has occurred");}
+                                    try{
+                                        str= sc.nextLine();
+                                    }
+                                    catch(Exception e){
+                                        System.out.println("An error has occurred");
+                                    }
                                     crud.updateAnimeGenreAddOne(anime,anime_collection,str);
-
+                                    answ=-1;
                                 }//ADD
                                 if(answ==2){
                                     System.out.println("Insert a genre to remove");
-                                    String str= sc.nextLine();
+                                    str= sc.nextLine();
                                     crud.updateAnimeGenreDeleteOne(anime,anime_collection,str);
+                                    answ=-1;
                                 }//REMOVE
-                            answ=-1;
                         }//WHILE OPERATING
                         continue;
                     }//CASE 6
                     case 7:{
                         int more=0;
                         int answ=-1;
+                        String str=new String();
                         while(more==0){
                             System.out.println("Do you want to insert or delete a studio?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
                                     answ=sc.nextInt();
+                                    sc.nextLine();
                                 }
                                 catch (InputMismatchException e){
                                     System.out.println("Wrong input!");
-                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
-                                this.showMenu();
+                                more=1;
                             if(answ==1){
                                 System.out.println("Insert a studio to add");
-                                String str= sc.nextLine();
+                                try{
+                                    str= sc.nextLine();
+                                }
+                                catch(Exception e){
+                                    System.out.println("An error has occurred");
+                                }
                                 crud.updateAnimeStudioAddOne(anime,anime_collection,str);
-
+                                answ=-1;
                             }//ADD
                             if(answ==2){
                                 System.out.println("Insert a studio to remove");
-                                String str= sc.nextLine();
+                                str= sc.nextLine();
                                 crud.updateAnimeStudioDeleteOne(anime,anime_collection,str);
+                                answ=-1;
                             }//REMOVE
-                            answ=-1;
                         }//WHILE OPERATING
                         continue;
                     }//CASE 7
                     case 8:{
                         int more=0;
                         int answ=-1;
+                        String str=new String();
                         while(more==0){
                             System.out.println("Do you want to insert or delete a producer?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
                                     answ=sc.nextInt();
+                                    sc.nextLine();
                                 }
                                 catch (InputMismatchException e){
                                     System.out.println("Wrong input!");
-                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
-                                this.showMenu();
+                                more=1;
                             if(answ==1){
                                 System.out.println("Insert a producer to add");
-                                String str= sc.nextLine();
+                                try{
+                                    str= sc.nextLine();
+                                }
+                                catch(Exception e){
+                                    System.out.println("An error has occurred");
+                                }
                                 crud.updateAnimeProducerAddOne(anime,anime_collection,str);
-
+                                answ=-1;
                             }//ADD
                             if(answ==2){
                                 System.out.println("Insert a producer to remove");
-                                String str= sc.nextLine();
+                                str= sc.nextLine();
                                 crud.updateAnimeProducerDeleteOne(anime,anime_collection,str);
+                                answ=-1;
                             }//REMOVE
-                           answ=-1;
                         }//WHILE OPERATING
                         continue;
                     }//CASE 8
                     case 9:{
                         int more=0;
                         int answ=-1;
+                        String str=new String();
                         while(more==0){
                             System.out.println("Do you want to insert or delete a licensor?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
                                     answ=sc.nextInt();
+                                    sc.nextLine();
                                 }
                                 catch (InputMismatchException e){
                                     System.out.println("Wrong input!");
-                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
-                                this.showMenu();
+                                more=1;
                             if(answ==1){
                                 System.out.println("Insert a licensor to add");
-                                String str= sc.nextLine();
+                                try{
+                                    str= sc.nextLine();
+                                }
+                                catch(Exception e){
+                                    System.out.println("An error has occurred");
+                                }
                                 crud.updateAnimeLicensorAddOne(anime,anime_collection,str);
-
+                                answ=-1;
                             }//ADD
                             if(answ==2){
                                 System.out.println("Insert a licensor to remove");
-                                String str= sc.nextLine();
+                                str= sc.nextLine();
                                 crud.updateAnimeLicensorDeleteOne(anime,anime_collection,str);
+                                answ=-1;
                             }//REMOVE
-                           answ=-1;
                         }//WHILE OPERATING
+                        continue;
                     }//CASE 9
 
 
@@ -853,17 +958,7 @@ public class BrowseAnimeMenu {
 
                 }//END SWITCH
             }//WHILE CHECK==0
-
-
-
-
         }
-
-
-
-
-
-
 
     public boolean checkIsAdmin(User user){
         if(user==null){
@@ -938,6 +1033,160 @@ public class BrowseAnimeMenu {
     }
 
 
+    public Anime advancedSearch(){
+        int check=0; //CHECK FOR WHILE
+        int input=-1; //CHECK FOR AGGREGATION
+        int chose=-1; //CHECK FOR OPTIONS IN AGGREGATION
+
+        Scanner sc=new Scanner(System.in);
+        String stringInput= new String();
+        while(check==0){
+            System.out.println(GREEN + "ADVANCED SEARCH MENU" + RESET);
+            System.out.println("Choose one of the following options" +
+                    "1)Top rated animes by field\n" +
+                    "2)Studio/Genre/Producer with the highest average\n" +
+                    "3)Top followed animes\n" +
+                    "4)Number of productions of Studios or Producers");
+            System.out.println("Choose an option 1-4 or Press 0 to go Back");
+            try {
+                input = Integer.parseInt(sc.nextLine());
+                if(input<0 || input>4){
+                    System.out.println("Wrong input!");
+                    continue;
+                }
+            } catch (NumberFormatException a) {
+                System.out.println("Attention! Wrong command!");
+                check = 0;
+                continue;
+            }
+            switch (input){
+                case 1:{
+                System.out.println("Select a field from 1)Year\n2)Source\n3)Type\nPress 0 to go back\n");
+               int answ=-1;
+               int innansw=-1;
+               while(answ==-1) {
+                   try {
+                       answ = sc.nextInt();
+                       sc.nextLine();
+                   } catch (NumberFormatException e) {
+                       System.out.println("Attention! Wrong input!");
+                       answ = -1;
+                   }
+                   if(answ==1){
+                       System.out.println("Please choose a year between 1917-2023");
+                       while(innansw==-1){
+                           try{
+                               innansw=sc.nextInt();
+                               sc.nextLine();
+                           }
+                           catch (NumberFormatException e){
+                               System.out.println("Attention! Wrong input!");
+                               innansw=-1;
+                           }
+                           if(innansw<1917 || innansw>2023){
+                               System.out.println("Attention! wrong year specified!");
+                               innansw=-1;
+                           }
+                           else {
+                               HashMap<Integer,String> results=new HashMap<>();
+                                results=aggregation.topTenAnimeByField(anime_collection,"premiered",innansw,null,null,10);
+                                return this.pickAnime(results);
+                           }//ELSE GOOD YEAR DATE
+                       }//ANSW FOR PICKING AN YEAR
+                   }//ANSW =1 YEAR
+                   if(answ==2) { //SOURCE
+                       System.out.println("Please choose a source type between\n" +
+                               "1)Original\n2)TV\n3)Music\n4)Manga\n5)Visual Novel\n6)Game\n" +
+                               "7)Book\nPress 0 to go back");
+                       HashMap<Integer, String> temp = new HashMap<>();
+                       temp.put(1, "Original");
+                       temp.put(2, "TV");
+                       temp.put(3, "Music");
+                       temp.put(4, "Manga");
+                       temp.put(5, "Visual Novel");
+                       temp.put(6, "Game");
+                       temp.put(7, "Book");
+
+                       while (innansw == -1) {
+                           try {
+                               innansw = sc.nextInt();
+                               sc.nextLine();
+                           } catch (NumberFormatException e) {
+                               System.out.println("Attention! Wrong input!");
+                               innansw = -1;
+                           }
+                           if (innansw < 0 || innansw > 7) {
+                               System.out.println("Attention! wrong input specified!");
+                               innansw = -1;
+                           }
+                           if (innansw == 0)
+                               return null;
+                           else {
+                               HashMap<Integer, String> results = new HashMap<>();
+                               results = aggregation.topTenAnimeByField(anime_collection, "type", innansw, temp.get(innansw), null, 10);
+                               return this.pickAnime(results);
+                           }//ELSE GOOD TYPE PICK
+                       }//ANSW FOR PICKING A SOURCE
+                   }//ANSW =2 SOURCE
+                   if(answ==3){ //TYPE
+                       System.out.println("Please choose a type between\n" +
+                               "1)TV\n2)Special\n3)OVA\n4)Movie\n5)Web\n6)Music\n");
+                       HashMap<Integer, String> temp = new HashMap<>();
+                       temp.put(1, "TV");
+                       temp.put(2, "Special");
+                       temp.put(3, "OVA");
+                       temp.put(4, "Movie");
+                       temp.put(5, "Web");
+                       temp.put(6, "Music");
+
+                       while (innansw == -1) {
+                           try {
+                               innansw = sc.nextInt();
+                               sc.nextLine();
+                           } catch (NumberFormatException e) {
+                               System.out.println("Attention! Wrong input!");
+                               innansw = -1;
+                           }
+                           if (innansw < 0 || innansw > 6) {
+                               System.out.println("Attention! wrong input specified!");
+                               innansw = -1;
+                           }
+                           if (innansw == 0)
+                               return null;
+                           else {
+                               HashMap<Integer, String> results = new HashMap<>();
+                               results = aggregation.topTenAnimeByField(anime_collection, "type", innansw, temp.get(innansw), null, 10);
+                               return this.pickAnime(results);
+                           }//ELSE GOOD TYPE PICK
+                       }//ANSW FOR PICKING A TYPE
+                   }//ANSW =3 TYPE
+                   if(answ==0)
+                       return  null;
+               }//ANSWER CHOSE FIELD
+                }//CASE 1
+                case 2:{
+
+
+                }
+                case 3:{
+
+                }
+                case 4:{
+
+                }
+                case 0:{check=1; break;}
+                default:{System.out.println("Attention! Wrong command!"); break;}
+
+
+
+            }//SWITCH
+        }//WHILE CHECK 0
+
+
+
+
+
+    }
 
 }
 
@@ -946,33 +1195,25 @@ public class BrowseAnimeMenu {
 
 
 
- /*  public void deleteAnimeFromInput(){
-        System.out.println("Insert the Anime name to delete: ");
-        Scanner sc=new Scanner(System.in);
-        String name=null;
-        animeNeo= new AnimeManagerNeo4J(dbNeo4J);
-        try{
-        name= sc.nextLine().toString();}
-        catch(Exception e){
-            System.out.println("Invalid input");
+
+
+
+
+
+
+/*
+    public void browseAnimeTitle(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Insert anime title: ");
+        String scan= sc.nextLine();
+        Anime t=new Anime();
+        t.setAnime_name(scan);
+        anime=crud.readAnime(t,anime_collection);
+        if(anime!=null)
+            animeMenu.showMenu(anime);
+        else{
+            System.out.println("Invalid name\n");
+            this.showMenu();
         }
-        Anime temp=new Anime();
-        temp.setAnime_name(name);
-        Document backup_doc= crud.getAnime(name,anime_collection);
-        if(crud.deleteAnime(temp,anime_collection)){ //MONGO DELETE
-            if(animeNeo.deleteAnime(name)) //DELETE NEO4J
-                System.out.println("Anime "+name+" deleted successfully");
-            else {
-                System.out.println("Error during the elimination of the element");
-                anime_collection.insertOne(backup_doc);     //IF NEO4J FAILS TO DELETE THE FILE GET REINSERTED INTO MONGO
-            }
-        }
-        else
-            System.out.println("Error during the elimination.\nCannot delete");
-        this.showMenu();
-    }  */
-
-
-
-
-
+    } //BROWSE ANIME
+    */
