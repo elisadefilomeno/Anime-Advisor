@@ -31,8 +31,8 @@ public class BrowseUsersMenu {
     System.out.println("1) Find User by username");
     System.out.println("2) Show your profile");
     System.out.println("3) View most active users");
-
-    System.out.println("0) Exit");
+    System.out.println("4) View suggested users to follow");
+    System.out.println("0) Go back to Home Page");
     System.out.println(GREEN + "**************************************" + RESET);
 
     System.out.println("Write your command here:");
@@ -136,7 +136,7 @@ public class BrowseUsersMenu {
 
                     ViewUserMenu vum = new ViewUserMenu();
                     User u = new User();
-                    u= userManagerNeo4J.getUserFromName(listUsers.get(indexUser-1))
+//                    u= userManagerNeo4J.getUserFromName(listUsers.get(indexUser-1))
                     //Metti funzioni che recupera l'oggetto dato il  nome
                    // vum.showMenu(listUsers.get(indexUser-1));
                 }
@@ -146,8 +146,14 @@ public class BrowseUsersMenu {
                 this.showMenu();
             }
         }
+        case 4:{
 
-        case 0:
+        }
+
+        case 0:{
+            Registered_Home_page rgh = new Registered_Home_page();
+            rgh.showMenu();
+        }
         default: {
             System.out.println("Wrong command !!!");
             this.showMenu();
