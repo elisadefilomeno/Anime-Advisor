@@ -1,5 +1,6 @@
 package it.unipi.large_scale.anime_advisor.application;
 
+import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User;
@@ -205,5 +206,51 @@ public class ViewReviewMenu {
             return false;
         }
         return user.getIs_admin();
+    }
+    public void showSingleReview(Review r){
+
+        System.out.println(GREEN+"**************************************"+RESET);
+        System.out.println(GREEN+ "INFORMATION REVIEW"+RESET);
+        System.out.println("Title Review: "+r.getTitle());
+        Anime a = new Anime ();
+        AnimeManagerNeo4J amn = new AnimeManagerNeo4J(dbNeo4J);
+        a= amn.getAnimeFromReview(r);
+        System.out.println("Title Anime: "+ a.getAnime_name());
+        System.out.println("Text: ");
+        System.out.println(r.getText());
+        System.out.println(GREEN+"**************************************"+RESET);
+
+        System.out.println("Choose one option :");
+        int value_case = -1;
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("1) Come back to your profile");
+        System.out.println("2) See other reviews of this anime");
+
+        try {
+            value_case = Integer.parseInt(sc.nextLine());
+        } catch (Exception e) {
+            System.out.println("ATTENTION! Wrong command");
+            this.showSingleReview(r);
+        }
+
+        switch (value_case) {
+            case 1: {
+                PersonalProfileUserMenu personalProfileUserMenu= new PersonalProfileUserMenu();
+                personalProfileUserMenu.showMenu();
+
+            }
+
+            case 2: {
+                BrowseReviewsMenu brm =new BrowseReviewsMenu();
+                brm.showMenu(a);
+            }
+
+            default:
+                System.out.println("Attention ! Wrong command");
+                this.showSingleReview(r);
+        }
+
+
     }
 }

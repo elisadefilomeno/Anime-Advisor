@@ -7,6 +7,7 @@ import it.unipi.large_scale.anime_advisor.reviewManager.ReviewManagerNeo4J;
 import it.unipi.large_scale.anime_advisor.userManager.UserManagerNeo4J;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
@@ -171,6 +172,7 @@ public class PersonalProfileUserMenu {
                 viewUserMenu.showMenu(u);
             }
             case 0 -> this.showMenu();
+
             default -> {
                 System.out.println("ATTENTION! Wrong command");
                 this.showMenu();
@@ -199,6 +201,8 @@ public class PersonalProfileUserMenu {
         System.out.println("Digit:");
         System.out.println("0) Go Back to your profile");
         System.out.println("1) View specific Review info");
+        System.out.println("2) Modify one review");
+        System.out.println("3) Delete one review");
 
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Write your command here:");
@@ -218,7 +222,27 @@ public class PersonalProfileUserMenu {
                     review_number = Integer.parseInt(sc.nextLine());
                 } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
+                    this.viewWrittenReviews();
+                }
+                if (!user_map_to_access_reviews.containsKey(review_number)) {
+                    System.out.println("ATTENTION! Wrong number");
+                    this.viewWrittenReviews();
+                }
+                reviewManagerNeo4J = new ReviewManagerNeo4J(dbNeo4J);
+                Review selected_review = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
+                ViewReviewMenu viewReviewMenu = new ViewReviewMenu();
+                viewReviewMenu.showSingleReview(selected_review);
+            }
+            case 0 -> this.showMenu();
+
+            case 2 -> {
+                System.out.println("Insert the number of the review you want to see: ");
+                int review_number = 0;
+                try {
+                    review_number = Integer.parseInt(sc.nextLine());
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
+                    this.viewWrittenReviews();
                 }
                 if (!user_map_to_access_reviews.containsKey(review_number)) {
                     System.out.println("ATTENTION! Wrong number");
@@ -226,10 +250,98 @@ public class PersonalProfileUserMenu {
                 }
                 reviewManagerNeo4J = new ReviewManagerNeo4J(dbNeo4J);
                 Review selected_review = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
-                ViewReviewMenu viewReviewMenu = new ViewReviewMenu();
-                viewReviewMenu.showReviewMenu(selected_review);
+                System.out.println("What do you want modify ?");
+                System.out.println("1) Title");
+                System.out.println("2) Text");
+                System.out.println("0) Go Back");
+                System.out.println("Digit: ");
+                value_case = 0;
+                try {
+                    value_case = Integer.parseInt(sc.nextLine());
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
+                    this.viewWrittenReviews();
+                }
+                switch (value_case) {
+                    case 1 -> {
+                        Review revToUpdate = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
+                        System.out.println("Last title: "+revToUpdate.getTitle());
+                        System.out.println("Insert the new title:");
+                        String newTitle =sc.nextLine();
+
+                        if(newTitle.isEmpty() || newTitle == null){
+                            System.out.println("ATTENTION! Wrong command");
+                            this.showMenu();
+                        }
+                        reviewManagerNeo4J.updateTitleReview(revToUpdate,newTitle);
+                        this.viewWrittenReviews();
+                    }
+                    case 2 -> {
+                        Review revToUpdateText = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
+                        System.out.println("Last text:\n "+revToUpdateText.getText());
+                        System.out.println("Insert the new text:");
+                        String newText =sc.nextLine();
+
+                        if(newText.isEmpty() || newText == null){
+                            System.out.println("ATTENTION! Wrong command");
+                            this.showMenu();
+                        }
+
+                        reviewManagerNeo4J.updateTextReview(revToUpdateText.getTitle(),newText);
+                        this.viewWrittenReviews();
+
+                    }
+                    case 0 -> {
+                        this.viewWrittenReviews();
+                    }
+                    default -> {
+                        System.out.println("ATTENTION! Wrong number");
+                        this.showMenu();
+                    }
+
+                }
             }
-            case 0 -> this.showMenu();
+            case 3 -> {
+                System.out.println("Insert the number of the review you want delete: ");
+                int review_number = 0;
+                try {
+                    review_number = Integer.parseInt(sc.nextLine());
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
+                    this.viewWrittenReviews();
+                }
+                if (!user_map_to_access_reviews.containsKey(review_number)) {
+                    System.out.println("ATTENTION! Wrong number");
+                    this.showMenu();
+                }
+                reviewManagerNeo4J = new ReviewManagerNeo4J(dbNeo4J);
+                Review selected_review = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
+                System.out.println("Are you sure ?");
+                System.out.println("1) Yes");
+                System.out.println("2) No");
+                System.out.println("Digit: ");
+                value_case = 0;
+                try {
+                    value_case = Integer.parseInt(sc.nextLine());
+                } catch (Exception e) {
+                    System.out.println("ATTENTION! Wrong command");
+                    this.viewWrittenReviews();
+                }
+                switch (value_case) {
+                    case 1 -> {
+                        Review selected_reviewToDelete = reviewManagerNeo4J.getReviewByTitle(user_map_to_access_reviews.get(review_number));
+                        reviewManagerNeo4J.deleteReview(selected_reviewToDelete.getTitle());
+                        this.viewWrittenReviews();
+                    }
+                    case 2 -> this.viewWrittenReviews();
+
+                    default -> {
+                        System.out.println("ATTENTION! Wrong command");
+                        this.viewWrittenReviews();
+                    }
+                }
+            }
+
             default -> {
                 System.out.println("ATTENTION! Wrong command");
                 this.showMenu();

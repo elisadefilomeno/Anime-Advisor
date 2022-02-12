@@ -387,40 +387,44 @@ public class ReviewManagerNeo4J{
         return list;
 
     }
+    public Review getReviewByTitle(String titleReview){
+        Review reviewFound ;
+        try(Session session= dbNeo4J.getDriver().session()) {
 
-   /* public static void main(String[] args) throws Exception {
+            reviewFound = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (r:Review{title:$title}) RETURN "+
+                                "r.title,r.text,r.last_update",
+                        parameters(
+                                "title",titleReview
+                        )
+                );
+                Review rev= new Review();
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
 
-        DbManagerNeo4J db = new DbManagerNeo4J();
-        ReviewManagerNeo4J rm = new ReviewManagerNeo4J(db);
-        UserManagerNeo4J um = new UserManagerNeo4J(db);
-        AnimeManagerNeo4J am = new AnimeManagerNeo4J(db);
-        User u = new User();
-        u.setUsername("Peppe");
-        u.setGender("male");
-        u.setPassword("1234");
-        u.setLogged_in(false);
-        u.setIs_admin(false);
-        um.createUser(u);
 
-        Anime a = new Anime ();
-        a.setAnime_name("OnePiece");
-        am.createAnime("OnePiece");
+                    rev.setText(r.get("r.text").asString());
+                    rev.setTitle(r.get("r.title").asString());
 
-        um.followAnime("Peppe","OnePiece");
-
-        Review r= new Review();
-        r.setTitle("Commento");
-        LocalDate al=LocalDate.of(1999,1,1);
-        r.setLast_update(al);
-        r.setText("Belisssiimoooo");
-
-        rm.createReview(r,a,u);
-        rm.deleteReview("Commento",a.getAnime_name(),u.getUsername());
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    rev.setLast_update(dataFound);
 
 
 
-        db.closeNeo4J();
+                    return rev;
+                }
+                else{
+                    System.out.println("Review not found");
+                    return null;
+                }
+
+            });
+
+        }
+        return reviewFound;
+
 
     }
-*/
+
 }
