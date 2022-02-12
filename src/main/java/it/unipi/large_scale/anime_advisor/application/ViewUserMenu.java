@@ -38,8 +38,10 @@ public class ViewUserMenu {
                 string.append("Status: Not an Admin");
             System.out.println(string);
 
+            System.out.println("Reviews Written: "+userManagerNeo4J.getNumberReviews(u.getUsername()));
             System.out.println("Numbers Follows: "+userManagerNeo4J.getNumberUserFollow(u.getUsername()));
             System.out.println("Numbers Follower: "+userManagerNeo4J.getNumberFollowers(u.getUsername()));
+
 
             System.out.println(GREEN + "**************************************" + RESET);
             System.out.println("What would you like to do?");
