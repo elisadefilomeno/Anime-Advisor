@@ -13,7 +13,7 @@ public class Main {
     protected static MongoCollection<Document> anime_collection;
 
 
-    public static void main(String argd[]) throws Exception {
+    public static void main(String args[]) throws Exception {
         try{
             // connections to databases
             dbNeo4J = new DbManagerNeo4J();
