@@ -109,7 +109,7 @@ public class AnimeManagerMongoDBCRUD{
             return null;}
         HashMap<Integer,String> res=new HashMap<>();
         MongoCursor<Document> results=collection.find(eq("name",new Document("$regex",anime.getAnime_name()).append("$options","i"))).iterator();
-        System.out.println("Resutls found:");
+        System.out.println("Results found:");
         Document temp;
         int pos=1;
         while(results.hasNext()){

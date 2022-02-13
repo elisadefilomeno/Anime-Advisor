@@ -11,10 +11,7 @@ import org.bson.Document;
 
 import javax.print.Doc;
 import java.lang.constant.DynamicCallSiteDesc;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class AnimeManagerMongoDBAgg {
 
@@ -219,18 +216,44 @@ public class AnimeManagerMongoDBAgg {
                     )
             ).iterator();
             int pos=1;
-            while(cursor.hasNext()){
-                Document temp=cursor.next();
-                Document en=temp.get("_id", Document.class);
-                if(entity.equals("studio")) {
-                    en.get("studio");
-                    System.out.println("Studio:"+en.get("studio").toString()+" Type:"+en.get("type").toString()+" Productions:"+temp.get("productions").toString());
-                }
-                if(entity.equals("producer")) {
-                    en.get("producer");
-                    System.out.println("Producer:"+en.get("producer").toString()+" Type:"+en.get("type").toString()+" Productions:"+temp.get("productions").toString());
-                }
-            }
+            int yn=-1;
+            Scanner sc=new Scanner(System.in);
+
+                while(cursor.hasNext()){
+                        Document temp = cursor.next();
+                        Document en = temp.get("_id", Document.class);
+                        if (entity.equals("studio")) {
+                            en.get("studio");
+                            System.out.println("Studio:" + en.get("studio").toString() + " Type:" + en.get("type").toString() + " Productions:" + temp.get("productions").toString());
+                            pos++;
+                        }
+                        if (entity.equals("producer")) {
+                            en.get("producer");
+                            System.out.println("Producer:" + en.get("producer").toString() + " Type:" + en.get("type").toString() + " Productions:" + temp.get("productions").toString());
+                            pos++;
+                        }
+                        if (pos==10) {
+                            yn=-1;
+                            while (yn != 1 && yn != 2) {
+                                System.out.println("Do you want to see more results?\n1)YES 2)NO");
+                                try {
+                                    yn = Integer.parseInt(sc.nextLine());
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Wrong input!");
+                                    continue;
+                                }
+                            }//WHILE YER OR NO
+                            if (yn == 1){
+                                pos = 1;
+                                continue;
+                            }
+                            if (yn == 2)
+                                return;
+                            if (yn != 1 && yn != 2)
+                                System.out.println("Wrong input!");
+                        }
+                }//WHILE CURSORS
+
 
 
         } catch (MongoException e) {
