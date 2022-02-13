@@ -720,15 +720,17 @@ public class BrowseAnimeMenu {
                 switch (input){
                     default:this.updateAnime(anime);
                     case 0:{ check=1;
-                        break;}
+                        break;
+                    }
                     case 1:{
                         String newName=new String();
                         System.out.println("Insert new name: ");
-                        sc.nextLine();
+                        newName = sc.nextLine();
                         try {
                             crud.updateAnimeName(anime,anime_collection,newName);
                             animeNeo= new AnimeManagerNeo4J(dbNeo4J);
                             animeNeo.updateAnimeTitle(anime.getAnime_name(),newName);
+                            anime.setAnime_name(newName);
                         }
                         catch (Exception e){
                             System.out.println("Unable to update");

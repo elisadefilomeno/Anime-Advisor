@@ -235,8 +235,13 @@ public class AnimeManagerNeo4J{
                     org.neo4j.driver.Record r = result.next();
                     return (r.get("anime_count").asInt());
                 }
+                else{
+                    System.out.println("ERROR!");
+                    return null;
 
-                return null;
+                }
+
+
             });
             return (anime_count>0);
         }catch(Exception ex){
