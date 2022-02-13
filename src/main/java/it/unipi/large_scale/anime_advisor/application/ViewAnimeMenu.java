@@ -58,31 +58,16 @@ public class ViewAnimeMenu {
 
 
             case 4: {
-                int score=-1;
-                    while (!(score>=0)&&!(score<=10)) {
-                        try {
-                            System.out.println("Insert a score between 1 and 10 or press 0 to go back");
-                            score = Integer.parseInt(sc.nextLine());
-                        } catch (NumberFormatException n) {
-                            System.out.println("Wrong input.");
-                        }
-                    }
-                        if(score==0){
-                            this.showMenu(anime);
-                        }
-                        else{
-                            crud.updateAnimeMeanScored(anime,anime_collection,score);
-                            System.out.println("Thank you for voting!");
-                            this.showMenu(anime);
-                        }
+                            if(crud.voteAnimeUser(anime,user,anime_collection)){
+                                System.out.println("Thank you for voting!");
 
-                this.showMenu(anime);
+                            }
+
             }
 
             case 5:return; //DA PROVARE
             case 0:
-                backMenu.showMenu();
-                break;
+                return;
             // 2) vuoi lasciare una recensione?
             // 3) vuoi votare l'anime?
             // 4) vuoi seguire l'anime?

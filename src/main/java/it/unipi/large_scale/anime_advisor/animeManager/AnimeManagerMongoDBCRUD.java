@@ -3,6 +3,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.DeleteResult;
+import it.unipi.large_scale.anime_advisor.entity.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.mongodb.client.*;
@@ -20,6 +21,7 @@ import it.unipi.large_scale.anime_advisor.entity.Anime;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class AnimeManagerMongoDBCRUD{
@@ -378,19 +380,29 @@ public class AnimeManagerMongoDBCRUD{
 
     }
     //Update the mean of the average score when someone vote USE IT ONLY AFTER THE FIRST VOTE
-    public void updateAnimeMeanScored(Anime anime,MongoCollection<Document> collection,double score) {
+    public void updateAnimeMeanScored(Anime anime,MongoCollection<Document> collection,double score,int i,double oldvote) {
+        //IF INT I==1 A USER WHO'S NEVER VOTED BEFORE THIS ANIME IS INSERTING A VOTE, ELSE YOU'RE CHANGIN
+        //AN OLD VOTE
         if(checkIfPresent(anime, collection)){
             Document doc= collection.find(eq("name",anime.getAnime_name())).first();
             double scored=doc.getDouble("scored");
+            double tempscored=0;
             int scoredBy=doc.getInteger("scoredBy");
-            double newScore= (scoredBy*scored+score)/(scoredBy+1);
+            double newScore=0;
+            if(i==1)
+                newScore= (scoredBy*scored+score)/(scoredBy+1);
+            else {
+                tempscored = (scored * scoredBy - oldvote) / (scoredBy - 1);//AVERAGE WITHOUT THE OLD VALUE
+                newScore = (scoredBy * tempscored + score) / (scoredBy + 1);//AVERAGE WITH NEW VALUE
+            }
             System.out.println("score="+scored+"\nsb="+scoredBy+"\nnew Score=");
             Bson query= new Document().append("name",anime.getAnime_name());
             Bson update= Updates.set("scored",newScore);
             try {
                 UpdateResult result = collection.updateOne(query, update);
                 System.out.println("Document updated\n");
-                updateAnimeIncScoredBy(anime,collection);
+                if(i==1)
+                    updateAnimeIncScoredBy(anime,collection);
             } catch (MongoException me) {
                 System.err.println("Unable to update due to an error: " + me);
             }
@@ -476,4 +488,46 @@ public class AnimeManagerMongoDBCRUD{
             return false;
         }
     }
+
+    public boolean voteAnimeUser(Anime anime,User user,MongoCollection<Document> collection){
+        //CHECK IF PRESENT
+        Document doc=collection.find(and(eq("name",anime.getAnime_name()),elemMatch("ratings",eq("name",user.getUsername())))).first();
+        int vote=-1;
+        int answ=-1;
+        int check=0;
+        Scanner sc= new Scanner(System.in);
+        if(doc==null) {
+            while (vote==-1) {
+                System.out.println("Insert a vote between 1 and 10 or press 0 to go back");
+                try {
+                    vote = Integer.parseInt(sc.nextLine());
+                    if(vote<0 || vote>10){
+                        System.out.println("Invalid input");
+                        vote=-1;
+                        continue;}
+                    if(vote==0)
+                        return false;
+                } catch (NumberFormatException e) {
+                    System.out.println("Attention! Wrong input!");
+                    continue;
+                }
+            }
+            //INSERT NEW VOTE FROM START
+            try{
+            this.updateAnimeMeanScored(anime,collection,Double.valueOf(vote),1,0);
+            Bson us= new Document().append("name",user.getUsername()).append("score:",vote);
+            collection.updateOne(eq("name",anime.getAnime_name()),push("ratings",us));
+            return true;
+            } //INSERTING MONGO USER DATA
+            catch (MongoException e){
+                System.out.println("An error has occurred\nVote not inserted");
+                return  false;
+            }
+       } //IF USER HAS NEVER VOTED BEFORE
+    System.out.println("You have already voted this anime!");
+    return false;
+    }//ELSE CHANGE VOTE
+
+
+
 }
