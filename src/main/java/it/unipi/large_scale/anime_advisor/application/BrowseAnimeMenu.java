@@ -741,15 +741,14 @@ public class BrowseAnimeMenu {
                         int ep=-1;
                         while(check==-1) {
                             try {
-                                ep = sc.nextInt();
-                                sc.nextLine();
+                                ep = Integer.parseInt(sc.nextLine());
                                 if (ep < 0) {
-                                    System.out.println("Invalid input");
+                                    System.out.println("Invalid input\nPlease insert the number of episodes or press 0 to go back\n");
                                     continue;
                                 }
                                 check=1;
-                            } catch (InputMismatchException e) {
-                                System.out.println("Error input");
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid input\nPlease insert the number of episodes or press 0 to go back");
                                 continue;
                             }
                         }
@@ -764,15 +763,14 @@ public class BrowseAnimeMenu {
                         int ep=-1;
                         while(check==-1) {
                             try {
-                                ep = sc.nextInt();
-                                sc.nextLine();
+                                ep = Integer.parseInt(sc.nextLine());
                                 if (ep < 0) {
-                                    System.out.println("Invalid input");
+                                    System.out.println("Invalid input\nPlease insert the number of the year or press 0 to go back:\n");
                                     continue;
                                 }
                                 check=1;
-                            } catch (InputMismatchException e) {
-                                System.out.println("Error input");
+                            } catch (NumberFormatException e) {
+                                System.out.println("Error input\nPlease insert the number of the year of press 0 to go back:\n");
                                 continue;
                             }
                         }
@@ -813,10 +811,9 @@ public class BrowseAnimeMenu {
                             System.out.println("Do you want to insert or delete a genre?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
-                                    answ=sc.nextInt();
-                                    sc.nextLine();
+                                    answ = Integer.parseInt(sc.nextLine());
                                 }
-                                catch (InputMismatchException e){
+                                catch (NumberFormatException e){
                                     System.out.println("Wrong input!");
                                 }
                             }//WHILE QUESTION
@@ -850,11 +847,11 @@ public class BrowseAnimeMenu {
                             System.out.println("Do you want to insert or delete a studio?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
-                                    answ=sc.nextInt();
-                                    sc.nextLine();
+                                    answ = Integer.parseInt(sc.nextLine());
                                 }
-                                catch (InputMismatchException e){
-                                    System.out.println("Wrong input!");
+                                catch (NumberFormatException e){
+                                    System.out.println("Wrong input!\nPlease choose an option:\n");
+                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
@@ -864,7 +861,7 @@ public class BrowseAnimeMenu {
                                 try{
                                     str= sc.nextLine();
                                 }
-                                catch(Exception e){
+                                catch(NumberFormatException e){
                                     System.out.println("An error has occurred");
                                 }
                                 crud.updateAnimeStudioAddOne(anime,anime_collection,str);
@@ -887,11 +884,11 @@ public class BrowseAnimeMenu {
                             System.out.println("Do you want to insert or delete a producer?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
-                                    answ=sc.nextInt();
-                                    sc.nextLine();
+                                    answ = Integer.parseInt(sc.nextLine());
                                 }
-                                catch (InputMismatchException e){
-                                    System.out.println("Wrong input!");
+                                catch (NumberFormatException e){
+                                    System.out.println("Wrong input!\nPlease choose an option");
+                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
@@ -924,11 +921,11 @@ public class BrowseAnimeMenu {
                             System.out.println("Do you want to insert or delete a licensor?\n1)Add\n2)Remove\n0)Go Back");
                             while(answ==-1){
                                 try{
-                                    answ=sc.nextInt();
-                                    sc.nextLine();
+                                    answ = Integer.parseInt(sc.nextLine());
                                 }
-                                catch (InputMismatchException e){
+                                catch (NumberFormatException e){
                                     System.out.println("Wrong input!");
+                                    continue;
                                 }
                             }//WHILE QUESTION
                             if(answ==0)
@@ -1067,25 +1064,24 @@ public class BrowseAnimeMenu {
                int innansw=-1;
                while(answ==-1) {
                    try {
-                       answ = sc.nextInt();
-                       sc.nextLine();
+                       answ = Integer.parseInt(sc.nextLine());
                    } catch (NumberFormatException e) {
                        System.out.println("Attention! Wrong input!");
-                       answ = -1;
+                       continue;
                    }
                    if(answ==0) return  null;
                    if(answ==1){
                        System.out.println("Please choose a year between 1917-2023");
                        while(innansw==-1){
                            try{
-                               innansw=sc.nextInt();
-                               sc.nextLine();
+                               innansw = Integer.parseInt(sc.nextLine());
                            }
                            catch (NumberFormatException e){
                                System.out.println("Attention! Wrong input!");
                                innansw=-1;
+                               continue;
                            }
-                           if(innansw<1917 || innansw>2023){
+                           if((innansw<1917 || innansw>2023)){
                                System.out.println("Attention! wrong year specified!");
                                innansw=-1;
                            }
@@ -1111,8 +1107,7 @@ public class BrowseAnimeMenu {
 
                        while (innansw == -1) {
                            try {
-                               innansw = sc.nextInt();
-                               sc.nextLine();
+                               innansw = Integer.parseInt(sc.nextLine());
                            } catch (NumberFormatException e) {
                                System.out.println("Attention! Wrong input!");
                                innansw = -1;
@@ -1143,8 +1138,7 @@ public class BrowseAnimeMenu {
 
                        while (innansw == -1) {
                            try {
-                               innansw = sc.nextInt();
-                               sc.nextLine();
+                               innansw = Integer.parseInt(sc.nextLine());
                            } catch (NumberFormatException e) {
                                System.out.println("Attention! Wrong input!");
                                innansw = -1;
@@ -1177,8 +1171,7 @@ public class BrowseAnimeMenu {
                     temp.put(3,"producer");
                     while(answ==-1) {
                         try {
-                            answ = sc.nextInt();
-                            sc.nextLine();
+                            answ = Integer.parseInt(sc.nextLine());
                         } catch (NumberFormatException e) {
                             System.out.println("Attention! Wrong input!");
                             answ = -1;
@@ -1194,10 +1187,11 @@ public class BrowseAnimeMenu {
                             System.out.println("Select a year between 1917 and 2023 or select 0 for an overall view");
                             while(innansw==-1) {
                                 try {
-                                    innansw = sc.nextInt();
-                                    sc.nextLine();
+                               //QUI
+                                    innansw = Integer.parseInt(sc.nextLine());
                                 } catch (NumberFormatException e) {
                                     System.out.println("Attention! Wrong input!");
+                                    System.out.println("Please choose a valid year or press 0 to go back");
                                     innansw = -1;
                                 }
                                 if ((innansw<1917 || innansw>2023)&& innansw!=0){
@@ -1215,29 +1209,27 @@ public class BrowseAnimeMenu {
                 case 4:{
                     System.out.println("Select:\n1)Studio\n2)Producer\nPress 0 to go back");
                     int answ=-1;
-                    int innansw=-1;
                     HashMap<Integer,String>temp=new HashMap<>();
                     temp.put(1,"studio");
                     temp.put(2,"producer");
                     while(answ==-1) {
                         try {
-                            answ = sc.nextInt();
-                            sc.nextLine();
+                            answ = Integer.parseInt(sc.nextLine());
                         } catch (NumberFormatException e) {
                             System.out.println("Attention! Wrong input!");
+                            System.out.println("Please select an option:");
+                            continue;
+                        }
+
+                        if (answ < 0 || answ > 2) {
+                            System.out.println("Wrong input");
                             answ = -1;
                         }
+                        if (answ == 0)
+                            return null;
                     }
-                    if(answ<0 ||answ>2 ){
-                        System.out.println("Wrong input");
-                        answ=-1;
-                    }
-                    if(answ==0)
-                        return null;
-                    else{
                         aggregation.entityProdByType(anime_collection,temp.get(answ));
-                    }
-
+                        break;
                 }//CASE 4
                 case 0:{check=1; break;}
                 default:{System.out.println("Attention! Wrong command!"); break;}
@@ -1249,68 +1241,6 @@ public class BrowseAnimeMenu {
             return null;
     }
 }
-
-    /*
-    public void viewTop10MostFollowedAnime(){
-
-           AnimeManagerNeo4J animeManagerNeo4J = new AnimeManagerNeo4J(dbNeo4J);
-           Map<String, Integer> top10_anime= animeManagerNeo4J.getTop10MostFollowedAnime();
-            int i =0;
-            Map<Integer, String> user_map_to_access_anime = new HashMap<>();
-            System.out.println(GREEN+"**************************************"+RESET);
-            System.out.println("Which anime would you like to see?");
-            System.out.println("Digit:");
-
-            for (String key : top10_anime.keySet()) {
-                i++;
-                user_map_to_access_anime.put(i,key);
-                System.out.println(Integer.toString(i)+") Anime: "+ key+ ", " +
-                        "number of followers: "+ top10_anime.get(key).toString());
-            }
-            System.out.println(GREEN+"**************************************"+RESET);
-
-            System.out.println("Write your command here:");
-            Scanner sc =new Scanner(System.in);
-            int anime_key;
-            try{
-                anime_key = Integer.parseInt(sc.nextLine());
-            }
-            catch(Exception e){
-                // TO DO
-                System.out.println("ATTENTION! Wrong command");
-                //this.showMenu();
-                return;
-            }
-            if(!user_map_to_access_anime.containsKey(anime_key)){
-                // TO DO
-                System.out.println("Wrong number digited");
-                //this.showMenu();
-                return;
-            }
-            String anime_title = user_map_to_access_anime.get(anime_key);
-            System.out.println(GREEN+"**************************************"+RESET);
-
-            System.out.println("You have choosen:");
-            Anime anime = new Anime(anime_title);
-            System.out.println(anime.getAnime_name());
-
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
     public void browseAnimeTitle(){
