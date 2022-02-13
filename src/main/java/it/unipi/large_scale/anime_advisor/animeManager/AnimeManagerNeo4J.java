@@ -562,4 +562,29 @@ public class AnimeManagerNeo4J{
         }
 
     }
+
+    public ArrayList<Anime> mostLikedAnime(){
+        ArrayList<Anime> listAnime ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            listAnime = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (a:Anime)<-[t:LIKE]-(u:User) RETURN "+
+                                "Count(t),a.title Order By count(t) DESC LIMIT 10",
+                        parameters()
+                );
+                ArrayList<Anime> list = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Anime a = new Anime() ;
+                    a.setAnime_name(r.get("a.title").asString());
+                    list.add(a);
+                }
+                return list;
+            });
+
+        }
+        return listAnime;
+
+    }
 }
