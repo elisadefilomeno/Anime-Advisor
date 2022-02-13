@@ -1046,11 +1046,13 @@ public class BrowseAnimeMenu {
                     "1)Top rated animes by field\n" +
                     "2)Studio/Genre/Producer with the highest average\n" +
                     "3)Top followed animes\n" +
-                    "4)Number of productions of Studios or Producers");
-            System.out.println("Choose an option 1-4 or Press 0 to go Back");
+                    "4)Number of productions of Studios or Producers\n"+
+                    "5)Top reviewed animes \n");
+
+            System.out.println("Choose an option 1-5 or Press 0 to go Back");
             try {
                 input = Integer.parseInt(sc.nextLine());
-                if(input<0 || input>4){
+                if(input<0 || input>5){
                     System.out.println("Wrong input!");
                     continue;
                 }
@@ -1205,6 +1207,17 @@ public class BrowseAnimeMenu {
                         }//GENRE STUDIO AND PRODUCER
                 break;} //CASE 2
                 case 3:{
+                    ArrayList<Anime> mostLikedAnime = new ArrayList<>();
+                    mostLikedAnime = animeNeo.mostLikedAnime();
+                    int count=0;
+                    if(mostLikedAnime.size()==0){
+                        System.out.println("No Top 10 ");
+                    }
+                    for (Anime a : mostLikedAnime){
+                        count++;
+                        System.out.println(GREEN+count+") "+RESET+a.getAnime_name());
+                    }
+                    System.out.println("Do you want");
 
 
                 }//CASE 3
