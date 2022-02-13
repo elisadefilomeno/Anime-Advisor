@@ -721,15 +721,17 @@ public class BrowseAnimeMenu {
                 switch (input){
                     default:this.updateAnime(anime);
                     case 0:{ check=1;
-                        break;}
+                        break;
+                    }
                     case 1:{
                         String newName=new String();
                         System.out.println("Insert new name: ");
-                        sc.nextLine();
+                        newName = sc.nextLine();
                         try {
                             crud.updateAnimeName(anime,anime_collection,newName);
                             animeNeo= new AnimeManagerNeo4J(dbNeo4J);
                             animeNeo.updateAnimeTitle(anime.getAnime_name(),newName);
+                            anime.setAnime_name(newName);
                         }
                         catch (Exception e){
                             System.out.println("Unable to update");
@@ -1045,11 +1047,13 @@ public class BrowseAnimeMenu {
                     "1)Top rated animes by field\n" +
                     "2)Studio/Genre/Producer with the highest average\n" +
                     "3)Top followed animes\n" +
-                    "4)Number of productions of Studios or Producers");
-            System.out.println("Choose an option 1-4 or Press 0 to go Back");
+                    "4)Number of productions of Studios or Producers\n"+
+                    "5)Top reviewed animes \n");
+
+            System.out.println("Choose an option 1-5 or Press 0 to go Back");
             try {
                 input = Integer.parseInt(sc.nextLine());
-                if(input<0 || input>4){
+                if(input<0 || input>5){
                     System.out.println("Wrong input!");
                     continue;
                 }
@@ -1204,6 +1208,17 @@ public class BrowseAnimeMenu {
                         }//GENRE STUDIO AND PRODUCER
                 break;} //CASE 2
                 case 3:{
+                    ArrayList<Anime> mostLikedAnime = new ArrayList<>();
+                    mostLikedAnime = animeNeo.mostLikedAnime();
+                    int count=0;
+                    if(mostLikedAnime.size()==0){
+                        System.out.println("No Top 10 ");
+                    }
+                    for (Anime a : mostLikedAnime){
+                        count++;
+                        System.out.println(GREEN+count+") "+RESET+a.getAnime_name());
+                    }
+                    System.out.println("Do you want");
 
 
                 }//CASE 3
