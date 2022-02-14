@@ -24,10 +24,10 @@ public class Interface {
             System.out.println(GREEN+"MENU"+RESET);
             System.out.println("What would you like to do?");
             System.out.println("Digit:");
-            System.out.println("1) Log in");
-            System.out.println("2) Sign up");
-            System.out.println("3) Browse Anime");
-            System.out.println("0) Exit");
+            System.out.println(GREEN+"1) "+RESET+"Log in");
+            System.out.println(GREEN+"2) "+RESET+"Sign up");
+            System.out.println(GREEN+"3) "+RESET+"Browse Anime");
+            System.out.println(GREEN+"0) "+RESET+"Exit");
             System.out.println(GREEN+"**************************************"+RESET);
             System.out.println("Write your command here:");
 
@@ -38,37 +38,39 @@ public class Interface {
             }
             catch(Exception e){
                 System.out.println("ATTENTION! Wrong command");
-                value_case=4;
+                value_case=-1;
             }
             if(value_case == 1) {
                 // call login function
                 User logged_user = userManagerNeo4J.logIn();
                 if(logged_user == null){
                     System.out.println("Login failed");
-                    continue;
+
                 }
                 else{
                     user = logged_user;
                     System.out.println(GREEN+"**************************************"+RESET);
                     System.out.println(GREEN+"WELCOME BACK "+ user.getUsername()+"!"+RESET);
                     registered_home_page.showMenu();
+
                 }
 
-                continue;
+
             }
 
             else if(value_case==2){
                 userManagerNeo4J.signUp();  // change function name to SignUp
-                System.out.println("fine signUp");
-                continue;
+                System.out.println("End signUp");
+
             }
             else if(value_case==3){
                 browse_anime_menu.showMenu();
-                continue;
+
             }
         }
 
         while(value_case!=0);
+
         if(user!=null){
             userManagerNeo4J.logOut(user);
         }
@@ -85,7 +87,7 @@ public class Interface {
         Scanner sc=new Scanner(System.in);
         for(int i=0;i<elements;i++){
             answ=0;
-            System.out.println((i+1)+") "+map.get(i+1));
+            System.out.println(GREEN+(i+1)+") "+RESET+map.get(i+1));
             temp++;
             if(temp==10) {
                 while (answ != 1 && answ != 2) {
@@ -100,7 +102,8 @@ public class Interface {
                 if (answ == 1) {
                     temp = 0;
                 }
-                if (answ == 2) break;
+                if (answ == 2)
+                    break;
 
             }
         }

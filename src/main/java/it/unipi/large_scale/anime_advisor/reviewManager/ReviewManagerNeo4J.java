@@ -427,4 +427,39 @@ public class ReviewManagerNeo4J{
 
     }
 
+    public ArrayList<Review> getlistReviewByUser(User u){
+
+        ArrayList<Review> list ;
+
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            list = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User{username:$user})-[f:WRITE]->(r:Review) "+
+                                " RETURN r.title,r.text,r.last_update ",
+                        parameters(
+                                "user", u.getUsername()
+                        )
+                );
+                ArrayList<Review> listRev = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Review reviewFound = new Review();
+                    reviewFound.setText(r.get("r.text").asString());
+                    reviewFound.setTitle(r.get("r.title").asString());
+
+                    DateValue dat = (DateValue) r.get("r.last_update");
+                    LocalDate dataFound = dat.asLocalDate();
+                    reviewFound.setLast_update(dataFound);
+
+                    listRev.add(reviewFound);
+                }
+                return listRev;
+            });
+
+        }
+        return list;
+
+
+    }
 }

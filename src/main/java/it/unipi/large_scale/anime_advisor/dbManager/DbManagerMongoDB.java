@@ -1,11 +1,9 @@
 package it.unipi.large_scale.anime_advisor.dbManager;
 
-import com.mongodb.MongoException;
 import com.mongodb.client.*;
-import com.mongodb.ConnectionString;
 import org.bson.Document;
 
-public class DbManagerMongoDB implements DbManager {
+public class DbManagerMongoDB {
     MongoClient client;
     MongoDatabase db;
     //Costruttore DBMangager per mongo che setta il client

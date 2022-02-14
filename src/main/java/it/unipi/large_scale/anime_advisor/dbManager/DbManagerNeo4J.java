@@ -3,7 +3,7 @@ package it.unipi.large_scale.anime_advisor.dbManager;
 import org.neo4j.driver.*;
 
 
-public class DbManagerNeo4J implements DbManager {
+public class DbManagerNeo4J {
     private static Driver driver;
 //    private final String uri = "neo4j://localhost:7687"; // original database
     private final String uri = "bolt://localhost:7687"; // personal new connection to test functions

@@ -966,6 +966,41 @@ public class UserManagerNeo4J {
 
     }
 
+    public User getUserFromReview (String title){
+        User userFound ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            userFound = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (u:User)-[t:WRITE]->(r:Review{title:$title}) "+
+                                " RETURN u.username,u.password,u.gender,u.logged_in,u.is_admin",
+                        parameters(
+                                "title",title
+                        )
+                );
+                User u= new User();
+                if (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+
+                    u.setUsername(r.get("u.username").asString());
+                    u.setGender(r.get("u.gender").asString());
+                    u.setPassword(r.get("u.password").asString());
+                    u.setLogged_in(r.get("u.logged_in").asBoolean());
+                    u.setIs_admin(r.get("u.is_admin").asBoolean());
+                    return u;
+                }
+                else{
+                    System.out.println("User not found");
+                    return null;
+                }
+
+            });
+
+        }
+        return userFound;
+
+
+    }
     public User getUserFromName(String username){
         User userFound ;
         try(Session session= dbNeo4J.getDriver().session()) {
@@ -999,5 +1034,30 @@ public class UserManagerNeo4J {
         }
         return userFound;
 
+    }
+    public ArrayList<Anime> getAnimeFromUser(User u){
+        ArrayList<Anime> animeList;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            animeList = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(u:User{username:$user})-[r:LIKE]->(a:Anime) RETURN a.title",
+                        parameters(
+                                "user",u.getUsername()
+                        )
+                );
+                ArrayList<Anime> anime_list= new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Anime anime = new Anime();
+                    anime.setAnime_name(r.get("a.title").asString());
+                    anime_list.add(anime);
+                }
+                return anime_list;
+
+            });
+
+        }
+        return animeList;
     }
 }

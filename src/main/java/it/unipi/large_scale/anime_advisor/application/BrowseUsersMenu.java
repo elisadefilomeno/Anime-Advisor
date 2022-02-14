@@ -25,139 +25,163 @@ public class BrowseUsersMenu {
         // 3) view most active users (they written lots of reviews)
         // 4) go back to registered home page
 
+        int check=1;
+        while(check==1) {
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println(GREEN + "USER MENU" + RESET);
+            System.out.println("What would you like to do?");
+            System.out.println("Digit:");
+            System.out.println(GREEN+"1) "+RESET+"Find User by username");
+            System.out.println(GREEN+"2) "+RESET+"Show your profile");
+            System.out.println(GREEN+"3) "+RESET+"View most active users");
+            System.out.println(GREEN+"4) "+RESET+"View suggested users to follow");
+            System.out.println(GREEN+"0) "+RESET+"Go Back To Home Page");
+            System.out.println(GREEN + "**************************************" + RESET);
 
-        System.out.println(GREEN + "**************************************" + RESET);
-        System.out.println(GREEN + "USER MENU" + RESET);
-        System.out.println("What would you like to do?");
-        System.out.println("Digit:");
-        System.out.println("1) Find User by username");
-        System.out.println("2) Show your profile");
-        System.out.println("3) View most active users");
-        System.out.println("4) View suggested users to follow");
-        System.out.println("0) Go Back To Home Page");
-        System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println("Write your command here:");
+            Scanner sc = new Scanner(System.in);
+            int value_case = -1;
 
-        System.out.println("Write your command here:");
-        Scanner sc = new Scanner(System.in);
-        int value_case = -1;
+            try {
+                value_case = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
 
-        try {
-            value_case = Integer.parseInt(sc.nextLine());
-        } catch (Exception e) {
-            System.out.println("ATTENTION! Wrong command");
-            this.showMenu();
-        }
-        switch (value_case) {
-            case 1: {
-                System.out.println("Insert the username :");
-                String userToFind = sc.nextLine();
-                if (userToFind == null) {
-                    System.out.println("Insert the name !");
-                    this.showMenu();
-                }
-
-                ArrayList<User> listUsers = new ArrayList<>();
-                UserManagerNeo4J um = new UserManagerNeo4J(dbNeo4J);
-                listUsers = um.findUserByKeyWord(user.getUsername(), userToFind);
-
-                int count = 0;
-                for (User u : listUsers) {
-                    count++;
-                    System.out.println(GREEN + count + ")" + RESET + "  " + u.getUsername());
-                }
-                System.out.println("Choose the profile that you want visualize (click 0 to come back)");
-                int indexUser = 0;
-                try {
-                    indexUser = Integer.parseInt(sc.nextLine());
-
-                    int maxIndex = 0;
-                    if (listUsers.size() < 11) {
-                        maxIndex = listUsers.size();
-                    } else {
-                        maxIndex = 10;
+                //   this.showMenu();
+            }
+            switch (value_case) {
+                case 1: {
+                    System.out.println("Insert the username :");
+                    String userToFind = sc.nextLine();
+                    if (userToFind == null || userToFind.isEmpty()) {
+                        System.out.println("Insert the name !");
+                        //this.showMenu();
+                        break;
                     }
 
-                    if (indexUser > maxIndex || indexUser < 0) {
+                    ArrayList<User> listUsers = new ArrayList<>();
+                    listUsers = userManagerNeo4J.findUserByKeyWord(user.getUsername(), userToFind);
+                    if (listUsers.size() == 0) {
+                        System.out.println("No users found !");
+                        break;
+                    }
+
+                    int count = 0;
+                    for (User u : listUsers) {
+                        count++;
+                        System.out.println(GREEN + count + ")" + RESET + "  " + u.getUsername());
+                    }
+                    System.out.println(GREEN + "Choose the profile that you want visualize (click 0 to come back)" + RESET);
+                    int indexUser = 0;
+                    try {
+                        indexUser = Integer.parseInt(sc.nextLine());
+
+                        int maxIndex = 0;
+                        if (listUsers.size() < 11) {
+                            maxIndex = listUsers.size();
+                        } else {
+                            maxIndex = 10;
+                        }
+
+                        if (indexUser > maxIndex || indexUser < 0) {
+                            System.out.println("ATTENTION! Wrong command");
+                            break;
+                            //this.showMenu();
+                        }
+                   /* else if (indexUser == 0) {
+
+                        //this.showMenu();
+                    } */
+                        else {
+                            ViewUserMenu vum = new ViewUserMenu();
+                            vum.showMenu(listUsers.get(indexUser - 1));
+
+                            break;
+                        }
+
+                    } catch (Exception e) {
                         System.out.println("ATTENTION! Wrong command");
-                        this.showMenu();
-
-                    } else if (indexUser == 0) {
-                        this.showMenu();
-                    } else {
-
-                        ViewUserMenu vum = new ViewUserMenu();
-                        vum.showMenu(listUsers.get(indexUser - 1));
+                        // this.showMenu();
+                        break;
                     }
 
-                } catch (Exception e) {
-                    System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
+
                 }
 
-
-            }
-
-
-            case 2: {
-                System.out.println("Show your profile");
-                ViewUserMenu vum = new ViewUserMenu();
-                vum.showMenu(user);
-            }
-
-            case 3: {
-                System.out.println("Show most active users ");
-                ArrayList<String> listNameUsers = userManagerNeo4J.viewMostActiveUsers();
-                int count = 0;
-                for (String s : listNameUsers) {
-                    count++;
-                    System.out.println(GREEN + count + ") " + RESET + s);
+                case 2: {
+                    System.out.println("View your personal profile");
+                    PersonalProfileUserMenu personalProfileUserMenu = new PersonalProfileUserMenu();
+                    personalProfileUserMenu.showMenu();
+                    break;
                 }
-                System.out.println("Choose the profile that you want visualize (click 0 to come back)");
-                int indexUser = 0;
-                try {
-                    indexUser = Integer.parseInt(sc.nextLine());
 
-                    int maxIndex = 0;
-                    if (listNameUsers.size() < 11) {
-                        maxIndex = listNameUsers.size();
-                    } else {
-                        maxIndex = 10;
+                case 3: {
+                    System.out.println("Show most active users ");
+                    ArrayList<String> listNameUsers = userManagerNeo4J.viewMostActiveUsers();
+                    int count = 0;
+                    for (String s : listNameUsers) {
+                        count++;
+                        System.out.println(GREEN + count + ") " + RESET + s);
                     }
+                    System.out.println(GREEN+"Choose the profile that you want visualize (click 0 to come back)"+RESET);
+                    int indexUser = 0;
+                    try {
+                        indexUser = Integer.parseInt(sc.nextLine());
 
-                    if (indexUser > maxIndex || indexUser < 0) {
+                        int maxIndex = 0;
+                        if (listNameUsers.size() < 11) {
+                            maxIndex = listNameUsers.size();
+                        } else {
+                            maxIndex = 10;
+                        }
+
+                        if (indexUser > maxIndex || indexUser < 0) {
+                            System.out.println("ATTENTION! Wrong command");
+                            // this.showMenu();
+                            break;
+
+                        } /*else if (indexUser == 0) {
+                        this.showMenu();
+                    }*/ else {
+
+                            ViewUserMenu vum = new ViewUserMenu();
+                            User u = new User();
+                            u = userManagerNeo4J.getUserFromName(listNameUsers.get(indexUser - 1));
+                            vum.showMenu(u);
+                            break;
+                        }
+
+                    } catch (Exception e) {
                         System.out.println("ATTENTION! Wrong command");
-                        this.showMenu();
-
-                    } else if (indexUser == 0) {
-                        this.showMenu();
-                    } else {
-
-                        ViewUserMenu vum = new ViewUserMenu();
-                        User u = new User();
-                        u = userManagerNeo4J.getUserFromName(listNameUsers.get(indexUser - 1));
-                        vum.showMenu(u);
-
+                        //   this.showMenu();
+                        break;
                     }
-
-                } catch (Exception e) {
-                    System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
                 }
-            }
-            case 4:
-                this.viewSuggestedUsers();
 
-            case 0: {
-                Registered_Home_page rhp = new Registered_Home_page();
-                rhp.showMenu();
-            }
-            default: {
-                System.out.println("Wrong command !!!");
-                this.showMenu();
+                case 4: {
+                    this.viewSuggestedUsers();
+                    break;
+                }
+
+                case 0: {
+             /*   Registered_Home_page rhp = new Registered_Home_page();
+                rhp.showMenu();*/
+                    check=0;
+                    break;
+                }
+
+                default: {
+                    System.out.println("Wrong command !!!");
+                    //  this.showMenu();
+                    break;
+                }
+
+
             }
 
+            if(check==0)
+                return;
         }
-
     }
 
     private void viewSuggestedUsers() {

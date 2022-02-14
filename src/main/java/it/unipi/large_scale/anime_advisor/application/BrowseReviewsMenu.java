@@ -19,123 +19,133 @@ public class BrowseReviewsMenu {
         // 2) view latest reviews
         // 3) if (user==admin) delete review
         // 4) go back to registered home page
+        int check=1;
+        while(check==1) {
+            System.out.println(GREEN + "**************************************" + RESET);
+            System.out.println(GREEN + "REVIEWS MENU" + RESET);
+            System.out.println("What would you like to do?");
+            System.out.println("Digit:");
+            System.out.println(GREEN+"1) "+RESET+"Show all the reviews");
+            System.out.println(GREEN+"2) "+RESET+"View latest reviews");
+            System.out.println(GREEN+"3) "+RESET+"Write a review");
+            System.out.println(GREEN+"4) "+RESET+"Find a review by keyword");
+            System.out.println(GREEN+"0) "+RESET+"Exit");
+            System.out.println(GREEN + "**************************************" + RESET);
 
-        System.out.println(GREEN+"**************************************"+RESET);
-        System.out.println(GREEN+"REVIEWS MENU"+RESET);
-        System.out.println("What would you like to do?");
-        System.out.println("Digit:");
-        System.out.println("1) Show all the reviews");
-        System.out.println("2) View latest reviews");
-        System.out.println("3) Write a review");
-        System.out.println("4) Find a review by keyword");
-        System.out.println("0) Exit");
-        System.out.println(GREEN+"**************************************"+RESET);
+            System.out.println("Write your command here:");
+            Scanner sc = new Scanner(System.in);
+            int value_case = -1;
 
-        System.out.println("Write your command here:");
-        Scanner sc = new Scanner(System.in);
-        int value_case = -1;
+            try {
+                value_case = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+                //this.showMenu(a);
 
-        try {
-            value_case = Integer.parseInt(sc.nextLine());
-        } catch (Exception e) {
-            System.out.println("ATTENTION! Wrong command");
-            this.showMenu(a);
+            }
+            switch (value_case) {
+                case 1: {//Show all the reviews
+
+                    ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
+                    ArrayList<Review> list = new ArrayList<>();
+                    list = rm.list_ReviewFound(a);
+                    int count = 0;
+                    for (Review r : list) {
+                        count++;
+                        System.out.println(GREEN + count + ")" + RESET + "  " + r.getTitle());
+                    }
+                    ViewReviewMenu viewReviewMenu = new ViewReviewMenu();
+                    viewReviewMenu.showReviewMenu(list, a);
+                   // check=-1;
+                    break;
+
+                }
+
+                case 2: {//View latest reviews
+                    ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
+                    ArrayList<Review> list = new ArrayList<>();
+                    list = rm.listLatestReviewByAnime(a);
+                    int count = 0;
+                    for (Review r : list) {
+                        count++;
+                        System.out.println(GREEN + count + ")" + RESET + "  " + r.getTitle() + WHITE + "   " + r.getLast_update() + RESET);
+                    }
+                    ViewReviewMenu viewReviewMenu = new ViewReviewMenu();
+                    viewReviewMenu.showReviewMenu(list, a);
+                  //  check=-1;
+                    break;
+                }
+
+                case 3: {//Write a review
+                    ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
+                    String titleReview, textReview;
+
+                    System.out.println("Insert the title of your review : ");
+                    titleReview = sc.nextLine();
+                    if (rm.checkIfPresent(titleReview)) {
+                        System.out.println("Change title review ");
+                        //this.showMenu(a);
+                        break;
+                    }
+                    System.out.println("Write your review : ");
+                    textReview = sc.nextLine();
+
+                    Review newReview = new Review();
+
+                    newReview.setTitle(titleReview);
+                    newReview.setText(textReview);
+
+                    rm.createReview(newReview, a, user);
+
+                    //this.showMenu(a);
+                    break;
+
+                }
+
+                case 4: {
+                    ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
+                    ArrayList<Review> list = new ArrayList<>();
+                    String keyWord;
+
+                    System.out.println("Insert the keyword : ");
+                    keyWord = sc.nextLine();
+
+                    list = rm.filterReviewByKeyWord(a, keyWord);
+                    int count = 0;
+
+                    for (Review r : list) {
+                        count++;
+                        System.out.println(GREEN + count + ")" + RESET + "  " + r.getTitle() + WHITE + "   " + r.getLast_update() + RESET);
+                    }
+                    if (!list.isEmpty()) {
+                        ViewReviewMenu vrm = new ViewReviewMenu();
+                        vrm.showReviewMenu(list, a);
+                        break;
+                    } else {
+                        System.out.println("Not found result !");
+                        break;
+                        //this.showMenu(a);
+                    }
+
+                }
+
+                case 0: {
+                  /*  BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
+                    browseAnimeMenu.showMenu();*/
+                    check=-1;
+                    break;
+                }
+
+                default: {
+                    System.out.println("Wrong command !!!");
+                    //this.showMenu(a);
+                    break;
+                }
+
+
+            }
+            if(check==-1)
+                return;
         }
-        switch (value_case) {
-            case 1:{
-
-                ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
-                ArrayList<Review> list =  new ArrayList<>();
-                list =rm.list_ReviewFound(a);
-                int count=0;
-                for(Review r: list){
-                    count++;
-                    System.out.println(GREEN+count+")"+RESET+"  "+r.getTitle());
-                }
-                ViewReviewMenu viewReviewMenu = new ViewReviewMenu ();
-                viewReviewMenu.showReviewMenu(list,a);
-
-            }
-
-            case 2: {
-                ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
-                ArrayList<Review> list =  new ArrayList<>();
-                list =rm.listLatestReviewByAnime(a);
-                int count=0;
-                for(Review r: list){
-                    count++;
-                    System.out.println(GREEN+count+")"+RESET+"  "+r.getTitle() + WHITE+"   "+r.getLast_update()+RESET);
-                }
-                ViewReviewMenu viewReviewMenu = new ViewReviewMenu ();
-                viewReviewMenu.showReviewMenu(list,a);
-
-
-
-            }
-
-            case 3:{
-                ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
-                String titleReview,textReview;
-
-                System.out.println("Insert the title of your review : ");
-                titleReview= sc.nextLine();
-                if(rm.checkIfPresent(titleReview)){
-                    System.out.println("Change title review ");
-                    this.showMenu(a);
-                }
-                System.out.println("Write your review : ");
-                textReview=sc.nextLine();
-
-                Review newReview = new Review();
-
-                newReview.setTitle(titleReview);
-                newReview.setText(textReview);
-
-                rm.createReview(newReview,a,user);
-
-                this.showMenu(a);
-
-            }
-
-            case 4:{
-                ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
-                ArrayList<Review> list =  new ArrayList<>();
-                String keyWord;
-
-                System.out.println("Insert the keyword : ");
-                keyWord=sc.nextLine();
-
-                list=rm.filterReviewByKeyWord(a,keyWord);
-                int count=-1;
-
-                for (Review r:list){
-                    count++;
-                    System.out.println(GREEN+count+1+")"+RESET+"  "+r.getTitle() + WHITE+"   "+r.getLast_update()+RESET);
-                }
-                if(!list.isEmpty()){
-                    ViewReviewMenu vrm = new ViewReviewMenu ();
-                    vrm.showReviewMenu(list,a);
-                }
-                else
-                {
-                    System.out.println("Not found result !");
-                    this.showMenu(a);
-                }
-
-            }
-
-
-
-            case 0: {
-                BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
-                browseAnimeMenu.showMenu();
-            }
-            default:{
-                System.out.println("Wrong command !!!");
-                this.showMenu(a);
-            }
-
-        }
-
     }
 }

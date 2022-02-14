@@ -320,7 +320,32 @@ public class AnimeManagerNeo4J{
 
     }
 
+    public int getNFolloerAnime (String title){
+        int numberFollow;
+        try(Session session= dbNeo4J.getDriver().session()) {
 
+            numberFollow = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH p=(a:Anime{title:$title})<-[:LIKE]-(u:User) "+
+                                "RETURN COUNT(p) as n_follow",
+                        parameters(
+                                "title", title
+                        )
+                );
+                int n;
+                if(result.hasNext()){
+                    org.neo4j.driver.Record r = result.next();
+                    n = r.get("n_follow").asInt();
+                    return n;
+                }
+                else{
+                    System.out.println("ERROR");
+                    return null;
+                }
+            });
+
+        }
+        return numberFollow;
+    }
     //ANALYTICS
     public NavigableMap<String, Integer> getTop10MostLikedAnime(){
         TreeMap<String, Integer> n_most_liked_anime_map = new TreeMap<>();
@@ -592,4 +617,31 @@ public class AnimeManagerNeo4J{
         return listAnime;
 
     }
+
+    public ArrayList<Anime> mostReviewedAnime(){
+        ArrayList<Anime> listAnime ;
+        try(Session session= dbNeo4J.getDriver().session()) {
+
+            listAnime = session.readTransaction(tx -> {
+                Result result = tx.run("MATCH (a:Anime)<-[t:REFERRED_TO]-(r:Review) RETURN "+
+                                "Count(t),a.title Order By COUNT(t) DESC LIMIT 10",
+                        parameters()
+                );
+                ArrayList<Anime> list = new ArrayList<>();
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record r = result.next();
+
+                    Anime a = new Anime() ;
+                    a.setAnime_name(r.get("a.title").asString());
+                    list.add(a);
+                }
+                return list;
+            });
+
+        }
+        return listAnime;
+
+    }
+
+
 }

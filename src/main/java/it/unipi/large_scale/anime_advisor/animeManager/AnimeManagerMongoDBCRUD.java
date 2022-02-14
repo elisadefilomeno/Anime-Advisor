@@ -3,6 +3,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.DeleteResult;
+import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.mongodb.client.*;
@@ -13,6 +14,8 @@ import com.mongodb.client.result.UpdateResult;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.RESET;
+import static it.unipi.large_scale.anime_advisor.application.ConsoleColors.GREEN;
 import static it.unipi.large_scale.anime_advisor.application.Interface.user;
 
 
@@ -53,6 +56,10 @@ public class AnimeManagerMongoDBCRUD{
 
     public void printDoc(Document doc){
         //System.out.println(doc.toJson());
+        ///MODIFICHE PEPPE
+   //     DbManagerNeo4J dbNeo4J = new DbManagerNeo4J();
+     //   AnimeManagerNeo4J anm = new AnimeManagerNeo4J(dbNeo4J);
+        ///
         System.out.println("Name:" + doc.get("name"));
         System.out.println("Episodes:" + doc.get("episodes"));
         System.out.println("Premiered:" + doc.get("premiered"));
@@ -61,7 +68,10 @@ public class AnimeManagerMongoDBCRUD{
         System.out.println("Source:" + doc.get("source"));
         System.out.println("Score:" + doc.get("scored"));
         System.out.println("Scored By:" + doc.get("scoredBy"));
-        System.out.println("Followers:" + doc.get("members"));
+     //   System.out.println("Followers:" + doc.get("members"));
+        ///
+      //  System.out.println("Followers:" + anm.getNFolloerAnime(doc.get("name").toString()));
+        ///
         System.out.println("Studio:" + doc.get("studio"));
         System.out.println("Producer:" + doc.get("producer"));
         System.out.println("Licensor:" + doc.get("licensor"));
@@ -104,6 +114,10 @@ public class AnimeManagerMongoDBCRUD{
 
     //Find and print if present the document specified in the collection Return anime result
     public HashMap<Integer,String> findResults(Anime anime,MongoCollection<Document>collection){
+        int indice=1;
+        int contEl=1;
+        int answer=-1;
+        Scanner sc=new Scanner(System.in);
         if(!checkIfPresent(anime, collection)){
             System.out.println("Document not found\n");
             return null;}
@@ -113,14 +127,41 @@ public class AnimeManagerMongoDBCRUD{
         Document temp;
         int pos=1;
         while(results.hasNext()){
-            temp=results.next();
-            System.out.println(pos+") "+temp.get("name"));
-            res.put(pos,temp.get("name").toString());
+            temp = results.next();
+            res.put(pos, temp.get("name").toString());
             pos++;
         }
+        while(indice<=11 && contEl<=res.size() ) {
+            System.out.println(GREEN + contEl + ") " + RESET + res.get(contEl));
+            indice++;
+            contEl++;
+            if(indice==11){
+                while(answer==-1){
+                    System.out.println("Do you want to see more results?\n"+GREEN+"1)"+RESET+"YES  "+GREEN+"2)"+RESET+"NO");
+                    try{
+                        answer=Integer.parseInt(sc.nextLine());
+                    }
+                    catch (NumberFormatException e){
+                        System.out.println("Please insert a valid input");
+                        answer=-1;
+                        continue;
+                    }
+                    if(answer!=1 && answer!=2){
+                        System.out.println("Please insert a valid input");
+                        answer=-1;
+                        continue;
+                    }
+                }//WHILE ANSWER
+            }//IF INDICE==10
+            if(answer==1){
+                answer=-1;
+                indice=1;
+            }
+            if (answer==2)
+                return res;
+        }//WHILE INDICE<10
+
         return res;
-
-
     }
 
     public Anime readAnime(Anime anime, MongoCollection<Document> collection) {
