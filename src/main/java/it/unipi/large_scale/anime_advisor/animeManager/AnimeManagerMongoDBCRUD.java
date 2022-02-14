@@ -4,6 +4,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.DeleteResult;
 import it.unipi.large_scale.anime_advisor.dbManager.DbManagerNeo4J;
+import it.unipi.large_scale.anime_advisor.entity.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.mongodb.client.*;
@@ -529,7 +530,7 @@ public class AnimeManagerMongoDBCRUD{
         }
     }
 
-    public boolean voteAnimeUser(Anime anime,User user,MongoCollection<Document> collection){
+    public boolean voteAnimeUser(Anime anime, User user, MongoCollection<Document> collection){
         //CHECK IF PRESENT
         Document doc=collection.find(and(eq("name",anime.getAnime_name()),elemMatch("ratings",eq("name",user.getUsername())))).first();
         int vote=-1;

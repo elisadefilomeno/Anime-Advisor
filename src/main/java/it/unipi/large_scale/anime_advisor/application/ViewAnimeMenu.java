@@ -71,26 +71,10 @@ public class ViewAnimeMenu {
                     }
 
                     case 4: {
-                        int score = -1;
-                        while (!(score >= 0) && !(score <= 10)) {
-                            try {
-                                System.out.println("Insert a score between 1 and 10 or press 0 to go back");
-                                score = Integer.parseInt(sc.nextLine());
-                            } catch (NumberFormatException n) {
-                                System.out.println("Wrong input.");
-                                break;
-                            }
-                        }
-                        if (score == 0) {
-                            //this.showMenu(anime);
-                        } else {
-                            crud.updateAnimeMeanScored(anime, anime_collection, score);
+                        if(crud.voteAnimeUser(anime,user,anime_collection)){
                             System.out.println("Thank you for voting!");
-                            //this.showMenu(anime);
                             break;
                         }
-
-                        //this.showMenu(anime);
                         break;
                     }
 
@@ -109,7 +93,7 @@ public class ViewAnimeMenu {
                 if (check == -1)
                     return;
             }
-            case 3:     browseReviewsMenu.showMenu(anime);
+           // case 3:     browseReviewsMenu.showMenu(anime);
 
 
         }
