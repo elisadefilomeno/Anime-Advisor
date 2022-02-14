@@ -4,6 +4,7 @@ import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBCRUD;
 import it.unipi.large_scale.anime_advisor.animeManager.AnimeManagerMongoDBAgg;
 import it.unipi.large_scale.anime_advisor.dbManager.*;
 import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.User;
 import org.bson.Document;
 
 import java.lang.reflect.Array;
@@ -52,7 +53,7 @@ public class MongoMain {
         //TEST MONGO CRUD
         //amg.entityProdByType(collection,"studio",1999);
 
-        System.out.println("studio 0");
+     /*   System.out.println("studio 0");
 
        amg.highAvgEntity(collection,"studio",0);
 
@@ -73,8 +74,12 @@ public class MongoMain {
 
         Anime aaaa=new Anime();
         aaaa.setAnime_name("cowboy");
-        amc.findResults(aaaa,collection);
-
+        amc.findResults(aaaa,collection);   */
+        User user=new User();
+        user.setUsername("MarioMerola");
+        Anime at=new Anime();
+        at.setAnime_name("animeTest");
+        amc.voteAnimeUser(at,user,collection);
         mongoM.closeMongo();
 
 

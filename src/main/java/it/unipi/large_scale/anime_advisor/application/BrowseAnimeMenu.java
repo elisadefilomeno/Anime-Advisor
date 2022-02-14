@@ -103,7 +103,8 @@ public class BrowseAnimeMenu {
                     }
                     case 0: {
                         stop = 1;
-                        break;
+                        Registered_Home_page rh=new Registered_Home_page();
+                        rh.showMenu();
                     }
                     default: {
                         System.out.println("Wrong command!");

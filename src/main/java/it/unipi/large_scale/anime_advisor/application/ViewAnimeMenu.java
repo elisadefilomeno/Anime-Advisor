@@ -109,6 +109,8 @@ public class ViewAnimeMenu {
                 if (check == -1)
                     return;
             }
+            case 3:     browseReviewsMenu.showMenu(anime);
+
 
         }
     } //MENU
