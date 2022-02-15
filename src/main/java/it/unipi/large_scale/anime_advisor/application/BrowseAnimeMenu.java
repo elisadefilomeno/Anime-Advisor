@@ -58,7 +58,7 @@ public class BrowseAnimeMenu {
                     value_case = Integer.parseInt(sc.nextLine());
                 } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
+                    //this.showMenu();
                 }
                 switch (value_case) {
                     case 1: { //FIND BY NAME
@@ -1232,45 +1232,54 @@ public class BrowseAnimeMenu {
                     catch(Exception e ){
                         e.printStackTrace();
                         System.out.println("Wrong Command!");
-                        this.advancedSearch();
+                       // this.advancedSearch();
                         break;
                     }
 
-                    switch (caseValue){
-                        case 1 :{
-                            System.out.println(GREEN+"What anime do you want see ? "+RESET);
-                            int  indexAnime=-1;
-                            try{
-                                indexAnime = Integer.parseInt(sc.nextLine());
-                                if (indexAnime<0 || indexAnime>mostLikedAnime.size()){
+                    int check1=1;
+                    while(check1==1) {
+                        switch (caseValue) {
+                            case 1: {
+                                System.out.println(GREEN + "What anime do you want see ? " + RESET);
+                                int indexAnime = -1;
+                                try {
+                                    indexAnime = Integer.parseInt(sc.nextLine());
+                                    if (indexAnime < 0 || indexAnime > mostLikedAnime.size()) {
+                                        System.out.println("Wrong Command!");
+                                        //this.advancedSearch();
+                                        break;
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                     System.out.println("Wrong Command!");
-                                    this.advancedSearch();
+                                    //this.advancedSearch();
                                     break;
                                 }
-
-                            }
-                            catch(Exception e ){
-                                e.printStackTrace();
-                                System.out.println("Wrong Command!");
-                                this.advancedSearch();
+                                ViewAnimeMenu vam = new ViewAnimeMenu();
+                                vam.showMenu(mostLikedAnime.get(indexAnime - 1));
+                                check1=-1;
                                 break;
                             }
-                            ViewAnimeMenu vam=new ViewAnimeMenu();
-                            vam.showMenu(mostLikedAnime.get(indexAnime-1));
-                            break;
-                        }
-                        case 2 :{
-                            this.advancedSearch();
-                            break;
+                            case 2: {
+                                //this.advancedSearch();
+                                check1=-1;
+                                break;
 
+                            }
+                            default: {
+                                System.out.println("Wrong Command !");
+                                //this.advancedSearch();
+                                check1=-1;
+                                break;
+
+                            }
                         }
-                        default:{
-                            System.out.println("Wrong Command !");
-                            this.advancedSearch();
+                        if(check1==-1)
                             break;
-                        }
                     }
-
+                    check=1;
+                    break;
 
                 }//CASE 3
                 case 4:{
@@ -1317,51 +1326,63 @@ public class BrowseAnimeMenu {
                         caseValue = Integer.parseInt(sc.nextLine());
                     }
                     catch(Exception e ){
-                        e.printStackTrace();
+                       // e.printStackTrace();
                         System.out.println("Wrong Command!");
-                        this.advancedSearch();
                         break;
+                       // this.advancedSearch();
+
                     }
 
-                    switch (caseValue){
-                        case 1 :{
-                            System.out.println(GREEN+"What anime do you want see ? "+RESET);
-                            int  indexAnime=-1;
-                            try{
-                                indexAnime = Integer.parseInt(sc.nextLine());
-                                if (indexAnime<0 || indexAnime>mostReviewedAnime.size()){
+                    int check1=1;
+                    while(check1==1) {
+                        switch (caseValue) {
+                            case 1: {
+                                System.out.println(GREEN + "What anime do you want see ? " + RESET);
+                                int indexAnime = -1;
+                                try {
+                                    indexAnime = Integer.parseInt(sc.nextLine());
+                                    if (indexAnime < 0 || indexAnime > mostReviewedAnime.size()) {
+                                        System.out.println("Wrong Command!");
+                                        //this.advancedSearch();
+                                        break;
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                     System.out.println("Wrong Command!");
-                                    this.advancedSearch();
+                                    //this.advancedSearch();
                                     break;
                                 }
-
-                            }
-                            catch(Exception e ){
-                                e.printStackTrace();
-                                System.out.println("Wrong Command!");
-                                this.advancedSearch();
+                                ViewAnimeMenu vam = new ViewAnimeMenu();
+                                vam.showMenu(mostReviewedAnime.get(indexAnime - 1));
+                                check1=-1;
                                 break;
                             }
-                            ViewAnimeMenu vam=new ViewAnimeMenu();
-                            vam.showMenu(mostReviewedAnime.get(indexAnime-1));
-                            break;
-                        }
-                        case 2 :{
-                            this.advancedSearch();
-                            break;
+                            case 2: {
+                                //this.advancedSearch();
+                                check1=-1;
+                                break;
 
+                            }
+                            default: {
+                                System.out.println("Wrong Command !");
+                               // this.advancedSearch();
+                                check1=-1;
+                                break;
+                            }
                         }
-                        default:{
-                            System.out.println("Wrong Command !");
-                            this.advancedSearch();
+                        if(check1==-1)
                             break;
-                        }
                     }
 
-
                 }//CASE 3
-                case 0:{check=1; break;}
-                default:{System.out.println("Attention! Wrong command!"); break;}
+                case 0:{
+                    check=1; break;
+                }
+                default:{
+                    System.out.println("Attention! Wrong command!");
+                    break;
+                }
 
 
 
