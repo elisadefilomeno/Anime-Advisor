@@ -214,7 +214,6 @@ public class BrowseAnimeMenu {
                 }
                 anime.setAnime_name(results.get(animechoosen));
                 //animeMenu.showMenu(anime);
-                System.out.println("PICK ANIME:"+anime.getAnime_name());
                 return anime;
             }
         }
@@ -1190,8 +1189,12 @@ public class BrowseAnimeMenu {
                                }//ELSE GOOD TYPE PICK
                            }//ANSW FOR PICKING A TYPE
                        }//ANSW =3 TYPE
-                       if(answ==4)
+                       if(answ==4) {
                            top10byGenre();
+
+                           break;
+
+                       }
                        if(answ==0)
                            return  null;
                    }//ANSWER CHOSE FIELD
@@ -1801,7 +1804,12 @@ public class BrowseAnimeMenu {
             //Insertion of the animes founded into an hashmap and selection of
             //an anime to visit
             animeResults = aggregation.topTenAnimeByField(anime_collection, "genre", 0, null, arrayGenres, 1);
+            //inte.printResults(animeResults);
+            Anime tt= this.pickAnime(animeResults);
+            if(tt!=null)
+            animeMenu.showMenu(tt);
             return null;
+
         } //RESEARCH BY GENRE
     }
 
