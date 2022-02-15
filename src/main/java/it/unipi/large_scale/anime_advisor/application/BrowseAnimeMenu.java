@@ -76,8 +76,6 @@ public class BrowseAnimeMenu {
                     }
                     case 3: { //ADVANCED SEARCH
                         this.advancedSearch();
-                        System.out.println("ritornato");
-
                         break;
                     }
                     case 4: { //UPDATE
@@ -103,8 +101,8 @@ public class BrowseAnimeMenu {
                     }
                     case 0: {
                         stop = 1;
-                        Registered_Home_page rh=new Registered_Home_page();
-                        rh.showMenu();
+                       // Registered_Home_page rh=new Registered_Home_page();
+                       // rh.showMenu();
                     }
                     default: {
                         System.out.println("Wrong command!");
@@ -165,7 +163,7 @@ public class BrowseAnimeMenu {
                     }
                     default: {
                         System.out.println("Wrong command!");
-                        this.showMenu();
+                        //this.showMenu();
                         break;
                     }
                 }
@@ -1054,16 +1052,18 @@ public class BrowseAnimeMenu {
         while(check==0){
             System.out.println(GREEN + "ADVANCED SEARCH MENU" + RESET);
             System.out.println("Choose one of the following options\n" +
-                    "1)Top rated animes by field\n" +
-                    "2)Studio/Genre/Producer with the highest average\n" +
-                    "3)Top followed animes\n" +
-                    "4)Number of productions of Studios or Producers\n"+
-                    "5)Top reviewed animes \n");
+                    GREEN+"1)"+RESET+"Top rated animes by field\n" +
+                    GREEN+"2)"+RESET+"Studio/Genre/Producer with the highest average\n" +
+                    GREEN+"3)"+RESET+"Top followed animes\n" +
+                    GREEN+"4)"+RESET+"Number of productions of Studios or Producers\n"+
+                    GREEN+"5)"+RESET+"Top reviewed animes \n"+
+                    GREEN+"6)"+RESET+"View suggested animes \n");
 
-            System.out.println("Choose an option 1-5 or Press 0 to go Back");
+
+            System.out.println("Choose an option 1-6 or Press 0 to go Back");
             try {
                 input = Integer.parseInt(sc.nextLine());
-                if(input<0 || input>5){
+                if(input<0 || input>6){
                     System.out.println("Wrong input!");
                     continue;
                 }
@@ -1403,6 +1403,83 @@ public class BrowseAnimeMenu {
                     }
 
                 }//CASE 3
+                case 6:{
+                    if(user!=null) {
+                        ArrayList<String> suggestedAnime = new ArrayList<>();
+                        AnimeManagerNeo4J am = new AnimeManagerNeo4J(dbNeo4J);
+                        suggestedAnime = am.getNSuggestedAnime(user.getUsername(), 10);
+                        int count = 1;
+                        for (String s : suggestedAnime) {
+                            System.out.println(GREEN + count + ") " + RESET + s);
+                            count++;
+                        }
+                        if (suggestedAnime.isEmpty()) {
+                            System.out.println("No suggested anime found");
+                            break;
+                        } else {
+                            System.out.println(GREEN + "\nDo you want see one of this anime" + RESET);
+                            System.out.println(GREEN + "1)" + RESET + " Yes" + "    " + GREEN + "2)" + RESET + " No");
+                            int caseValue = -1;
+                            try {
+                                caseValue = Integer.parseInt(sc.nextLine());
+                            } catch (Exception e) {
+                                // e.printStackTrace();
+                                System.out.println("Wrong Command!");
+                                break;
+                                // this.advancedSearch();
+
+                            }
+
+                            int check1 = 1;
+                            while (check1 == 1) {
+                                switch (caseValue) {
+                                    case 1: {
+                                        System.out.println(GREEN + "What anime do you want see ? " + RESET);
+                                        int indexAnime = -1;
+                                        try {
+                                            indexAnime = Integer.parseInt(sc.nextLine());
+                                            if (indexAnime < 0 || indexAnime > suggestedAnime.size()) {
+                                                System.out.println("Wrong Command!");
+                                                //this.advancedSearch();
+                                                break;
+                                            }
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            System.out.println("Wrong Command!");
+                                            //this.advancedSearch();
+                                            break;
+                                        }
+                                        ViewAnimeMenu vam = new ViewAnimeMenu();
+                                        Anime a = new Anime();
+                                        a.setAnime_name(suggestedAnime.get(indexAnime - 1));
+                                        vam.showMenu(a);
+                                        check1 = -1;
+                                        break;
+                                    }
+                                    case 2: {
+                                        //this.advancedSearch();
+                                        check1 = -1;
+                                        break;
+
+                                    }
+                                    default: {
+                                        System.out.println("Wrong Command !");
+                                        // this.advancedSearch();
+                                        check1 = -1;
+                                        break;
+                                    }
+                                }
+                                if (check1 == -1)
+                                    break;
+                            }
+
+                        }
+                    }
+                    else{
+                        System.out.println("You must register to do this operation");
+                    }
+                }
                 case 0:{
                     check=1; break;
                 }
