@@ -1402,26 +1402,25 @@ public class BrowseAnimeMenu {
 
                 }//CASE 3
                 case 6:{
+                    if(user!=null) {
                         ArrayList<String> suggestedAnime = new ArrayList<>();
                         AnimeManagerNeo4J am = new AnimeManagerNeo4J(dbNeo4J);
-                        suggestedAnime= am.getNSuggestedAnime(user.getUsername(),10);
-                        int count=1;
-                        for (String s : suggestedAnime){
-                            System.out.println(GREEN+count+") "+RESET+s);
+                        suggestedAnime = am.getNSuggestedAnime(user.getUsername(), 10);
+                        int count = 1;
+                        for (String s : suggestedAnime) {
+                            System.out.println(GREEN + count + ") " + RESET + s);
                             count++;
                         }
-                        if(suggestedAnime.isEmpty()){
+                        if (suggestedAnime.isEmpty()) {
                             System.out.println("No suggested anime found");
                             break;
-                        }
-                        else{
-                            System.out.println(GREEN+ "\nDo you want see one of this anime"+RESET);
-                            System.out.println(GREEN+"1)"+RESET+" Yes"+"    "+GREEN+"2)"+RESET+" No");
-                            int  caseValue=-1;
-                            try{
+                        } else {
+                            System.out.println(GREEN + "\nDo you want see one of this anime" + RESET);
+                            System.out.println(GREEN + "1)" + RESET + " Yes" + "    " + GREEN + "2)" + RESET + " No");
+                            int caseValue = -1;
+                            try {
                                 caseValue = Integer.parseInt(sc.nextLine());
-                            }
-                            catch(Exception e ){
+                            } catch (Exception e) {
                                 // e.printStackTrace();
                                 System.out.println("Wrong Command!");
                                 break;
@@ -1429,8 +1428,8 @@ public class BrowseAnimeMenu {
 
                             }
 
-                            int check1=1;
-                            while(check1==1) {
+                            int check1 = 1;
+                            while (check1 == 1) {
                                 switch (caseValue) {
                                     case 1: {
                                         System.out.println(GREEN + "What anime do you want see ? " + RESET);
@@ -1453,27 +1452,31 @@ public class BrowseAnimeMenu {
                                         Anime a = new Anime();
                                         a.setAnime_name(suggestedAnime.get(indexAnime - 1));
                                         vam.showMenu(a);
-                                        check1=-1;
+                                        check1 = -1;
                                         break;
                                     }
                                     case 2: {
                                         //this.advancedSearch();
-                                        check1=-1;
+                                        check1 = -1;
                                         break;
 
                                     }
                                     default: {
                                         System.out.println("Wrong Command !");
                                         // this.advancedSearch();
-                                        check1=-1;
+                                        check1 = -1;
                                         break;
                                     }
                                 }
-                                if(check1==-1)
+                                if (check1 == -1)
                                     break;
                             }
 
                         }
+                    }
+                    else{
+                        System.out.println("You must register to do this operation");
+                    }
                 }
                 case 0:{
                     check=1; break;
