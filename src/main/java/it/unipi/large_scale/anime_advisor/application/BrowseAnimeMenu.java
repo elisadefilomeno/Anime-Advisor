@@ -1074,7 +1074,7 @@ public class BrowseAnimeMenu {
             }
             switch (input){
                 case 1:{
-                    System.out.println("Select a field from\n1)Year\n2)Source\n3)Type\nPress 0 to go back\n");
+                    System.out.println("Select a field from\n1)Year\n2)Source\n3)Type\n4)Genre\nPress 0 to go back\n");
                    int answ=-1;
                    int innansw=-1;
                    while(answ==-1) {
@@ -1190,6 +1190,8 @@ public class BrowseAnimeMenu {
                                }//ELSE GOOD TYPE PICK
                            }//ANSW FOR PICKING A TYPE
                        }//ANSW =3 TYPE
+                       if(answ==4)
+                           top10byGenre();
                        if(answ==0)
                            return  null;
                    }//ANSWER CHOSE FIELD
@@ -1415,5 +1417,318 @@ public class BrowseAnimeMenu {
         }//WHILE CHECK 0
             return null;
     }
+
+    public Anime top10byGenre() {
+        Scanner sc = new Scanner(System.in);
+        int select = -1;
+        List<String> genresChoosen = new ArrayList<>();
+        HashMap<Integer, String> animeResults;
+        int pos = 0;
+        while (select != 0) {
+            int yn = -1; //YES OR NO VALUE
+            String genreList = ("Insert one or more genres from the following list or presso 0 to go back:\n" +
+                    "1)Action\t2)Drama\t3)Gag\t4)Mecha\t5)Sports\n" +
+                    "6)Slice of Life\t7)Music\t8)Thriller\t9)Shoujo\t10)Hentai\n" +
+                    "11)Shounen\t12)Seinen\t13)Josei\t14)Isekai\t15)Ecchi");
+            System.out.println(genreList);
+            try {
+                select = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                System.out.println("ATTENTION! Wrong command");
+                continue;
+            }
+            if (!(select >= 1) && !(select <= 15) && (select != 0)) {
+                System.out.println("Please chose a genre or press 0 to go stop");
+                continue;
+            }
+            if (select == 1) {
+                genresChoosen.add("Action");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 2) {
+                genresChoosen.add("Drama");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 3) {
+                genresChoosen.add("Gag");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 4) {
+                genresChoosen.add("Mecha");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 5) {
+                genresChoosen.add("Sports");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 6) {
+                genresChoosen.add("Slice of Life");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 7) {
+                genresChoosen.add("Music");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 8) {
+                genresChoosen.add("Thriller");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 9) {
+                genresChoosen.add("Shoujo");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 10) {
+                genresChoosen.add("Hentai");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 11) {
+                genresChoosen.add("Shounen");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 12) {
+                genresChoosen.add("Seinen");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 13) {
+                genresChoosen.add("Josei");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 14) {
+                genresChoosen.add("Isekai");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+            if (select == 15) {
+                genresChoosen.add("Ecchi");
+                pos++;
+                while (yn != 1 && yn != 2) {
+
+                    System.out.println("Do you want to select more genres?\n1)YES 2)NO");
+                    try {
+                        yn = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Wrong input!");
+                        continue;
+                    }
+                }
+
+                if (yn == 1)
+                    continue;
+                else
+                    break;
+            }
+
+        } //End while
+        if (pos == 0) {
+            return null;
+        } else {
+            inte = new Interface();
+            String[] arrayGenres = new String[pos];
+            for (int i = 0; i < genresChoosen.size(); i++)
+                arrayGenres[i] = genresChoosen.get(i);
+            //Insertion of the animes founded into an hashmap and selection of
+            //an anime to visit
+            animeResults = aggregation.topTenAnimeByField(anime_collection, "genre", 0, null, arrayGenres, 1);
+            return null;
+        } //RESEARCH BY GENRE
+    }
+
+
+
 }
 
