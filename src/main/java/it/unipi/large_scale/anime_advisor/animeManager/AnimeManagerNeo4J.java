@@ -377,11 +377,11 @@ public class AnimeManagerNeo4J{
     }
 
 
-    public Set<String> getVerySuggestedAnime(String username){
+    public ArrayList<String> getVerySuggestedAnime(String username){
         // They have the highest priority, given a user u1 if u1 is following user u2
         // and U2 liked an anime a and has also writted on a, then a is very suggested to u1.
 
-        Set<String> very_sugggested_anime = new HashSet<String>();
+        ArrayList<String> very_sugggested_anime = new ArrayList<>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -411,11 +411,11 @@ public class AnimeManagerNeo4J{
         return very_sugggested_anime;
     }
 
-    public Set<String> getSuggestedAnimeMediumPriority(String username){
+    public ArrayList<String> getSuggestedAnimeMediumPriority(String username){
         // They have the second priority level, if a user u1 is following user u2 and u2 liked
         // an anime a, then a is suggested to u1.
 
-        Set<String> sugggested_anime = new HashSet<String>();
+        ArrayList<String> sugggested_anime = new ArrayList<String>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -445,11 +445,11 @@ public class AnimeManagerNeo4J{
         return sugggested_anime;
     }
 
-    public Set<String> getCommentedByFriendAnime(String username){
+    public ArrayList<String> getCommentedByFriendAnime(String username){
         // They have the lowest priority level, if a user u1 follows a user u2
         // who has written a review on an anime a, then a is suggested as "commented by a friend" at u1.
 
-        Set<String> sugggested_anime = new HashSet<String>();
+        ArrayList<String> sugggested_anime = new ArrayList<String>();
 
         try(Session session= dbNeo4J.getDriver().session()){
 
@@ -479,14 +479,14 @@ public class AnimeManagerNeo4J{
         return sugggested_anime;
     }
 
-    public List<String> getNSuggestedAnime(String username, int number_of_suggested){
+    public ArrayList<String> getNSuggestedAnime(String username, int number_of_suggested){
         // suggest N Anime to a user considering three levels of priorities to anime
 
-        Set<String> verySuggestedAnime = getVerySuggestedAnime(username);
-        List<String> suggested_anime = new ArrayList<String>(verySuggestedAnime);
+        ArrayList<String> verySuggestedAnime = getVerySuggestedAnime(username);
+        ArrayList<String> suggested_anime = new ArrayList<String>(verySuggestedAnime);
 
         if(suggested_anime.size()<number_of_suggested){
-            Set<String> medium_suggested_anime = getSuggestedAnimeMediumPriority(username);
+            ArrayList<String> medium_suggested_anime = getSuggestedAnimeMediumPriority(username);
             for(String title: medium_suggested_anime){
                 if(!suggested_anime.contains(title) && suggested_anime.size()<number_of_suggested){
                     suggested_anime.add(title);
@@ -494,7 +494,7 @@ public class AnimeManagerNeo4J{
             }
         }
         if(suggested_anime.size()<number_of_suggested){
-            Set<String> commented_by_friend_anime = getCommentedByFriendAnime(username);
+            ArrayList<String> commented_by_friend_anime = getCommentedByFriendAnime(username);
             for(String title: commented_by_friend_anime){
                 if(!suggested_anime.contains(title) && suggested_anime.size()<number_of_suggested){
                     suggested_anime.add(title);

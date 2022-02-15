@@ -56,8 +56,10 @@ public class Registered_Home_page {
                         System.out.println(BLUE+"**************************************"+RESET);
                         user=null;
                         check=-1;
+
                     }
-                    return;
+                    check=-1;
+
                 }
                 default ->{
                     System.out.println("ATTENTION! Wrong command");
