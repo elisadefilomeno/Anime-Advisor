@@ -1,26 +1,25 @@
-package dbExtaction;
+package it.unipi.large_scale.anime_advisor.dbPopulation;
 
 //import com.mongodb.client.MongoCollection;
 //import it.unipi.large_scale.anime_advisor.dbManager.DbManagerMongoDB;
 /*import it.unipi.large_scale.anime_advisor.entity.Anime;
 import it.unipi.large_scale.anime_advisor.entity.Review;
 import it.unipi.large_scale.anime_advisor.entity.User; */
-import it.unipi.large_scale.anime_advisor.entity.*;
-//import org.bson.Document;
-import org.neo4j.driver.*;
-//import org.neo4j.driver.internal.value.LocalDateTimeValue;
-//import it.unipi.large_scale.anime_advisor.application.*;
+
+import it.unipi.large_scale.anime_advisor.entity.Anime;
+import it.unipi.large_scale.anime_advisor.entity.Review;
+import it.unipi.large_scale.anime_advisor.entity.User;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Session;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-//import java.text.DateFormat;
-//import java.text.SimpleDateFormat;
-//import java.time.Instant;
 import java.time.LocalDate;
-import java.util.*;
-//import it.unipi.large_scale.anime_advisor.animeManager.*;
-//import it.unipi.large_scale.anime_advisor.application.*;
-
-
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -317,7 +316,7 @@ public class MyPopulation implements AutoCloseable {
         driver.close();
     }
 
-    public static void main(String[] args) throws Exception{
+   /* public static void main(String[] args) throws Exception{
         MyPopulation gp = new MyPopulation();
 
 
@@ -367,7 +366,7 @@ public class MyPopulation implements AutoCloseable {
         gp.createFollowsRelationshipUserAnime(number_of_users, n_follows_edges_user_anime, anime_names);
         */
 
-    }
+   // }
 
 
 }

@@ -26,7 +26,7 @@ public class ViewReviewMenu {
                 System.out.println(GREEN+"1) "+RESET+"Read one reviews");
                 System.out.println(GREEN+"2) "+RESET+"Read information about the author");
                 System.out.println(GREEN+"3) "+RESET+"Delete review ");
-                System.out.println("0) Exit");
+                System.out.println(GREEN+"0) "+RESET+"Exit");
                 System.out.println(GREEN + "**************************************" + RESET);
 
                 System.out.println("Write your command here:");
@@ -37,7 +37,6 @@ public class ViewReviewMenu {
                     value_case = Integer.parseInt(sc.nextLine());
                 } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
-                    //this.showReviewMenu(list, a);
                 }
 
                 switch (value_case) {
@@ -64,11 +63,9 @@ public class ViewReviewMenu {
                             if (numberTitle > maxIndex || numberTitle <= 0) {
                                 System.out.println("ATTENTION! Wrong command");
                                 break;
-                                //this.showReviewMenu(list, a);
                             }
                         } catch (Exception e) {
                             System.out.println("ATTENTION! Wrong command");
-                            //this.showReviewMenu(list, a);
                             break;
                         }
 
@@ -76,7 +73,6 @@ public class ViewReviewMenu {
                         System.out.println(list.get(numberTitle - 1).getText());
                         check=-1;
                         break;
-                        //this.showReviewMenu(list, a);
                     }
 
                     case 2: {
@@ -107,29 +103,23 @@ public class ViewReviewMenu {
                             }
                             if (numberTitle > maxIndex || numberTitle <= 0) {
                                 System.out.println("ATTENTION! Wrong command");
-                                //this.showReviewMenu(list, a);
-                            } else {
+                            }
+                            else {
                                 System.out.println("Deletion successfully !");
                                 rm.deleteReview(list.get(numberTitle - 1).getTitle());
                                 list.remove(numberTitle - 1);
 
                                 break;
-                               /* BrowseReviewsMenu brm = new BrowseReviewsMenu();
-                                brm.showMenu(a);*/
-                                //VEDERE DOVE Tornare
 
                             }
                         } catch (Exception e) {
                             System.out.println("ATTENTION! Wrong command");
-                            //this.showReviewMenu(list, a);
                             break;
                         }
 
                     }
 
                     case 0: {
-                        /*BrowseReviewsMenu brm = new BrowseReviewsMenu();
-                        brm.showMenu(a);*/
                         check = -1;
                         break;
                     }
@@ -162,7 +152,6 @@ public class ViewReviewMenu {
                     value_case = Integer.parseInt(sc.nextLine());
                 } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
-                    //this.showReviewMenu(list, a);
                 }
 
                 switch (value_case) {
@@ -189,18 +178,15 @@ public class ViewReviewMenu {
                             }
                             if (numberTitle > maxIndex || numberTitle <= 0) {
                                 System.out.println("ATTENTION! Wrong command");
-                                //this.showReviewMenu(list, a);
                                 break;
                             }
                         } catch (Exception e) {
                             System.out.println("ATTENTION! Wrong command");
-                            //this.showReviewMenu(list, a);
                             break;
                         }
 
                         //-1 perche' in input valori partono da 1
                         System.out.println(list.get(numberTitle - 1).getText());
-                        //this.showReviewMenu(list, a);
                         break;
                     }
 
@@ -219,12 +205,10 @@ public class ViewReviewMenu {
                             }
                             if (numberTitle > maxIndex || numberTitle <= 0) {
                                 System.out.println("ATTENTION! Wrong command");
-                                //this.showReviewMenu(list, a);
                                 break;
                             }
                         } catch (Exception e) {
                             System.out.println("ATTENTION! Wrong command");
-                            //this.showReviewMenu(list, a);
                             break;
                         }
                         System.out.println(list.get(numberTitle-1).getTitle());
@@ -235,8 +219,6 @@ public class ViewReviewMenu {
                         break;
                     }
                     case 0: {
-                       /* BrowseReviewsMenu brm = new BrowseReviewsMenu();
-                        brm.showMenu(a);*/
                         check=-1;
                         break;
                     }
@@ -251,9 +233,6 @@ public class ViewReviewMenu {
             }
         }
 
-        //1) vede info review, autore,...
-        // 2) vuoi leggere il testo?
-        // 3) if user è admin mostra l'opzione di eliminare la review
     }
     public boolean checkIsAdmin(User user){
         if(user==null){
@@ -287,13 +266,10 @@ public class ViewReviewMenu {
                 value_case = Integer.parseInt(sc.nextLine());
             } catch (Exception e) {
                 System.out.println("ATTENTION! Wrong command");
-                //this.showSingleReview(r);
             }
 
             switch (value_case) {
                 case 1: {
-                  /*  PersonalProfileUserMenu personalProfileUserMenu = new PersonalProfileUserMenu();
-                    personalProfileUserMenu.showMenu();*/
                     check=-1;
                     break;
 
@@ -308,7 +284,6 @@ public class ViewReviewMenu {
 
                 default:
                     System.out.println("Attention ! Wrong command");
-                    //this.showSingleReview(r);
                     break;
             }
             if(check==-1)

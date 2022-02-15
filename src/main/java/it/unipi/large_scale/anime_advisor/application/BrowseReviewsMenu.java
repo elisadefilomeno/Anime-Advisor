@@ -22,13 +22,16 @@ public class BrowseReviewsMenu {
         int check=1;
         while(check==1) {
             System.out.println(GREEN + "**************************************" + RESET);
-            System.out.println(GREEN + "REVIEWS MENU" + RESET);
+            System.out.println(GREEN + "BROWSE REVIEWS PAGE" + RESET);
             System.out.println("What would you like to do?");
             System.out.println("Digit:");
             System.out.println(GREEN+"1) "+RESET+"Show all the reviews");
             System.out.println(GREEN+"2) "+RESET+"View latest reviews");
             System.out.println(GREEN+"3) "+RESET+"Write a review");
             System.out.println(GREEN+"4) "+RESET+"Find a review by keyword");
+            if(user.getIs_admin())
+                System.out.println(GREEN+"5) "+RESET+"Delete a review");
+
             System.out.println(GREEN+"0) "+RESET+"Exit");
             System.out.println(GREEN + "**************************************" + RESET);
 
@@ -40,7 +43,6 @@ public class BrowseReviewsMenu {
                 value_case = Integer.parseInt(sc.nextLine());
             } catch (Exception e) {
                 System.out.println("ATTENTION! Wrong command");
-                //this.showMenu(a);
 
             }
             switch (value_case) {
@@ -84,7 +86,6 @@ public class BrowseReviewsMenu {
                     titleReview = sc.nextLine();
                     if (rm.checkIfPresent(titleReview)) {
                         System.out.println("Change title review ");
-                        //this.showMenu(a);
                         break;
                     }
                     System.out.println("Write your review : ");
@@ -97,7 +98,6 @@ public class BrowseReviewsMenu {
 
                     rm.createReview(newReview, a, user);
 
-                    //this.showMenu(a);
                     break;
 
                 }
@@ -124,21 +124,76 @@ public class BrowseReviewsMenu {
                     } else {
                         System.out.println("Not found result !");
                         break;
-                        //this.showMenu(a);
                     }
 
                 }
+                case 5 :{
+
+                    ReviewManagerNeo4J rm = new ReviewManagerNeo4J(dbNeo4J);
+                    ArrayList<Review> list = new ArrayList<>();
+                    list = rm.list_ReviewFound(a);
+                    int count = 0;
+                    for (Review r : list) {
+                        count++;
+                        System.out.println(GREEN + count + ")" + RESET + "  " + r.getTitle());
+                    }
+
+                    int check3=1;
+                    while(check3==1) {
+                        System.out.println("Do you want delete one review ?");
+                        System.out.println(GREEN+"1) "+RESET+"Yes");
+                        System.out.println(GREEN+"2) "+RESET+"No");
+                        System.out.println("Digit: ");
+                        value_case = 0;
+                        try {
+                            value_case = Integer.parseInt(sc.nextLine());
+                        } catch (Exception e) {
+                            System.out.println("ATTENTION! Wrong command");
+                        }
+                        switch (value_case) {
+                            case 1 -> {
+                                int indexAnime=-1;
+                                try {
+                                    System.out.println("Select the review that you want delete: ");
+                                    indexAnime = Integer.parseInt(sc.nextLine());
+                                } catch (Exception e) {
+                                    System.out.println("ATTENTION! Wrong command");
+                                }
+                                if(indexAnime<1||indexAnime>list.size()){
+                                    System.out.println("ATTENTION! Wrong command");
+                                    break;
+                                }
+                                else {
+                                    rm.deleteReview(list.get(indexAnime-1).getTitle());
+                                    check3=-1;
+                                    break;
+                                }
+                            }
+                            case 2 ->{
+
+                                check3=-1;
+                                break;
+                            }
+                            default -> {
+                                System.out.println("ATTENTION! Wrong command");
+                                break;
+                            }
+
+                        }
+                        if(check3==-1)
+                            return;
+                    }
+                    break;
+                }
 
                 case 0: {
-                  /*  BrowseAnimeMenu browseAnimeMenu = new BrowseAnimeMenu();
-                    browseAnimeMenu.showMenu();*/
+
                     check=-1;
                     break;
                 }
 
                 default: {
                     System.out.println("Wrong command !!!");
-                    //this.showMenu(a);
                     break;
                 }
 

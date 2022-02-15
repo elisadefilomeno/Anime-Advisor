@@ -15,13 +15,7 @@ import static it.unipi.large_scale.anime_advisor.application.Main.dbNeo4J;
 
 
 public class BrowseAnimeMenu {
-    //1) ricerca anime per titolo
-    //1) trova anime  per genere
-    // 2) ricerca avanzata (aggregazioni + viewMostoFollowedAnime)
-    // 3) view most followed anime ( capire se con members di Mongo o contanto archi su Graph)
-    // 4) view most reviewed anime (sul grafo-> da decidere se fare come most followed anime)
-    // 3) view personalised suggested anime (Neo4J)
-    // 4) go back to registered home page
+
     AnimeManagerMongoDBCRUD crud= new AnimeManagerMongoDBCRUD();
     AnimeManagerMongoDBAgg aggregation=new AnimeManagerMongoDBAgg();
     ViewAnimeMenu animeMenu=new ViewAnimeMenu();
@@ -42,13 +36,13 @@ public class BrowseAnimeMenu {
                 System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
                 System.out.println("What would you like to do?");
                 System.out.println("Digit:");
-                System.out.println("1) Find anime by name");
-                System.out.println("2) Find anime by genre");
-                System.out.println("3) Advanced search");
-                System.out.println("4) Update Anime");
-                System.out.println("5) Insert Anime");
-                System.out.println("6) Delete Anime");
-                System.out.println("0) Go back");
+                System.out.println(GREEN+"1) "+"Find anime by name");
+                System.out.println(GREEN+"2) "+"Find anime by genre");
+                System.out.println(GREEN+"3) "+"Advanced search");
+                System.out.println(GREEN+"4) "+"Update Anime");
+                System.out.println(GREEN+"5) "+"Insert Anime");
+                System.out.println(GREEN+"6) "+"Delete Anime");
+                System.out.println(GREEN+"0) "+"+Go back");
                 System.out.println(GREEN + "**************************************" + RESET);
                 System.out.println("Write your command here:");
 
@@ -58,7 +52,6 @@ public class BrowseAnimeMenu {
                     value_case = Integer.parseInt(sc.nextLine());
                 } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
-                    //this.showMenu();
                 }
                 switch (value_case) {
                     case 1: { //FIND BY NAME
@@ -82,8 +75,7 @@ public class BrowseAnimeMenu {
                         Anime b = this.findAnime();
                         if (b != null)
                             this.updateAnime(b);
-                        // else
-                        //   this.showMenu();
+
                         break;
                     }
                     case 5: { //INSERT
@@ -94,19 +86,15 @@ public class BrowseAnimeMenu {
                         Anime c = this.findAnime();
                         if (c != null)
                             this.deleteAnimeFromInput(c);
-                        //     else
-                        //       this.showMenu();
+
                         break;
-                        //case 3 : profileUserMenu.showMenu();
                     }
                     case 0: {
                         stop = 1;
-                       // Registered_Home_page rh=new Registered_Home_page();
-                       // rh.showMenu();
+                        break;
                     }
                     default: {
                         System.out.println("Wrong command!");
-                       // this.showMenu();
                         break;
                     }
                 }
@@ -138,7 +126,6 @@ public class BrowseAnimeMenu {
                     value_case = Integer.parseInt(sc.nextLine());
                 } catch (Exception e) {
                     System.out.println("ATTENTION! Wrong command");
-                    //this.showMenu();
 
                 }
                 switch (value_case) {
@@ -163,7 +150,6 @@ public class BrowseAnimeMenu {
                     }
                     default: {
                         System.out.println("Wrong command!");
-                        //this.showMenu();
                         break;
                     }
                 }
@@ -213,7 +199,6 @@ public class BrowseAnimeMenu {
                     }
                 }
                 anime.setAnime_name(results.get(animechoosen));
-                //animeMenu.showMenu(anime);
                 return anime;
             }
         }
@@ -1262,7 +1247,6 @@ public class BrowseAnimeMenu {
                     catch(Exception e ){
                         e.printStackTrace();
                         System.out.println("Wrong Command!");
-                       // this.advancedSearch();
                         break;
                     }
 
@@ -1283,7 +1267,6 @@ public class BrowseAnimeMenu {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     System.out.println("Wrong Command!");
-                                    //this.advancedSearch();
                                     break;
                                 }
                                 ViewAnimeMenu vam = new ViewAnimeMenu();
@@ -1292,14 +1275,12 @@ public class BrowseAnimeMenu {
                                 break;
                             }
                             case 2: {
-                                //this.advancedSearch();
                                 check1=-1;
                                 break;
 
                             }
                             default: {
                                 System.out.println("Wrong Command !");
-                                //this.advancedSearch();
                                 check1=-1;
                                 break;
 
@@ -1356,10 +1337,8 @@ public class BrowseAnimeMenu {
                         caseValue = Integer.parseInt(sc.nextLine());
                     }
                     catch(Exception e ){
-                       // e.printStackTrace();
                         System.out.println("Wrong Command!");
                         break;
-                       // this.advancedSearch();
 
                     }
 
@@ -1373,14 +1352,12 @@ public class BrowseAnimeMenu {
                                     indexAnime = Integer.parseInt(sc.nextLine());
                                     if (indexAnime < 0 || indexAnime > mostReviewedAnime.size()) {
                                         System.out.println("Wrong Command!");
-                                        //this.advancedSearch();
                                         break;
                                     }
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     System.out.println("Wrong Command!");
-                                    //this.advancedSearch();
                                     break;
                                 }
                                 ViewAnimeMenu vam = new ViewAnimeMenu();
@@ -1389,14 +1366,12 @@ public class BrowseAnimeMenu {
                                 break;
                             }
                             case 2: {
-                                //this.advancedSearch();
                                 check1=-1;
                                 break;
 
                             }
                             default: {
                                 System.out.println("Wrong Command !");
-                               // this.advancedSearch();
                                 check1=-1;
                                 break;
                             }
@@ -1426,10 +1401,8 @@ public class BrowseAnimeMenu {
                             try {
                                 caseValue = Integer.parseInt(sc.nextLine());
                             } catch (Exception e) {
-                                // e.printStackTrace();
                                 System.out.println("Wrong Command!");
                                 break;
-                                // this.advancedSearch();
 
                             }
 
@@ -1443,14 +1416,12 @@ public class BrowseAnimeMenu {
                                             indexAnime = Integer.parseInt(sc.nextLine());
                                             if (indexAnime < 0 || indexAnime > suggestedAnime.size()) {
                                                 System.out.println("Wrong Command!");
-                                                //this.advancedSearch();
                                                 break;
                                             }
 
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                             System.out.println("Wrong Command!");
-                                            //this.advancedSearch();
                                             break;
                                         }
                                         ViewAnimeMenu vam = new ViewAnimeMenu();
@@ -1461,14 +1432,12 @@ public class BrowseAnimeMenu {
                                         break;
                                     }
                                     case 2: {
-                                        //this.advancedSearch();
                                         check1 = -1;
                                         break;
 
                                     }
                                     default: {
                                         System.out.println("Wrong Command !");
-                                        // this.advancedSearch();
                                         check1 = -1;
                                         break;
                                     }
@@ -1804,7 +1773,6 @@ public class BrowseAnimeMenu {
             //Insertion of the animes founded into an hashmap and selection of
             //an anime to visit
             animeResults = aggregation.topTenAnimeByField(anime_collection, "genre", 0, null, arrayGenres, 1);
-            //inte.printResults(animeResults);
             Anime tt= this.pickAnime(animeResults);
             if(tt!=null)
             animeMenu.showMenu(tt);

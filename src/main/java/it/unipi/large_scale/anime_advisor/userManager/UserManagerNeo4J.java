@@ -830,8 +830,8 @@ public class UserManagerNeo4J {
             list = session.readTransaction(tx -> {
                 Result result = tx.run("MATCH (u:User) , (u1:User{username:$user}) "+
                                 "WHERE u.username CONTAINS $keyword AND u<>u1 "+
-                                "RETURN u.username,u.password,u.gender "+
-                                "ORDER BY u.last_update LIMIT 10",
+                                "RETURN u.username,u.password,u.gender,u.is_admin "+
+                                "ORDER BY u.last_update ",
                         parameters(
                                 "user", userName,
                                 "keyword",keyword
@@ -845,7 +845,7 @@ public class UserManagerNeo4J {
                     userFound.setUsername(r.get("u.username").asString());
                     userFound.setPassword(r.get("u.password").asString());
                     userFound.setGender(r.get("u.gender").asString());
-                    userFound.setIs_admin(false);
+                    userFound.setIs_admin(r.get("u.is_admin").asBoolean());
                     userFound.setLogged_in(false);
 
                     listUser.add(userFound);
@@ -857,6 +857,7 @@ public class UserManagerNeo4J {
         return list;
 
     }
+
     public int getNumberUserFollow (String userName){
         int numberFollow;
         try(Session session= dbNeo4J.getDriver().session()) {
@@ -940,6 +941,7 @@ public class UserManagerNeo4J {
         }
         return numberReviews;
     }
+
     public ArrayList<String> viewMostActiveUsers(){
         ArrayList<String> list ;
         try(Session session= dbNeo4J.getDriver().session()) {
@@ -947,7 +949,7 @@ public class UserManagerNeo4J {
             list = session.readTransaction(tx -> {
                 Result result = tx.run("MATCH p=(u:User)-[t:WRITE]->(r:Review) "+
                                 "RETURN COUNT(t) as n_rev,u.username ORDER BY "+
-                                "n_rev DESC LIMIT 10",
+                                "n_rev DESC LIMIT 10 ",
                         parameters()
                 );
                 ArrayList<String> listUser = new ArrayList<>();
@@ -1001,6 +1003,7 @@ public class UserManagerNeo4J {
 
 
     }
+
     public User getUserFromName(String username){
         User userFound ;
         try(Session session= dbNeo4J.getDriver().session()) {
@@ -1035,6 +1038,7 @@ public class UserManagerNeo4J {
         return userFound;
 
     }
+
     public ArrayList<Anime> getAnimeFromUser(User u){
         ArrayList<Anime> animeList;
         try(Session session= dbNeo4J.getDriver().session()) {

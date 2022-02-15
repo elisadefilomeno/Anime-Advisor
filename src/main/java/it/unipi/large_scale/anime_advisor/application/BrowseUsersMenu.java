@@ -20,15 +20,11 @@ import static it.unipi.large_scale.anime_advisor.application.Main.userManagerNeo
 
 public class BrowseUsersMenu {
     public void showMenu() {
-        // 1) browse users username that starts with  keyword
-        // 2) view suggested users to follow (No4J)
-        // 3) view most active users (they written lots of reviews)
-        // 4) go back to registered home page
 
         int check=1;
         while(check==1) {
             System.out.println(GREEN + "**************************************" + RESET);
-            System.out.println(GREEN + "USER MENU" + RESET);
+            System.out.println(GREEN + "BROWSE USER PAGE" + RESET);
             System.out.println("What would you like to do?");
             System.out.println("Digit:");
             System.out.println(GREEN+"1) "+RESET+"Find User by username");
@@ -47,7 +43,6 @@ public class BrowseUsersMenu {
             } catch (Exception e) {
                 System.out.println("ATTENTION! Wrong command");
 
-                //   this.showMenu();
             }
             switch (value_case) {
                 case 1: {
@@ -55,7 +50,6 @@ public class BrowseUsersMenu {
                     String userToFind = sc.nextLine();
                     if (userToFind == null || userToFind.isEmpty()) {
                         System.out.println("Insert the name !");
-                        //this.showMenu();
                         break;
                     }
 
@@ -76,22 +70,14 @@ public class BrowseUsersMenu {
                     try {
                         indexUser = Integer.parseInt(sc.nextLine());
 
-                        int maxIndex = 0;
-                        if (listUsers.size() < 11) {
-                            maxIndex = listUsers.size();
-                        } else {
-                            maxIndex = 10;
-                        }
+                        int maxIndex = listUsers.size();
 
                         if (indexUser > maxIndex || indexUser < 0) {
                             System.out.println("ATTENTION! Wrong command");
                             break;
-                            //this.showMenu();
-                        }
-                   /* else if (indexUser == 0) {
 
-                        //this.showMenu();
-                    } */
+                        }
+
                         else {
                             ViewUserMenu vum = new ViewUserMenu();
                             vum.showMenu(listUsers.get(indexUser - 1));
@@ -101,7 +87,6 @@ public class BrowseUsersMenu {
 
                     } catch (Exception e) {
                         System.out.println("ATTENTION! Wrong command");
-                        // this.showMenu();
                         break;
                     }
 
@@ -137,12 +122,10 @@ public class BrowseUsersMenu {
 
                         if (indexUser > maxIndex || indexUser < 0) {
                             System.out.println("ATTENTION! Wrong command");
-                            // this.showMenu();
                             break;
 
-                        } /*else if (indexUser == 0) {
-                        this.showMenu();
-                    }*/ else {
+                        }
+                        else {
 
                             ViewUserMenu vum = new ViewUserMenu();
                             User u = new User();
@@ -153,7 +136,6 @@ public class BrowseUsersMenu {
 
                     } catch (Exception e) {
                         System.out.println("ATTENTION! Wrong command");
-                        //   this.showMenu();
                         break;
                     }
                 }
@@ -164,15 +146,13 @@ public class BrowseUsersMenu {
                 }
 
                 case 0: {
-             /*   Registered_Home_page rhp = new Registered_Home_page();
-                rhp.showMenu();*/
+
                     check=0;
                     break;
                 }
 
                 default: {
                     System.out.println("Wrong command !!!");
-                    //  this.showMenu();
                     break;
                 }
 
@@ -186,7 +166,7 @@ public class BrowseUsersMenu {
 
     private void viewSuggestedUsers() {
         UserManagerNeo4J userManagerNeo4J = new UserManagerNeo4J(dbNeo4J);
-        List<String> suggested_users = userManagerNeo4J.getNSuggestedUsers(user.getUsername(), 5);
+        List<String> suggested_users = userManagerNeo4J.getNSuggestedUsers(user.getUsername(), 10);
         System.out.println(GREEN + "**************************************" + RESET);
         System.out.println("Suggested Users:");
         HashMap<Integer, String> user_map_to_access_users = new HashMap<>();
@@ -200,7 +180,7 @@ public class BrowseUsersMenu {
             anInterface.printResults(user_map_to_access_users);
         } else {
             System.out.println("You don't have any suggested user!");
-            this.showMenu();
+            //this.showMenu();
         }
 
         System.out.println(GREEN + "**************************************" + RESET);
@@ -219,30 +199,38 @@ public class BrowseUsersMenu {
             System.out.println("ATTENTION! Wrong command");
             this.showMenu();
         }
-        switch (value_case) {
-            case 1 -> {
-                System.out.println("Insert the number of the user you want to visit: ");
-                int user_number = 0;
-                try {
-                    user_number = Integer.parseInt(sc.nextLine());
-                } catch (Exception e) {
+        int check = 1;
+        while (check == 1) {
+            switch (value_case) {
+                case 1 -> {
+                    System.out.println("Insert the number of the user you want to visit: ");
+                    int user_number = 0;
+                    try {
+                        user_number = Integer.parseInt(sc.nextLine());
+                    } catch (Exception e) {
+                        System.out.println("ATTENTION! Wrong command");
+                    }
+                    if (!user_map_to_access_users.containsKey(user_number)) {
+                        System.out.println("ATTENTION! Wrong number");
+                    }
+                    User u = new User();
+                    u.setUsername(user_map_to_access_users.get(user_number));
+                    ViewUserMenu viewUserMenu = new ViewUserMenu();
+                    viewUserMenu.showMenu(u);
+                    check=-1;
+                    break;
+                }
+                case 0 -> {
+                    check=-1;
+                    break;
+                }
+                default -> {
                     System.out.println("ATTENTION! Wrong command");
-                    this.showMenu();
+                    break;
                 }
-                if (!user_map_to_access_users.containsKey(user_number)) {
-                    System.out.println("ATTENTION! Wrong number");
-                    this.showMenu();
-                }
-                User u = new User();
-                u.setUsername(user_map_to_access_users.get(user_number));
-                ViewUserMenu viewUserMenu = new ViewUserMenu();
-                viewUserMenu.showMenu(u);
             }
-            case 0 -> this.showMenu();
-            default -> {
-                System.out.println("ATTENTION! Wrong command");
-                this.showMenu();
-            }
+            if(check==-1)
+                return;
         }
     }
 }

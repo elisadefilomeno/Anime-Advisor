@@ -80,12 +80,10 @@ public class ViewUserMenu {
                 switch (value_case) {
                     case 1 -> {//follow this user
                         userManagerNeo4J.followUser(user.getUsername(), u.getUsername());
-                        //this.showMenu(u);
                         break;
                     }
                     case 2 -> {//UNFollow this user
                         userManagerNeo4J.unfollowUser(user.getUsername(), u.getUsername());
-                      //  this.showMenu(u);
                         break;
                     }
                     case 3 ->{ //Show anime list
