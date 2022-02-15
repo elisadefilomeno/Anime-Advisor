@@ -65,12 +65,10 @@ public class BrowseAnimeMenu {
                         Anime a = this.findAnime();
                         if (a != null)
                             animeMenu.showMenu(a);
-                        //else
-                        //  this.showMenu();
+
                         break;
                     }
                     case 2: { //FIND BY GENRE
-                       // this.researchByGenre();
                         Anime a=this.researchByGenre();
                         if(a!=null)
                             animeMenu.showMenu(a);
@@ -78,6 +76,8 @@ public class BrowseAnimeMenu {
                     }
                     case 3: { //ADVANCED SEARCH
                         this.advancedSearch();
+                        System.out.println("ritornato");
+
                         break;
                     }
                     case 4: { //UPDATE
@@ -178,6 +178,7 @@ public class BrowseAnimeMenu {
     public Anime pickAnime(HashMap<Integer,String> results){
         Interface inte=new Interface();
         inte.printResults(results);
+        Anime anime=new Anime();
         int x=0;
         int select=-1;
         Scanner sc=new Scanner(System.in);
@@ -207,10 +208,15 @@ public class BrowseAnimeMenu {
                         animecheck = 0;
                         continue;
                     }
+                    if (animechoosen<1 || animechoosen>results.size()){
+                        System.out.println("Error! Wrong input!");
+                        animecheck=0;
+                        continue;
+                    }
                 }
-                Anime anime=new Anime();
                 anime.setAnime_name(results.get(animechoosen));
                 //animeMenu.showMenu(anime);
+                System.out.println("PICK ANIME:"+anime.getAnime_name());
                 return anime;
             }
         }
@@ -1068,107 +1074,126 @@ public class BrowseAnimeMenu {
             }
             switch (input){
                 case 1:{
-                System.out.println("Select a field from\n1)Year\n2)Source\n3)Type\nPress 0 to go back\n");
-               int answ=-1;
-               int innansw=-1;
-               while(answ==-1) {
-                   try {
-                       answ = Integer.parseInt(sc.nextLine());
-                   } catch (NumberFormatException e) {
-                       System.out.println("Attention! Wrong input!");
-                       continue;
-                   }
-                   if(answ==0) return  null;
-                   if(answ==1){
-                       System.out.println("Please choose a year between 1917-2023");
-                       while(innansw==-1){
-                           try{
-                               innansw = Integer.parseInt(sc.nextLine());
-                           }
-                           catch (NumberFormatException e){
-                               System.out.println("Attention! Wrong input!");
-                               innansw=-1;
-                               continue;
-                           }
-                           if((innansw<1917 || innansw>2023)){
-                               System.out.println("Attention! wrong year specified!");
-                               innansw=-1;
-                           }
-                           else {
-                               HashMap<Integer,String> results=new HashMap<>();
-                                results=aggregation.topTenAnimeByField(anime_collection,"premiered",innansw,null,null,10);
-                                return this.pickAnime(results);
-                           }//ELSE GOOD YEAR DATE
-                       }//ANSW FOR PICKING AN YEAR
-                   }//ANSW =1 YEAR
-                   if(answ==2) { //SOURCE
-                       System.out.println("Please choose a source  between\n" +
-                               "1)Original\n2)TV\n3)Music\n4)Manga\n5)Visual Novel\n6)Game\n" +
-                               "7)Book\nPress 0 to go back");
-                       HashMap<Integer, String> temp = new HashMap<>();
-                       temp.put(1, "Original");
-                       temp.put(2, "TV");
-                       temp.put(3, "Music");
-                       temp.put(4, "Manga");
-                       temp.put(5, "Visual Novel");
-                       temp.put(6, "Game");
-                       temp.put(7, "Book");
+                    System.out.println("Select a field from\n1)Year\n2)Source\n3)Type\nPress 0 to go back\n");
+                   int answ=-1;
+                   int innansw=-1;
+                   while(answ==-1) {
+                       try {
+                           answ = Integer.parseInt(sc.nextLine());
+                       } catch (NumberFormatException e) {
+                           System.out.println("Attention! Wrong input!");
+                           continue;
+                       }
+                       if(answ==0) return  null;
+                       if(answ==1){
+                           System.out.println("Please choose a year between 1917-2023");
+                           while(innansw==-1){
+                               try{
+                                   innansw = Integer.parseInt(sc.nextLine());
+                               }
+                               catch (NumberFormatException e){
+                                   System.out.println("Attention! Wrong input!");
+                                   innansw=-1;
+                                   continue;
+                               }
+                               if((innansw<1917 || innansw>2023)){
+                                   System.out.println("Attention! wrong year specified!");
+                                   innansw=-1;
+                                   continue;
+                               }
+                               else {
+                                   HashMap<Integer,String> results=new HashMap<>();
+                                    results=aggregation.topTenAnimeByField(anime_collection,"premiered",innansw,null,null,10);
 
-                       while (innansw == -1) {
-                           try {
-                               innansw = Integer.parseInt(sc.nextLine());
-                           } catch (NumberFormatException e) {
-                               System.out.println("Attention! Wrong input!");
-                               innansw = -1;
-                           }
-                           if (innansw < 0 || innansw > 7) {
-                               System.out.println("Attention! wrong input specified!");
-                               innansw = -1;
-                           }
-                           if (innansw == 0)
-                               return null;
-                           else {
-                               HashMap<Integer, String> results = new HashMap<>();
-                               results = aggregation.topTenAnimeByField(anime_collection, "source", innansw, temp.get(innansw), null, 10);
-                               return this.pickAnime(results);
-                           }//ELSE GOOD TYPE PICK
-                       }//ANSW FOR PICKING A SOURCE
-                   }//ANSW =2 SOURCE
-                   if(answ==3){ //TYPE
-                       System.out.println("Please choose a type between\n" +
-                               "1)TV\n2)Special\n3)OVA\n4)Movie\n5)Web\n6)Music\nPress 0 to go back");
-                       HashMap<Integer, String> temp = new HashMap<>();
-                       temp.put(1, "TV");
-                       temp.put(2, "Special");
-                       temp.put(3, "OVA");
-                       temp.put(4, "Movie");
-                       temp.put(5, "Web");
-                       temp.put(6, "Music");
+                                    Anime tt= ( this.pickAnime(results));
+                                    if(tt!=null)
+                                        animeMenu.showMenu(tt);
+                                    else
+                                        return null;
+                               }//ELSE GOOD YEAR DATE
+                           }//ANSW FOR PICKING AN YEAR
+                       }//ANSW =1 YEAR
+                       if(answ==2) { //SOURCE
+                           System.out.println("Please choose a source  between\n" +
+                                   "1)Original\n2)TV\n3)Music\n4)Manga\n5)Visual Novel\n6)Game\n" +
+                                   "7)Book\nPress 0 to go back");
+                           HashMap<Integer, String> temp = new HashMap<>();
+                           temp.put(1, "Original");
+                           temp.put(2, "TV");
+                           temp.put(3, "Music");
+                           temp.put(4, "Manga");
+                           temp.put(5, "Visual Novel");
+                           temp.put(6, "Game");
+                           temp.put(7, "Book");
 
-                       while (innansw == -1) {
-                           try {
-                               innansw = Integer.parseInt(sc.nextLine());
-                           } catch (NumberFormatException e) {
-                               System.out.println("Attention! Wrong input!");
-                               innansw = -1;
-                           }
-                           if (innansw < 0 || innansw > 6) {
-                               System.out.println("Attention! wrong input specified!");
-                               innansw = -1;
-                           }
-                           if (innansw == 0)
-                               return null;
-                           else {
-                               HashMap<Integer, String> results = new HashMap<>();
-                               results = aggregation.topTenAnimeByField(anime_collection, "type", innansw, temp.get(innansw), null, 10);
-                               return this.pickAnime(results);
-                           }//ELSE GOOD TYPE PICK
-                       }//ANSW FOR PICKING A TYPE
-                   }//ANSW =3 TYPE
-                   if(answ==0)
-                       return  null;
-               }//ANSWER CHOSE FIELD
-                    break;
+                           while (innansw == -1) {
+                               try {
+                                   innansw = Integer.parseInt(sc.nextLine());
+                               } catch (NumberFormatException e) {
+                                   System.out.println("Attention! Wrong input!");
+                                   innansw = -1;
+                               }
+                               if (innansw < 0 || innansw > 7) {
+                                   System.out.println("Attention! wrong input specified!");
+                                   innansw = -1;
+                                   continue;
+                               }
+                               if (innansw == 0)
+                                   return null;
+                               else {
+                                   HashMap<Integer, String> results = new HashMap<>();
+                                   results = aggregation.topTenAnimeByField(anime_collection, "source", innansw, temp.get(innansw), null, 10);
+                                   //return this.pickAnime(results);
+                                   Anime tt= ( this.pickAnime(results));
+                                   if(tt!=null)
+                                       animeMenu.showMenu(tt);
+                                   else
+                                       return null;
+                               }//ELSE GOOD TYPE PICK
+                           }//ANSW FOR PICKING A SOURCE
+                       }//ANSW =2 SOURCE
+                       if(answ==3){ //TYPE
+                           System.out.println("Please choose a type between\n" +
+                                   "1)TV\n2)Special\n3)OVA\n4)Movie\n5)Web\n6)Music\nPress 0 to go back");
+                           HashMap<Integer, String> temp = new HashMap<>();
+                           temp.put(1, "TV");
+                           temp.put(2, "Special");
+                           temp.put(3, "OVA");
+                           temp.put(4, "Movie");
+                           temp.put(5, "Web");
+                           temp.put(6, "Music");
+
+                           while (innansw == -1) {
+                               try {
+                                   innansw = Integer.parseInt(sc.nextLine());
+                               } catch (NumberFormatException e) {
+                                   System.out.println("Attention! Wrong input!");
+                                   innansw = -1;
+                               }
+                               if (innansw < 0 || innansw > 6) {
+                                   System.out.println("Attention! wrong input specified!");
+                                   innansw = -1;
+                                   continue;
+                               }
+                               if (innansw == 0)
+                                   return null;
+                               else {
+                                   HashMap<Integer, String> results = new HashMap<>();
+                                   results = aggregation.topTenAnimeByField(anime_collection, "type", innansw, temp.get(innansw), null, 10);
+                                   //return this.pickAnime(results);
+
+                                   Anime tt= ( this.pickAnime(results));
+                                   if(tt!=null)
+                                       animeMenu.showMenu(tt);
+                                   else
+                                       return null;
+                               }//ELSE GOOD TYPE PICK
+                           }//ANSW FOR PICKING A TYPE
+                       }//ANSW =3 TYPE
+                       if(answ==0)
+                           return  null;
+                   }//ANSWER CHOSE FIELD
+                        break;
                 }//CASE 1
                 case 2:{
                     System.out.println("Select:\n1)Genre\n2)Studio\n3)Producer\nPress 0 to go back");
