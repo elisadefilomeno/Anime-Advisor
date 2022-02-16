@@ -14,11 +14,16 @@ public class Main {
 
 
     public static void main(String args[]) throws Exception {
+        String connectionString= "mongodb://172.16.4.72:27020," +
+                "172.16.4.73:27020," +
+                "172.16.4.74:27020" +
+                "/?retryWrites=true&w=3&wtimeoutMS=5000&readPreference=nearest";
         try{
             // connections to databases
             dbNeo4J = new DbManagerNeo4J();
             userManagerNeo4J =new UserManagerNeo4J(dbNeo4J);
-            DbManagerMongoDB mongoM=new DbManagerMongoDB("mongodb://localhost:27017");
+//            DbManagerMongoDB mongoM=new DbManagerMongoDB("mongodb://localhost:27017");
+            DbManagerMongoDB mongoM=new DbManagerMongoDB(connectionString);
             mongoM.startMongo("Anime_Advisor");
             anime_collection= mongoM.getCollection("anime");
 
