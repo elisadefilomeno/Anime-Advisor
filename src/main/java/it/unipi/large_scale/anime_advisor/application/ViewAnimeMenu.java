@@ -33,8 +33,8 @@ public class ViewAnimeMenu {
                 System.out.println(GREEN + "ANIME MENU" + RESET);
                 System.out.println("What would you like to do?");
                 System.out.println("Digit:");
-                System.out.println(GREEN+"1) "+RESET+"Follow anime");
-                System.out.println(GREEN+"2) "+RESET+"Unfollow anime");
+                System.out.println(GREEN+"1) "+RESET+"Like anime");
+                System.out.println(GREEN+"2) "+RESET+"Unlike anime");
                 System.out.println(GREEN+"3) "+RESET+"Review anime"); //io
                 System.out.println(GREEN+"4) "+RESET+"Vote anime");
                 System.out.println(GREEN+"0) "+RESET+"Go back");

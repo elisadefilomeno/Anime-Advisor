@@ -36,13 +36,13 @@ public class BrowseAnimeMenu {
                 System.out.println(GREEN + "BROWSE ANIME PAGE" + RESET);
                 System.out.println("What would you like to do?");
                 System.out.println("Digit:");
-                System.out.println(GREEN+"1) "+"Find anime by name");
-                System.out.println(GREEN+"2) "+"Find anime by genre");
-                System.out.println(GREEN+"3) "+"Advanced search");
-                System.out.println(GREEN+"4) "+"Update Anime");
-                System.out.println(GREEN+"5) "+"Insert Anime");
-                System.out.println(GREEN+"6) "+"Delete Anime");
-                System.out.println(GREEN+"0) "+"+Go back");
+                System.out.println(GREEN+"1) "+RESET+"Find anime by name");
+                System.out.println(GREEN+"2) "+RESET+"Find anime by genre");
+                System.out.println(GREEN+"3) "+RESET+"Advanced search");
+                System.out.println(GREEN+"4) "+RESET+"Update Anime");
+                System.out.println(GREEN+"5) "+RESET+"Insert Anime");
+                System.out.println(GREEN+"6) "+RESET+"Delete Anime");
+                System.out.println(GREEN+"0) "+RESET+"Go back");
                 System.out.println(GREEN + "**************************************" + RESET);
                 System.out.println("Write your command here:");
 

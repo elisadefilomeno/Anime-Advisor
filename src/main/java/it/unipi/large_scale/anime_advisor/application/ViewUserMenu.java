@@ -58,7 +58,7 @@ public class ViewUserMenu {
                 System.out.println(GREEN+"0) "+RESET+"Go Back To Home Page");
                 System.out.println(GREEN+"1) "+RESET+"Follow this user");
                 System.out.println(GREEN+"2) "+RESET+"Unfollow this user");
-                System.out.println(GREEN+"3) "+RESET+"Show list anime follow");
+                System.out.println(GREEN+"3) "+RESET+"Show list anime liked");
                 System.out.println(GREEN+"4) "+RESET+"Show list review written");
 
                 if (user.getIs_admin()) {
