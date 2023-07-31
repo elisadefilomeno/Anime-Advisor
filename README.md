@@ -1,4 +1,3 @@
 # Anime-Advisor
 
-Anime Advisor is an application that lets users to find an high amount of Animes (which is the name given 
-for japan’s animations products) of all kind and generes
+Anime Advisor is a comprehensive application that allows users to explore a wide variety of anime, which refers to Japan's animated products, including numerous types and genres.
