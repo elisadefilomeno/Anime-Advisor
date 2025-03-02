@@ -82,5 +82,3 @@ The application provides detailed information about each anime, including its na
 - Java Development Kit (JDK) 8 or higher.
 - MongoDB installed and running.
 - Neo4J installed and running.
-
-   git clone https://github.com/elisadefilomeno/Anime-Advisor.git
